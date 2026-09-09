@@ -1,0 +1,56 @@
+# Publishes the Vite gallery to GitHub Pages.
+#
+# Deliberately manual (workflow_dispatch only). Two things to know before you
+# run it:
+#
+#   1. Pages must be enabled for this repository, with "Source: GitHub Actions"
+#      (Settings → Pages). Pages on a PRIVATE repo needs a paid plan.
+#   2. A published Pages site is PUBLIC even when the repository is private.
+#      Restricting who can view it requires GitHub Enterprise Cloud.
+#
+# Switch `on:` to `push: {branches: [main]}` once you actually want it to
+# deploy on every commit.
+name: Deploy gallery to Pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      # A project Pages site is served from /<repo>/, not /. vite.config.ts
+      # reads GALLERY_BASE, and src/gallery/main.tsx uses the same base to
+      # remap Remotion's staticFile() paths.
+      - run: npm run build:gallery
+        env:
+          GALLERY_BASE: /${{ github.event.repository.name }}/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-gallery
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

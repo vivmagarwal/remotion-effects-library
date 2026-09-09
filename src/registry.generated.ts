@@ -243,3 +243,21 @@ export const effects: readonly EffectEntry[] = [
 ];
 
 export const effectById = (id: string) => effects.find((e) => e.meta.id === id);
+
+/**
+ * Everything in public/. staticFile() returns a ROOT-absolute path with no way
+ * to prefix a base, so a gallery served from a subpath (GitHub Pages project
+ * sites, for instance) has to remap these before the app mounts. See
+ * src/gallery/main.tsx.
+ */
+export const publicAssets: readonly string[] = [
+  'plate-1.svg',
+  'plate-2.svg',
+  'plate-3.svg',
+  'plate-4.svg',
+  'plate-5.svg',
+  'sample-audio.mp3',
+  'sample-city.svg',
+  'sample-scene.svg',
+  'subject-skyline.svg',
+];
