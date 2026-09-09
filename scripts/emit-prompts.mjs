@@ -36,8 +36,13 @@ const readMeta = (file) => {
   };
 };
 
-/** Packages that ship no types of their own and need an @types companion. */
-const needsTypes = (p) => p === 'three' || p.startsWith('d3-');
+/**
+ * Packages that ship no types of their own and need an @types companion.
+ * `world-atlas` is deliberately absent — it ships JSON, which resolveJsonModule
+ * handles without a types package.
+ */
+const NEEDS_TYPES = new Set(['three', 'topojson-client']);
+const needsTypes = (p) => NEEDS_TYPES.has(p) || p.startsWith('d3-');
 
 const installLine = (packages) => {
   const rp = packages.filter((p) => p.startsWith('@remotion/'));
@@ -61,6 +66,87 @@ const syncSetupBlock = (brief, packages) =>
     (_m, open, close) => `${open}${installLine(packages)}${close}`,
   );
 
+
+/**
+ * Pull the component's props and their real defaults out of the source.
+ *
+ * Hand-written briefs kept omitting a default here and there — blind agents
+ * reported it every single round ("backgroundColor is the one prop with no
+ * default"). Generating this table from the destructuring block means it is
+ * complete by construction and cannot drift from the code.
+ */
+const readProps = (dir) => {
+  const tsx = readdirSync(dir).find((f) => f.endsWith('.tsx'));
+  if (!tsx) return [];
+  const src = readFileSync(join(dir, tsx), 'utf8');
+
+  const block = src.match(/export const \w+: React\.FC<Props> = \(\{([\s\S]*?)\n\}\) =>/)?.[1];
+  if (!block) return [];
+
+  // Doc comments from the Props type, keyed by prop name.
+  const notes = new Map();
+  const propsType = src.match(/type Props = \{([\s\S]*?)\n\};/)?.[1] ?? '';
+  const noteRe = /\/\*\*([\s\S]*?)\*\/\s*\n\s*readonly (\w+)\??:/g;
+  let nm;
+  while ((nm = noteRe.exec(propsType)) !== null) {
+    notes.set(nm[2], nm[1].replace(/\s*\*\s?/g, ' ').replace(/\s+/g, ' ').trim());
+  }
+
+  // Split the destructuring on top-level commas only. Defaults contain arrays,
+  // objects AND string literals with commas inside them ('Rendering,
+  // everywhere'), so the scan has to track quotes as well as brackets.
+  const parts = [];
+  let depth = 0;
+  let quote = null;
+  let cur = '';
+  for (let i = 0; i < block.length; i++) {
+    const ch = block[i];
+    if (quote) {
+      cur += ch;
+      if (ch === '\\') {
+        cur += block[++i] ?? '';
+      } else if (ch === quote) {
+        quote = null;
+      }
+      continue;
+    }
+    if (ch === "'" || ch === '"' || ch === '`') {
+      quote = ch;
+      cur += ch;
+      continue;
+    }
+    if ('([{'.includes(ch)) depth++;
+    else if (')]}'.includes(ch)) depth--;
+    if (ch === ',' && depth === 0) {
+      parts.push(cur);
+      cur = '';
+    } else cur += ch;
+  }
+  if (cur.trim()) parts.push(cur);
+
+  return parts
+    .map((raw) => raw.split('\n').filter((l) => !l.trim().startsWith('//')).join(' ').trim())
+    .filter(Boolean)
+    .map((entry) => {
+      const eq = entry.indexOf('=');
+      if (eq === -1) return {name: entry.trim(), def: '(required)', note: notes.get(entry.trim()) ?? ''};
+      const name = entry.slice(0, eq).trim();
+      let def = entry.slice(eq + 1).trim().replace(/\n\s*/g, ' ');
+      if (def.length > 260) def = def.slice(0, 257) + "…";
+      return {name, def, note: notes.get(name) ?? ''};
+    })
+    .filter((p) => /^\w+$/.test(p.name));
+};
+
+const propsTable = (dir) => {
+  const props = readProps(dir);
+  if (!props.length) return '';
+  const rows = props
+    .map((p) => `| \`${p.name}\` | \`${p.def.replace(/\|/g, '\\|')}\` | ${p.note.replace(/\|/g, '\\|')} |`)
+    .join('\n');
+  return `\n## Props and their exact defaults\n\nEvery prop the component takes, with the default it must use.\n\n| prop | default | note |\n|---|---|---|\n${rows}\n`;
+};
+
 let n = 0;
 for (const category of dirs(join(src, 'effects')).sort()) {
   for (const id of dirs(join(src, 'effects', category)).sort()) {
@@ -82,6 +168,7 @@ ${projectSetup}
 ${installLine(meta.packages)}
 \`\`\`
 
+${propsTable(dir)}
 ---
 
 ${essentials}

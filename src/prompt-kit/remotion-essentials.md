@@ -20,7 +20,7 @@ import {Player, Thumbnail} from '@remotion/player';
 import {TransitionSeries, springTiming, linearTiming} from '@remotion/transitions';
 import {fade} from '@remotion/transitions/fade';              // one subpath per presentation
 import {duotone} from '@remotion/effects/duotone';            // one subpath per effect
-import {getLength, evolvePath, getPointAtLength} from '@remotion/paths';
+import {getLength, evolvePath, interpolatePath, getPointAtLength} from '@remotion/paths';
 import {useAudioData, visualizeAudio} from '@remotion/media-utils';
 
 // 3D
@@ -35,6 +35,10 @@ import {hierarchy, pack, partition, treemap} from 'd3-hierarchy';
 import {chord, ribbon} from 'd3-chord';
 import {forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide} from 'd3-force';
 import {Delaunay} from 'd3-delaunay';
+import {sankey, sankeyLinkHorizontal, sankeyJustify} from 'd3-sankey';
+import {geoOrthographic, geoPath, geoGraticule10, geoInterpolate} from 'd3-geo';
+import {feature} from 'topojson-client';                 // TopoJSON → GeoJSON
+import countries110m from 'world-atlas/countries-110m.json';   // needs resolveJsonModule
 ```
 
 `random`, `interpolate`, `spring` and `Easing` all come from `remotion` itself — there is no separate

@@ -1,18 +1,12 @@
-# Publishes the Vite gallery to GitHub Pages.
+# Publishes the Vite gallery to GitHub Pages on every push to main.
 #
-# Deliberately manual (workflow_dispatch only). Two things to know before you
-# run it:
-#
-#   1. Pages must be enabled for this repository, with "Source: GitHub Actions"
-#      (Settings → Pages). Pages on a PRIVATE repo needs a paid plan.
-#   2. A published Pages site is PUBLIC even when the repository is private.
-#      Restricting who can view it requires GitHub Enterprise Cloud.
-#
-# Switch `on:` to `push: {branches: [main]}` once you actually want it to
-# deploy on every commit.
+# Requires Pages enabled for the repository with "Source: GitHub Actions"
+# (Settings → Pages).
 name: Deploy gallery to Pages
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:

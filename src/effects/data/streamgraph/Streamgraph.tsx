@@ -5,7 +5,7 @@ import type {SeriesPoint} from 'd3-shape';
 import {scaleLinear} from 'd3-scale';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
-const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets: ['latin']});
+const {fontFamily} = loadFont('normal', {weights: ['600', '800'], subsets: ['latin']});
 
 /**
  * Streamgraph

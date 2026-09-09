@@ -33,8 +33,12 @@ import {DonutProgress as C_DonutProgress} from './effects/data/donut-progress/Do
 import {meta as M_DonutProgress} from './effects/data/donut-progress/meta';
 import {ForceNetwork as C_ForceNetwork} from './effects/data/force-network/ForceNetwork';
 import {meta as M_ForceNetwork} from './effects/data/force-network/meta';
+import {GlobeArcs as C_GlobeArcs} from './effects/data/globe-arcs/GlobeArcs';
+import {meta as M_GlobeArcs} from './effects/data/globe-arcs/meta';
 import {LineChartDraw as C_LineChartDraw} from './effects/data/line-chart-draw/LineChartDraw';
 import {meta as M_LineChartDraw} from './effects/data/line-chart-draw/meta';
+import {SankeyFlow as C_SankeyFlow} from './effects/data/sankey-flow/SankeyFlow';
+import {meta as M_SankeyFlow} from './effects/data/sankey-flow/meta';
 import {Streamgraph as C_Streamgraph} from './effects/data/streamgraph/Streamgraph';
 import {meta as M_Streamgraph} from './effects/data/streamgraph/meta';
 import {SunburstRings as C_SunburstRings} from './effects/data/sunburst-rings/SunburstRings';
@@ -47,6 +51,8 @@ import {EffectsCatalogue as C_EffectsCatalogue} from './effects/effects/effects-
 import {meta as M_EffectsCatalogue} from './effects/effects/effects-catalogue/meta';
 import {HalftonePrint as C_HalftonePrint} from './effects/effects/halftone-print/HalftonePrint';
 import {meta as M_HalftonePrint} from './effects/effects/halftone-print/meta';
+import {MetaballGoo as C_MetaballGoo} from './effects/effects/metaball-goo/MetaballGoo';
+import {meta as M_MetaballGoo} from './effects/effects/metaball-goo/meta';
 import {PixelDissolveReveal as C_PixelDissolveReveal} from './effects/effects/pixel-dissolve-reveal/PixelDissolveReveal';
 import {meta as M_PixelDissolveReveal} from './effects/effects/pixel-dissolve-reveal/meta';
 import {ProgressiveBlurFocus as C_ProgressiveBlurFocus} from './effects/effects/progressive-blur-focus/ProgressiveBlurFocus';
@@ -69,6 +75,8 @@ import {AttentionIndicators as C_AttentionIndicators} from './effects/motion/att
 import {meta as M_AttentionIndicators} from './effects/motion/attention-indicators/meta';
 import {FreezeTrail as C_FreezeTrail} from './effects/motion/freeze-trail/FreezeTrail';
 import {meta as M_FreezeTrail} from './effects/motion/freeze-trail/meta';
+import {LogoPathDraw as C_LogoPathDraw} from './effects/motion/logo-path-draw/LogoPathDraw';
+import {meta as M_LogoPathDraw} from './effects/motion/logo-path-draw/meta';
 import {MagicMoveCard as C_MagicMoveCard} from './effects/motion/magic-move-card/MagicMoveCard';
 import {meta as M_MagicMoveCard} from './effects/motion/magic-move-card/meta';
 import {MagicMoveGallery as C_MagicMoveGallery} from './effects/motion/magic-move-gallery/MagicMoveGallery';
@@ -81,6 +89,10 @@ import {ParticleField as C_ParticleField} from './effects/motion/particle-field/
 import {meta as M_ParticleField} from './effects/motion/particle-field/meta';
 import {RouteFlyover as C_RouteFlyover} from './effects/motion/route-flyover/RouteFlyover';
 import {meta as M_RouteFlyover} from './effects/motion/route-flyover/meta';
+import {ShapeMorph as C_ShapeMorph} from './effects/motion/shape-morph/ShapeMorph';
+import {meta as M_ShapeMorph} from './effects/motion/shape-morph/meta';
+import {ChapterDivider as C_ChapterDivider} from './effects/openers/chapter-divider/ChapterDivider';
+import {meta as M_ChapterDivider} from './effects/openers/chapter-divider/meta';
 import {CinematicTechIntro as C_CinematicTechIntro} from './effects/openers/cinematic-tech-intro/CinematicTechIntro';
 import {meta as M_CinematicTechIntro} from './effects/openers/cinematic-tech-intro/meta';
 import {CountdownLeader as C_CountdownLeader} from './effects/openers/countdown-leader/CountdownLeader';
@@ -101,6 +113,8 @@ import {HeadlineHighlight as C_HeadlineHighlight} from './effects/text/headline-
 import {meta as M_HeadlineHighlight} from './effects/text/headline-highlight/meta';
 import {KineticWordReveal as C_KineticWordReveal} from './effects/text/kinetic-word-reveal/KineticWordReveal';
 import {meta as M_KineticWordReveal} from './effects/text/kinetic-word-reveal/meta';
+import {QuoteSlam as C_QuoteSlam} from './effects/text/quote-slam/QuoteSlam';
+import {meta as M_QuoteSlam} from './effects/text/quote-slam/meta';
 import {SplitFlapBoard as C_SplitFlapBoard} from './effects/text/split-flap-board/SplitFlapBoard';
 import {meta as M_SplitFlapBoard} from './effects/text/split-flap-board/meta';
 import {TextMaskReveal as C_TextMaskReveal} from './effects/text/text-mask-reveal/TextMaskReveal';
@@ -147,6 +161,8 @@ import {ChatGptComposer as C_ChatGptComposer} from './effects/ui/chatgpt-compose
 import {meta as M_ChatGptComposer} from './effects/ui/chatgpt-composer/meta';
 import {ChatGptFullUi as C_ChatGptFullUi} from './effects/ui/chatgpt-full-ui/ChatGptFullUi';
 import {meta as M_ChatGptFullUi} from './effects/ui/chatgpt-full-ui/meta';
+import {ChecklistTicks as C_ChecklistTicks} from './effects/ui/checklist-ticks/ChecklistTicks';
+import {meta as M_ChecklistTicks} from './effects/ui/checklist-ticks/meta';
 import {ClaudeFullUi as C_ClaudeFullUi} from './effects/ui/claude-full-ui/ClaudeFullUi';
 import {meta as M_ClaudeFullUi} from './effects/ui/claude-full-ui/meta';
 import {CodeEditorTyping as C_CodeEditorTyping} from './effects/ui/code-editor-typing/CodeEditorTyping';
@@ -157,6 +173,8 @@ import {LowerThird as C_LowerThird} from './effects/ui/lower-third/LowerThird';
 import {meta as M_LowerThird} from './effects/ui/lower-third/meta';
 import {NotificationStack as C_NotificationStack} from './effects/ui/notification-stack/NotificationStack';
 import {meta as M_NotificationStack} from './effects/ui/notification-stack/meta';
+import {StepProgress as C_StepProgress} from './effects/ui/step-progress/StepProgress';
+import {meta as M_StepProgress} from './effects/ui/step-progress/meta';
 import {SubscribeButton as C_SubscribeButton} from './effects/ui/subscribe-button/SubscribeButton';
 import {meta as M_SubscribeButton} from './effects/ui/subscribe-button/meta';
 
@@ -177,13 +195,16 @@ export const effects: readonly EffectEntry[] = [
   {meta: M_CountUpStat, Component: C_CountUpStat as React.ComponentType, file: 'data/count-up-stat/CountUpStat.tsx'},
   {meta: M_DonutProgress, Component: C_DonutProgress as React.ComponentType, file: 'data/donut-progress/DonutProgress.tsx'},
   {meta: M_ForceNetwork, Component: C_ForceNetwork as React.ComponentType, file: 'data/force-network/ForceNetwork.tsx'},
+  {meta: M_GlobeArcs, Component: C_GlobeArcs as React.ComponentType, file: 'data/globe-arcs/GlobeArcs.tsx'},
   {meta: M_LineChartDraw, Component: C_LineChartDraw as React.ComponentType, file: 'data/line-chart-draw/LineChartDraw.tsx'},
+  {meta: M_SankeyFlow, Component: C_SankeyFlow as React.ComponentType, file: 'data/sankey-flow/SankeyFlow.tsx'},
   {meta: M_Streamgraph, Component: C_Streamgraph as React.ComponentType, file: 'data/streamgraph/Streamgraph.tsx'},
   {meta: M_SunburstRings, Component: C_SunburstRings as React.ComponentType, file: 'data/sunburst-rings/SunburstRings.tsx'},
   {meta: M_VersusTable, Component: C_VersusTable as React.ComponentType, file: 'data/versus-table/VersusTable.tsx'},
   {meta: M_VoronoiShatter, Component: C_VoronoiShatter as React.ComponentType, file: 'data/voronoi-shatter/VoronoiShatter.tsx'},
   {meta: M_EffectsCatalogue, Component: C_EffectsCatalogue as React.ComponentType, file: 'effects/effects-catalogue/EffectsCatalogue.tsx'},
   {meta: M_HalftonePrint, Component: C_HalftonePrint as React.ComponentType, file: 'effects/halftone-print/HalftonePrint.tsx'},
+  {meta: M_MetaballGoo, Component: C_MetaballGoo as React.ComponentType, file: 'effects/metaball-goo/MetaballGoo.tsx'},
   {meta: M_PixelDissolveReveal, Component: C_PixelDissolveReveal as React.ComponentType, file: 'effects/pixel-dissolve-reveal/PixelDissolveReveal.tsx'},
   {meta: M_ProgressiveBlurFocus, Component: C_ProgressiveBlurFocus as React.ComponentType, file: 'effects/progressive-blur-focus/ProgressiveBlurFocus.tsx'},
   {meta: M_VhsVintage, Component: C_VhsVintage as React.ComponentType, file: 'effects/vhs-vintage/VhsVintage.tsx'},
@@ -195,12 +216,15 @@ export const effects: readonly EffectEntry[] = [
   {meta: M_VideoInText, Component: C_VideoInText as React.ComponentType, file: 'media/video-in-text/VideoInText.tsx'},
   {meta: M_AttentionIndicators, Component: C_AttentionIndicators as React.ComponentType, file: 'motion/attention-indicators/AttentionIndicators.tsx'},
   {meta: M_FreezeTrail, Component: C_FreezeTrail as React.ComponentType, file: 'motion/freeze-trail/FreezeTrail.tsx'},
+  {meta: M_LogoPathDraw, Component: C_LogoPathDraw as React.ComponentType, file: 'motion/logo-path-draw/LogoPathDraw.tsx'},
   {meta: M_MagicMoveCard, Component: C_MagicMoveCard as React.ComponentType, file: 'motion/magic-move-card/MagicMoveCard.tsx'},
   {meta: M_MagicMoveGallery, Component: C_MagicMoveGallery as React.ComponentType, file: 'motion/magic-move-gallery/MagicMoveGallery.tsx'},
   {meta: M_OrbitSystem, Component: C_OrbitSystem as React.ComponentType, file: 'motion/orbit-system/OrbitSystem.tsx'},
   {meta: M_ParallaxLayers, Component: C_ParallaxLayers as React.ComponentType, file: 'motion/parallax-layers/ParallaxLayers.tsx'},
   {meta: M_ParticleField, Component: C_ParticleField as React.ComponentType, file: 'motion/particle-field/ParticleField.tsx'},
   {meta: M_RouteFlyover, Component: C_RouteFlyover as React.ComponentType, file: 'motion/route-flyover/RouteFlyover.tsx'},
+  {meta: M_ShapeMorph, Component: C_ShapeMorph as React.ComponentType, file: 'motion/shape-morph/ShapeMorph.tsx'},
+  {meta: M_ChapterDivider, Component: C_ChapterDivider as React.ComponentType, file: 'openers/chapter-divider/ChapterDivider.tsx'},
   {meta: M_CinematicTechIntro, Component: C_CinematicTechIntro as React.ComponentType, file: 'openers/cinematic-tech-intro/CinematicTechIntro.tsx'},
   {meta: M_CountdownLeader, Component: C_CountdownLeader as React.ComponentType, file: 'openers/countdown-leader/CountdownLeader.tsx'},
   {meta: M_DeviceRise, Component: C_DeviceRise as React.ComponentType, file: 'openers/device-rise/DeviceRise.tsx'},
@@ -211,6 +235,7 @@ export const effects: readonly EffectEntry[] = [
   {meta: M_HandAnnotations, Component: C_HandAnnotations as React.ComponentType, file: 'text/hand-annotations/HandAnnotations.tsx'},
   {meta: M_HeadlineHighlight, Component: C_HeadlineHighlight as React.ComponentType, file: 'text/headline-highlight/HeadlineHighlight.tsx'},
   {meta: M_KineticWordReveal, Component: C_KineticWordReveal as React.ComponentType, file: 'text/kinetic-word-reveal/KineticWordReveal.tsx'},
+  {meta: M_QuoteSlam, Component: C_QuoteSlam as React.ComponentType, file: 'text/quote-slam/QuoteSlam.tsx'},
   {meta: M_SplitFlapBoard, Component: C_SplitFlapBoard as React.ComponentType, file: 'text/split-flap-board/SplitFlapBoard.tsx'},
   {meta: M_TextMaskReveal, Component: C_TextMaskReveal as React.ComponentType, file: 'text/text-mask-reveal/TextMaskReveal.tsx'},
   {meta: M_TextScramble, Component: C_TextScramble as React.ComponentType, file: 'text/text-scramble/TextScramble.tsx'},
@@ -234,11 +259,13 @@ export const effects: readonly EffectEntry[] = [
   {meta: M_ChatThreadLive, Component: C_ChatThreadLive as React.ComponentType, file: 'ui/chat-thread-live/ChatThreadLive.tsx'},
   {meta: M_ChatGptComposer, Component: C_ChatGptComposer as React.ComponentType, file: 'ui/chatgpt-composer/ChatGptComposer.tsx'},
   {meta: M_ChatGptFullUi, Component: C_ChatGptFullUi as React.ComponentType, file: 'ui/chatgpt-full-ui/ChatGptFullUi.tsx'},
+  {meta: M_ChecklistTicks, Component: C_ChecklistTicks as React.ComponentType, file: 'ui/checklist-ticks/ChecklistTicks.tsx'},
   {meta: M_ClaudeFullUi, Component: C_ClaudeFullUi as React.ComponentType, file: 'ui/claude-full-ui/ClaudeFullUi.tsx'},
   {meta: M_CodeEditorTyping, Component: C_CodeEditorTyping as React.ComponentType, file: 'ui/code-editor-typing/CodeEditorTyping.tsx'},
   {meta: M_GeminiFullUi, Component: C_GeminiFullUi as React.ComponentType, file: 'ui/gemini-full-ui/GeminiFullUi.tsx'},
   {meta: M_LowerThird, Component: C_LowerThird as React.ComponentType, file: 'ui/lower-third/LowerThird.tsx'},
   {meta: M_NotificationStack, Component: C_NotificationStack as React.ComponentType, file: 'ui/notification-stack/NotificationStack.tsx'},
+  {meta: M_StepProgress, Component: C_StepProgress as React.ComponentType, file: 'ui/step-progress/StepProgress.tsx'},
   {meta: M_SubscribeButton, Component: C_SubscribeButton as React.ComponentType, file: 'ui/subscribe-button/SubscribeButton.tsx'},
 ];
 

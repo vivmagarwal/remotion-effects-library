@@ -15,7 +15,9 @@
     "verify": "npm run registry && node scripts/verify.mjs",
     "check:frames": "npm run registry && node scripts/check-dead-frames.mjs",
     "prompts": "node scripts/emit-prompts.mjs",
-    "docs": "node scripts/update-readme.mjs"
+    "docs": "node scripts/update-readme.mjs",
+    "check:prompts": "npm run prompts && node scripts/check-prompt-defaults.mjs",
+    "check:fonts": "node scripts/check-font-weights.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^9.7.0",

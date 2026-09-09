@@ -18,18 +18,18 @@ npm run studio      # Remotion Studio, all effects  → http://localhost:3000
 
 ## What's in it
 
-79 effects across 12 categories.
+88 effects across 12 categories.
 
 | Category | Effects |
 |---|---|
-| **Text & Type** | Character Drop (Spring) · Glitch Text · Gradient Text Sweep · Hand Annotations · Headline Highlight · Kinetic Word Reveal · Split-Flap Board · Text Mask Reveal · Text Scramble · Typewriter Terminal · Write-On Text |
-| **Openers** | Cinematic Tech Intro · Countdown Leader · Device Rise · Stat Slam |
+| **Text & Type** | Character Drop (Spring) · Glitch Text · Gradient Text Sweep · Hand Annotations · Headline Highlight · Kinetic Word Reveal · Quote Slam · Split-Flap Board · Text Mask Reveal · Text Scramble · Typewriter Terminal · Write-On Text |
+| **Openers** | Chapter Divider · Cinematic Tech Intro · Countdown Leader · Device Rise · Stat Slam |
 | **Transitions** | Custom Circle Reveal · Light Leak Transition · Transition Sampler · Whip Pan |
-| **Visual FX** | Effects Catalogue · Halftone Print · Pixel Dissolve Reveal · Progressive Blur Focus · VHS / Vintage Tape |
-| **Motion** | Attention Indicators · Freeze Trail · Magic Move (Card) · Magic Move (Gallery) · Orbit System · Parallax Layers · Particle Field · Route Flyover |
+| **Visual FX** | Effects Catalogue · Halftone Print · Metaball Goo · Pixel Dissolve Reveal · Progressive Blur Focus · VHS / Vintage Tape |
+| **Motion** | Attention Indicators · Freeze Trail · Logo Path Draw · Magic Move (Card) · Magic Move (Gallery) · Orbit System · Parallax Layers · Particle Field · Route Flyover · Shape Morph |
 | **Backgrounds** | Aurora Mesh · Dot Grid Pulse · Floating Shapes · Retro Grid Floor |
-| **Data & Charts** | Bar Chart Race · Bubble Pack · Bullet Pop List · Chord Diagram · Count-Up Stat · Donut Progress · Force Network · Line Chart Draw · Streamgraph · Sunburst Rings · Versus Table · Voronoi Shatter |
-| **UI & Social** | Browser Window Scroll · Chat Conversation · Chat Thread (Live) · ChatGPT Composer · ChatGPT Full UI · Claude Full UI · Code Editor Typing · Gemini Full UI · Lower Third · Notification Stack · Subscribe Button |
+| **Data & Charts** | Bar Chart Race · Bubble Pack · Bullet Pop List · Chord Diagram · Count-Up Stat · Donut Progress · Force Network · Globe Arcs · Line Chart Draw · Sankey Flow · Streamgraph · Sunburst Rings · Versus Table · Voronoi Shatter |
+| **UI & Social** | Browser Window Scroll · Chat Conversation · Chat Thread (Live) · ChatGPT Composer · ChatGPT Full UI · Checklist Ticks · Claude Full UI · Code Editor Typing · Gemini Full UI · Lower Third · Notification Stack · Step Progress · Subscribe Button |
 | **Captions** | Hype Captions · Karaoke Band · TikTok Captions |
 | **Media** | Before / After Wipe · Ken Burns · Mask Reveal Kit · Photo Stack Shuffle · Text Behind Subject · Video In Text |
 | **3D** | CSS Card Flip · DNA Helix · Extruded Text · Galaxy Particles · Glass Refraction · Infinite Tunnel · Instanced Cube Wave · Shader Blob · Three.js Rotating Logo |
@@ -64,6 +64,15 @@ code.
 ---
 
 ## How prompts are validated
+
+Every composed prompt carries a **props table generated from the component source** — every prop with
+the exact default it must use. `npm run check:prompts` fails the build if a component has a default
+the prompt does not state. That gate exists because blind agents reported the same defect every
+single round: *"`backgroundColor` is the one prop with no default"*, *"`title` and `subtitle` have no
+example copy at all"*. A brief that omits a default is a brief you cannot rebuild the effect from,
+which is the whole promise here. Before the table existed, **65 of 88 prompts** were missing at least
+one.
+
 
 The prompts are not written and shipped. Each one is handed to a **fresh agent with no memory of this
 project**, which builds the effect from scratch in an empty directory, renders it, and reports back on
@@ -157,6 +166,8 @@ scripts/
 | `npm run studio` | Remotion Studio with every effect registered |
 | `npm run verify` | renders a still of every effect; **non-zero exit on any failure** |
 | `npm run check:frames` | flags any effect whose `checkFrame` shows no motion |
+| `npm run check:prompts` | fails if any component default is missing from its prompt |
+| `npm run check:fonts` | fails if a component uses a font weight it never loaded |
 | `npm run prompts` | writes all composed prompts to `out/prompts/` |
 | `npm run docs` | regenerates the catalogue table in this README |
 | `npm run typecheck` | `tsc --noEmit` |
@@ -198,3 +209,14 @@ Several effects are re-interpretations of ideas from the
 [Remotion prompt showcase](https://www.remotion.dev/prompts); those name their source in the gallery's
 **About** tab. The **Remotion essentials** block is distilled from the official
 [Remotion Agent Skills](https://github.com/remotion-dev/remotion/tree/main/packages/skills).
+
+---
+
+## Licence
+
+The effects, prompts and tooling in this repository are **MIT** — copy anything out of it freely.
+
+**Remotion itself is licensed separately and is not MIT.** It is free for individuals, non-profits
+and for-profit organizations with **up to 3 employees**; larger for-profit organizations need a paid
+company licence. That applies to anyone who runs this code, not just to this repository. See
+[remotion.dev/license](https://www.remotion.dev/license).

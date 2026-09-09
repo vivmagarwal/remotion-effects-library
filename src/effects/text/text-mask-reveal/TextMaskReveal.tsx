@@ -79,7 +79,7 @@ export const TextMaskReveal: React.FC<Props> = ({
         style={{
           fontFamily: 'Inter, -apple-system, Helvetica, sans-serif',
           fontSize: 30,
-          fontWeight: 500,
+          fontWeight: 500, // font-weight-check: ignore — this rule targets the system Inter stack above, not AntonSC (which ships 400 only)
           letterSpacing: '0.28em',
           marginRight: '-0.28em',
           textTransform: 'uppercase',
