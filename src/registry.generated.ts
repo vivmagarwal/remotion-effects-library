@@ -9,6 +9,8 @@ import {FloatingShapes as C_FloatingShapes} from './effects/backgrounds/floating
 import {meta as M_FloatingShapes} from './effects/backgrounds/floating-shapes/meta';
 import {RetroGridFloor as C_RetroGridFloor} from './effects/backgrounds/retro-grid-floor/RetroGridFloor';
 import {meta as M_RetroGridFloor} from './effects/backgrounds/retro-grid-floor/meta';
+import {PauseAwareCaptions as C_PauseAwareCaptions} from './effects/captions/pause-aware-captions/PauseAwareCaptions';
+import {meta as M_PauseAwareCaptions} from './effects/captions/pause-aware-captions/meta';
 import {SubtitleBand as C_SubtitleBand} from './effects/captions/subtitle-band/SubtitleBand';
 import {meta as M_SubtitleBand} from './effects/captions/subtitle-band/meta';
 import {TiktokCaptions as C_TiktokCaptions} from './effects/captions/tiktok-captions/TiktokCaptions';
@@ -192,6 +194,7 @@ const base: readonly EffectEntry[] = [
   {meta: M_DotGridPulse, Component: C_DotGridPulse as React.ComponentType, file: 'backgrounds/dot-grid-pulse/DotGridPulse.tsx'},
   {meta: M_FloatingShapes, Component: C_FloatingShapes as React.ComponentType, file: 'backgrounds/floating-shapes/FloatingShapes.tsx'},
   {meta: M_RetroGridFloor, Component: C_RetroGridFloor as React.ComponentType, file: 'backgrounds/retro-grid-floor/RetroGridFloor.tsx'},
+  {meta: M_PauseAwareCaptions, Component: C_PauseAwareCaptions as React.ComponentType, file: 'captions/pause-aware-captions/PauseAwareCaptions.tsx'},
   {meta: M_SubtitleBand, Component: C_SubtitleBand as React.ComponentType, file: 'captions/subtitle-band/SubtitleBand.tsx'},
   {meta: M_TiktokCaptions, Component: C_TiktokCaptions as React.ComponentType, file: 'captions/tiktok-captions/TiktokCaptions.tsx'},
   {meta: M_BarChartRace, Component: C_BarChartRace as React.ComponentType, file: 'charts/bar-chart-race/BarChartRace.tsx'},
