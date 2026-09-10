@@ -119,6 +119,8 @@ import {Audiogram as C_Audiogram} from './effects/sound/audiogram/Audiogram';
 import {meta as M_Audiogram} from './effects/sound/audiogram/meta';
 import {FftBars as C_FftBars} from './effects/sound/fft-bars/FftBars';
 import {meta as M_FftBars} from './effects/sound/fft-bars/meta';
+import {MusicDuck as C_MusicDuck} from './effects/sound/music-duck/MusicDuck';
+import {meta as M_MusicDuck} from './effects/sound/music-duck/meta';
 import {DnaHelix as C_DnaHelix} from './effects/three-d/dna-helix/DnaHelix';
 import {meta as M_DnaHelix} from './effects/three-d/dna-helix/meta';
 import {GalaxyParticles as C_GalaxyParticles} from './effects/three-d/galaxy-particles/GalaxyParticles';
@@ -253,6 +255,7 @@ const base: readonly EffectEntry[] = [
   {meta: M_SubscribeButton, Component: C_SubscribeButton as React.ComponentType, file: 'social/subscribe-button/SubscribeButton.tsx'},
   {meta: M_Audiogram, Component: C_Audiogram as React.ComponentType, file: 'sound/audiogram/Audiogram.tsx'},
   {meta: M_FftBars, Component: C_FftBars as React.ComponentType, file: 'sound/fft-bars/FftBars.tsx'},
+  {meta: M_MusicDuck, Component: C_MusicDuck as React.ComponentType, file: 'sound/music-duck/MusicDuck.tsx'},
   {meta: M_DnaHelix, Component: C_DnaHelix as React.ComponentType, file: 'three-d/dna-helix/DnaHelix.tsx'},
   {meta: M_GalaxyParticles, Component: C_GalaxyParticles as React.ComponentType, file: 'three-d/galaxy-particles/GalaxyParticles.tsx'},
   {meta: M_GlassRefraction, Component: C_GlassRefraction as React.ComponentType, file: 'three-d/glass-refraction/GlassRefraction.tsx'},
@@ -351,6 +354,7 @@ export const publicAssets: readonly string[] = [
   'audio/sfx/sub-drop.mp3',
   'audio/sfx/swish.mp3',
   'audio/sfx/whoosh.mp3',
+  'audio/voice-interview.mp3',
   'footage/broll-earth.mp4',
   'footage/broll-eva.mp4',
   'footage/broll-night.mp4',

@@ -174,11 +174,12 @@ provenance trail, and several of the big free libraries (Pixabay, Coverr, Mixkit
 forbid redistributing the raw file on a standalone basis — which is exactly what a file sitting in
 `public/` of a public repository is. Synthesis removes the question entirely.
 
-All files are mono, 44.1 kHz MP3.
+All files are mono, 44.1 kHz MP3. All are synthesised except `voice-interview.mp3`, which is cut from the NASA interview clip.
 
 | path | what it is | source | licence | attribution required? | how it was derived |
 |---|---|---|---|---|---|
 | `public/audio/music-bed.mp3` | Music bed, 42.266 s, 192 kbps, 1,015,056 B. 16 bars of Am9 → Fmaj7 → Cmaj7 → G6 at 92 BPM. Deliberately banded so a spectrum analyser has something to draw in every column — kick and bass under 200 Hz, pad and pluck in the mids, hats above 7 kHz — with parts added every four bars so the bars visibly change shape instead of sitting still. | `scripts/make-audio-assets.py` (`music_bed()`) | CC0 1.0 — synthesised, no third-party material | No | `python3 scripts/make-audio-assets.py` |
+| `public/audio/voice-interview.mp3` | Voice only, 12.042 s, mono, 44.1 kHz, 98,938 B. The 41.0–53.0 s window of `footage/interview-raw.mp4`, picture discarded. Chosen because it contains the clip's one long pause — 3.36 s — so a ducking envelope has a gap long enough to actually release into. | `public/footage/interview-raw.mp4` (see the video table above for its own provenance) | US Government work, generally not subject to copyright (see §2) | Not legally required; NASA acknowledged as source | `ffmpeg -ss 41.0 -t 12.0 -i public/footage/interview-raw.mp4 -vn -ac 1 -ar 44100 -c:a libmp3lame -q:a 4 public/audio/voice-interview.mp3` |
 | `public/audio/sfx/whoosh.mp3` | Whoosh, 0.627 s, 13,105 B. Starts 10 frames before a cut. | `scripts/make-audio-assets.py` (`sfx_whoosh()`) | CC0 1.0 — synthesised | No | `python3 scripts/make-audio-assets.py` |
 | `public/audio/sfx/riser.mp3` | Riser, 2.038 s, 41,317 B. Ends **on** the cut. | `scripts/make-audio-assets.py` (`sfx_riser()`) | CC0 1.0 — synthesised | No | `python3 scripts/make-audio-assets.py` |
 | `public/audio/sfx/impact.mp3` | Impact, 1.541 s, 31,391 B. Transient lands 1 frame before the visual event. | `scripts/make-audio-assets.py` (`sfx_impact()`) | CC0 1.0 — synthesised | No | `python3 scripts/make-audio-assets.py` |
