@@ -59,6 +59,8 @@ import {WriteOnText as C_WriteOnText} from './effects/diagrams/write-on-text/Wri
 import {meta as M_WriteOnText} from './effects/diagrams/write-on-text/meta';
 import {BeforeAfterWipe as C_BeforeAfterWipe} from './effects/edit/before-after-wipe/BeforeAfterWipe';
 import {meta as M_BeforeAfterWipe} from './effects/edit/before-after-wipe/meta';
+import {DesignedPause as C_DesignedPause} from './effects/edit/designed-pause/DesignedPause';
+import {meta as M_DesignedPause} from './effects/edit/designed-pause/meta';
 import {FreezeTrail as C_FreezeTrail} from './effects/edit/freeze-trail/FreezeTrail';
 import {meta as M_FreezeTrail} from './effects/edit/freeze-trail/meta';
 import {HandheldDrift as C_HandheldDrift} from './effects/edit/handheld-drift/HandheldDrift';
@@ -215,6 +217,7 @@ const base: readonly EffectEntry[] = [
   {meta: M_VizGallery, Component: C_VizGallery as React.ComponentType, file: 'diagrams/viz-gallery/VizGallery.tsx'},
   {meta: M_WriteOnText, Component: C_WriteOnText as React.ComponentType, file: 'diagrams/write-on-text/WriteOnText.tsx'},
   {meta: M_BeforeAfterWipe, Component: C_BeforeAfterWipe as React.ComponentType, file: 'edit/before-after-wipe/BeforeAfterWipe.tsx'},
+  {meta: M_DesignedPause, Component: C_DesignedPause as React.ComponentType, file: 'edit/designed-pause/DesignedPause.tsx'},
   {meta: M_FreezeTrail, Component: C_FreezeTrail as React.ComponentType, file: 'edit/freeze-trail/FreezeTrail.tsx'},
   {meta: M_HandheldDrift, Component: C_HandheldDrift as React.ComponentType, file: 'edit/handheld-drift/HandheldDrift.tsx'},
   {meta: M_KenBurns, Component: C_KenBurns as React.ComponentType, file: 'edit/ken-burns/KenBurns.tsx'},

@@ -58,11 +58,15 @@ const buildKeepList = (words, {minSilence, margin, minSegment, fillers}) => {
   {shown.map((k) => (
     <Series.Sequence key={k.s} durationInFrames={Math.max(1, Math.round((k.e - k.s) * fps))} premountFor={fps}>
       <Video src={source} trimBefore={Math.round(k.s * fps)} trimAfter={Math.round(k.e * fps)} muted
-             style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+             objectFit="cover" style={{width: '100%', height: '100%'}} />
     </Series.Sequence>
   ))}
 </Series>
 ```
+
+**`objectFit` is a prop on `<Video>`, not a style.** It decodes into a canvas, so CSS `object-fit`
+has nothing to act on and is silently ignored — which looks fine right up until the source and the
+composition stop sharing an aspect ratio.
 
 **`trimBefore` and `trimAfter` are FRAME counts, not seconds.** Multiply by `fps` exactly once, at the
 boundary, and round — a float frame index silently resamples.

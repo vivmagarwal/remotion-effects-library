@@ -73,6 +73,22 @@ for (const e of walkEffects()) {
   }
 }
 
+// A brief teaches by example, so a code fence with the bug in it is the bug.
+for (const e of walkEffects()) {
+  const brief = readFileSync(e.promptPath, 'utf8');
+  brief.split('\n').forEach((line, i) => {
+    if (!/<(?:Video|Audio)\b/.test(line) && !/^\s*(?:style=)?\{\{/.test(line)) return;
+    for (const key of Object.keys(MISPLACED)) {
+      if (!new RegExp(`style=\\{\\{[^}]*\\b${key}\\s*:`).test(line)) continue;
+      g.fail(`${rel(e.promptPath)}:${i + 1}`, `the brief shows \`${key}\` inside a <Video> style`, [
+        line.trim(),
+        MISPLACED[key],
+        'An agent building from this brief will copy the line, and the bug ships again.',
+      ]);
+    }
+  });
+}
+
 // The rule is only useful if the brief that teaches it says so too.
 const kit = readFileSync(`${PROMPT_KIT_DIR}/video.md`, 'utf8');
 if (!/objectFit`? is a (?:\*\*)?PROP/i.test(kit)) {
