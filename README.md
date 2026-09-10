@@ -23,14 +23,14 @@ npm run studio      # Remotion Studio, all effects  → http://localhost:3000
 
 ## What's in it
 
-91 effects across 16 categories.
+96 effects across 16 categories.
 
 | Category | Effects |
 |---|---|
-| **Video Editing** | Before / After Wipe · Freeze Trail · Handheld Drift · Ken Burns · Photo Stack Shuffle · Punch-In Cut · Silence Cut |
-| **Colour & Texture** | Progressive Blur Focus |
-| **Captions & Subtitles** | Subtitle Band · TikTok Captions |
-| **Sound & Music** | Audiogram · FFT Bars |
+| **Video Editing** | Before / After Wipe · Designed Pause · Freeze Trail · Handheld Drift · Ken Burns · Photo Stack Shuffle · Punch-In Cut · Silence Cut · Speed Ramp |
+| **Colour & Texture** | Film Grade · Progressive Blur Focus |
+| **Captions & Subtitles** | Pause-Aware Captions · Subtitle Band · TikTok Captions |
+| **Sound & Music** | Audiogram · FFT Bars · Music Duck |
 | **Transitions** | CSS Card Flip · Custom Circle Reveal · Light Leak Transition · Voronoi Shatter · Whip Pan |
 | **Text & Type** | Character Drop (Spring) · Extruded Text · Gradient Text Sweep · Headline Highlight · Kinetic Word Reveal · Split-Flap Board · Text Behind Subject · Text Mask Reveal · Text Scramble · Typewriter Terminal · Video In Text |
 | **Titles & Lower Thirds** | Chapter Divider · Cinematic Tech Intro · Countdown Leader · Lower Third · Quote Slam · Stat Slam |
@@ -154,8 +154,17 @@ wrapper. Almost none of it is new API — it is the API used deliberately:
   ratios**, clamped, collapsing to `[0.5, 0.5]` if an opposite pair sums over 1, and implemented as a
   `clip-path` — so they **clip and do not rescale**, and they throw with `layout="none"`. A reframe is
   therefore crop **plus** scale and translate; crop alone gives you a letterbox, not a punch-in.
-- **Speed ramps** via `playbackRate` — which also changes pitch; `preservePitch` exists only on the
-  `fallbackOffthreadVideoProps` path.
+- **Speed ramps** are a *remap*, not a `playbackRate` animation. `playbackRate` is read once when the
+  clip mounts, so animating it changes nothing on screen: you sum the speed so far to get the source
+  position and seek there with `trimBefore`, inside `<Sequence from={frame}>` so the child's own clock
+  cannot advance as well. It also pitches the audio with the picture, and `toneFrequency`'s verified
+  range is 0.01–2 — not enough to correct a 0.4× ramp — so the honest answer is a muted picture plus a
+  separate un-ramped `<Audio>`. `preservePitch` exists only on the `fallbackOffthreadVideoProps` path.
+- **`objectFit` is a PROP on `<Video>`, never a style.** It decodes into a canvas, so CSS `object-fit`
+  in `style` has nothing to act on and is silently ignored. This is invisible whenever the source and
+  the composition share an aspect ratio, which is most of the time — it appears the day someone puts
+  16:9 footage in a 9:16 frame and gets a letterboxed strip. `check:media-props` fails on it, in a
+  component and in a brief's code fence.
 - **Freeze frames** via `<Sequence freeze={n}>`, with no wrapper.
 - **Ducking** via `volume={(f) => …}`. The frame argument is **scene-local** — it restarts at 0 when
   the audio starts and is not `useCurrentFrame()`. Build the speaking mask from the *utterance* list,
@@ -249,8 +258,20 @@ Four things to know before you copy one of these effects:
   magnifies the sketchiness along with everything else. `defaults { node { roughness: 0.35 } edge {
   roughness: 0.35 } }` is the fix that needs no upstream change.
 
-The npm registry currently serves edododraw **0.12.1**; everything above was verified against that
-version, so the prompts pin it.
+The npm registry currently serves edododraw **0.12.1**. This library needs **0.15.0**, which is not
+published yet, so `package.json` installs it from `vendor/edododraw-0.15.0.tgz` — see `vendor/README.md`
+for the two fixes it carries and how to remove it after publishing. Everything above was verified
+against 0.15.0.
+
+The first of those fixes is worth reading even if you never touch edododraw, because the failure had no
+symptom. The package populates its visualization registry by **import side effect**, and its
+`sideEffects` globs pointed at `**/viz/generators/*.ts` while the published build ships only `.d.ts`
+files there. The declaration matched nothing, so the package looked side-effect-free and a production
+bundler removed the registrations. An unregistered `viz` type **warns rather than errors** — so a card
+compiled to a scene with zero nodes and rendered a clean blank frame. Every gate was green, the dev
+server was fine, server-side stills were fine, and only the production Vite build tree-shook. A human
+had to see it. `check:edd` now fails on a `sideEffects` glob that matches no shipped `.js`, and on any
+viz template that compiles to an empty scene.
 
 ---
 
@@ -400,12 +421,14 @@ Every one exits non-zero on failure.
 | `check:compose` | `emit-prompts` output differs from what the gallery composer produces, byte for byte | fast |
 | `check:vocab` | a tag or concept is outside `src/tags.ts` | fast |
 | `check:taxonomy` | `src/types.ts`, `src/gallery/categories.ts` and `scripts/lib/taxonomy.mjs` disagree | fast |
-| `check:meta` | a tagline is outside 42–79 characters or does not end in `.`; an id is not kebab-case of its component; a duplicate id | fast |
+| `check:meta` | a tagline is outside 42–79 characters or does not end in `.`; an id is not kebab-case of its component; a duplicate id; **a key written in `meta.ts` never reached the registry** | fast |
 | `check:standalone` | a `prompt.md` says "this repo", "the library", "as elsewhere" or "see also", or references a `staticFile()` asset that is not in `public/` | fast |
+| `check:media-props` | a `<Video>`/`<Audio>` sets `objectFit` or `objectPosition` inside `style`, where a canvas-backed component silently ignores it — in a component **or in a brief's code fence** | fast |
 | `check:assets` | a file in `public/` has no row in `public/ASSETS.md` | fast |
 | `check:fonts` | a component uses a font weight it never loaded | fast |
 | `check:prompts` | a component default is missing from its prompt | fast |
 | `check:palette` | a hex literal in a component is outside the house palette, is not derived from a prop, and is not marked `// palette: brand-mimicry` | fast |
+| `check:edd` | an `edododraw` `sideEffects` glob matches no shipped JS, or a viz template compiles to an empty scene | fast |
 | `verify` | any effect fails to render a still | slow |
 | `check:frames` | an effect's `checkFrame` shows no motion | slow |
 | `check:poster` | a poster frame's mean luminance variance is below the floor — a blank or black card | slow |

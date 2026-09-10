@@ -69,7 +69,7 @@
     "d3-sankey": "^0.12.3",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
-    "edododraw": "file:../../../../private/tmp/claude-501/-Users-vivmagarwal-Work-remotion-library/5687ba98-db63-4ebb-a77a-ce3fca4131e9/scratchpad/edododraw-0.15.0.tgz",
+    "edododraw": "file:vendor/edododraw-0.15.0.tgz",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "remotion": "^4.0.522",
