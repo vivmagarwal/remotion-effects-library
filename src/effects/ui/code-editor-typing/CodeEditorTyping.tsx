@@ -30,11 +30,15 @@ type SyntaxTheme = {
  */
 type Theme = {
   readonly mono: string;
+  readonly bgDeep: string;
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
   mono: fontFamily,
+  bgDeep: '#04050a',
+  radius: 18,
 };
 
 type Props = {
@@ -51,6 +55,8 @@ type Props = {
   readonly blinkFrames?: number;
   readonly syntax?: SyntaxTheme;
   readonly fontSize?: number;
+  readonly backgroundColor?: string;
+  readonly radius?: number;
 };
 
 const DEFAULT_CODE = `import {useCurrentFrame, interpolate} from 'remotion';
@@ -107,6 +113,10 @@ export const CodeEditorTyping: React.FC<Props> = ({
   exitFrames = 24,
   blinkFrames = 15,
   fontSize = 30,
+  /** The ground behind the window. The editor's own chrome is `syntax`. */
+  backgroundColor = theme.bgDeep,
+  /** Window corner radius. The one shape token a recreated UI can honestly take. */
+  radius = theme.radius,
   syntax = {
     bg: '#12141c',
     gutter: '#3a4055',
@@ -153,7 +163,7 @@ export const CodeEditorTyping: React.FC<Props> = ({
     <AbsoluteFill
       name="Scene"
       style={{
-        backgroundColor: '#080a10',
+        backgroundColor,
         backgroundImage: 'radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 66%)',
         justifyContent: 'center',
         alignItems: 'center',
@@ -165,7 +175,7 @@ export const CodeEditorTyping: React.FC<Props> = ({
         style={{
           width: 1440,
           backgroundColor: syntax.bg,
-          borderRadius: 16,
+          borderRadius: radius,
           overflow: 'hidden',
           border: '1px solid #232838',
           boxShadow: '0 40px 100px rgba(0,0,0,0.6)',

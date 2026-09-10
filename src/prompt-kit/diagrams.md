@@ -246,10 +246,15 @@ contains `dark`. Colours you set explicitly are always kept.
 - [ ] `SvgRenderer` constructed with `{static: true}`.
 - [ ] `compileEdd` in `useMemo`, `render()` in a `useLayoutEffect` keyed on the scene — neither runs
       per frame.
-- [ ] Per frame: only `applyVisibility` / `applyCamera` / `setRevealProgress` / `AnnotationLayer.render`.
-- [ ] `setRevealProgress` is called for **every** animatable id every frame, including the finished
-      ones at `1` — no stale dashes when scrubbing backwards.
+- [ ] Per frame: style writes only. `applyVisibility` / `applyCamera` / `setRevealProgress` /
+      `AnnotationLayer.render` are the four calls that qualify — or your own dash writes onto elements
+      you measured at mount, which is the same discipline reached a different way.
+- [ ] Whichever reveal you drive, it is written for **every** animatable element every frame,
+      including the finished ones at `1` — no stale dashes when a frame is produced after a later one.
+      Through the API that is `setRevealProgress` per id (or `setRevealProgressAll`, which is the safe
+      one when frames arrive out of order); by hand it is the dash pair on every measured path.
 - [ ] No `~>` / `animate:` arrow left relying on CSS; every flow is rebuilt from `frame`.
 - [ ] `defaults { node { roughness: … } edge { roughness: … } }` set, and the rendered check frame
       inspected at the effect's maximum zoom, not at zoom 1.
-- [ ] `document.fonts.load('32px Excalifont')` gated with `delayRender`.
+- [ ] Fonts gated with `delayRender` — `whenFontsReady()` if the package's own helper is available,
+      otherwise `document.fonts.load('32px Excalifont')`.

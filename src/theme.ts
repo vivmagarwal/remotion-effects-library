@@ -196,18 +196,31 @@ export const HOUSE: Theme = {
 export const THEMES: Readonly<Record<string, Theme>> = {
   house: HOUSE,
 
-  /** Editorial: paper ground, serif display, ruler-straight. */
+  /**
+   * Editorial: paper ground, serif display, ruler-straight.
+   *
+   * Its paper tokens are its OWN, not the house ones. They used to be inherited
+   * from `HOUSE` through the spread, and the consequence was that the one theme
+   * built for paper changed nothing at all on a paper-ground effect: the
+   * hand-drawn diagram catalogue, the annotation sampler and the product
+   * recreations all rendered byte-identical to the house look. A theme that
+   * cannot be seen on the ground it is named after is not a theme.
+   */
   broadsheet: {
     ...HOUSE,
     scheme: 'light',
-    bg: '#f6f5f2',
-    bgDeep: '#e8e6e0',
+    bg: '#faf7f0',
+    bgDeep: '#ece7dc',
     surface: '#ffffff',
-    ink: '#1d1b17',
-    body: '#1d1b17',
-    muted: '#4a4e5a',
+    paper: '#faf7f0',
+    paperInk: '#14120e',
+    paperMuted: '#57534e',
+    ink: '#14120e',
+    body: '#14120e',
+    muted: '#57534e',
     accent: '#c2410c',
-    accentInk: '#f6f5f2',
+    accentInk: '#faf7f0',
+    accentOnPaper: '#9a3412',
     pair: '#1d4ed8',
     series: ['#c2410c', '#1d4ed8', '#047857', '#a16207', '#7c3aed', '#4a4e5a'],
     display: playfair,

@@ -9,8 +9,14 @@ export const meta: EffectMeta = {
   concepts: ['word-level timing', 'text stroke + paintOrder', 'half-open interval', 'safe area'],
   width: 1080, height: 1920, fps: 30, durationInFrames: 190,
   packages: ['remotion', '@remotion/media', '@remotion/google-fonts'],
-  // 100 is inside "natural" (2.88-3.76 s), which is both the active word and an
-  // authored hit — the one frame that shows all three colour states at once.
-  difficulty: 'intermediate', checkFrame: 100, posterFrame: 100,
+  // 115 is inside "up" (3.76-4.08 s) on the page "UP IN SPACE": "up" is the
+  // active word, "in" has not been reached, and "space" is an authored hit that
+  // has not been reached either — the one frame showing all three colour states.
+  //
+  // It was 100, which is inside "natural" — active AND a hit. Hits win, so that
+  // frame rendered the hit colour and the active colour never appeared on it,
+  // and anyone checking the frame against the brief saw amber where the brief
+  // says lime and had to work out for themselves that both were right.
+  difficulty: 'intermediate', checkFrame: 115, posterFrame: 115,
   requires: ['transcript', 'video'], ground: 'dark', audience: ['youtuber', 'agency'],
 };

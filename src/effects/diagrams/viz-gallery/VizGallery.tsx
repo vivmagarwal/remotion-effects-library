@@ -12,7 +12,7 @@ import {
 import {cameraForBBox, compileEdd, sceneBBox, SvgRenderer, whenFontsReady} from 'edododraw';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
-const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets: ['latin']});
+const {fontFamily} = loadFont('normal', {weights: ['500', '700'], subsets: ['latin']});
 
 /**
  * The SVG host's insets, in frame pixels. Declared once because two things read
@@ -62,6 +62,8 @@ type Theme = {
   readonly text: string;
   readonly accentOnPaper: string;
   readonly paper: string;
+  /** 0 (ruler) to 1 (sketchy). Chooses the edododraw preset — see `preset` below. */
+  readonly roughness: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -71,6 +73,7 @@ const THEME: Theme = {
   text: fontFamily,
   accentOnPaper: '#c2410c',
   paper: '#f6f5f2',
+  roughness: 0.45,
 };
 
 type Props = {
@@ -89,6 +92,17 @@ type Props = {
   readonly startAt?: number;
   /** `hand-clean` is the built-for-video preset: pinned corners, one pass. */
   readonly preset?: string;
+  /**
+   * How much the strokes wobble, 0 (ruler) to 1 (sketchy). Defaults to the
+   * theme's, and this is the one place that token can land: the wobble is
+   * generated inside the diagram engine, not by any CSS this file writes.
+   *
+   * Applied as a `defaults` block rather than by swapping the preset, because
+   * every roughness-0 preset edododraw ships is also monochrome — and these are
+   * data visualisations, where the palette is what tells two items apart. A
+   * theme should be able to straighten the lines without greying the content.
+   */
+  readonly roughness?: number;
   /** Screen-space padding left around the fitted diagram, in px. */
   readonly padding?: number;
   readonly backgroundColor?: string;
@@ -130,6 +144,7 @@ export const VizGallery: React.FC<Props> = ({
   drawFrames = 76,
   startAt = 10,
   preset = 'hand-clean',
+  roughness = theme.roughness,
   padding = 96,
   backgroundColor = theme.paper,
   accentColor = theme.accentOnPaper,
@@ -137,12 +152,16 @@ export const VizGallery: React.FC<Props> = ({
   const frame = useCurrentFrame();
   const {width, height, durationInFrames} = useVideoConfig();
 
-  // The preset is declared in the source, so prepend it rather than mutating a
-  // renderer option — one input, one output, nothing hidden.
-  const edd = useMemo(
-    () => (/\bmeta\s*\{/.test(source) ? source : `meta { style: ${preset} }\n${source}`),
-    [source, preset],
-  );
+  // The preset and the roughness are declared in the SOURCE, so the compiled
+  // scene is a pure function of one string — one input, one output, nothing
+  // hidden in a renderer option. `defaults` is diagram-wide and every viz
+  // template follows it, which is why the roughness can be set once here rather
+  // than per node.
+  const edd = useMemo(() => {
+    const head = /\bmeta\s*\{/.test(source) ? '' : `meta { style: ${preset} }\n`;
+    const rough = `defaults { node { roughness: ${roughness} } edge { roughness: ${roughness} } }\n`;
+    return `${head}${rough}${source}`;
+  }, [source, preset, roughness]);
 
   /**
    * Compile once, and keep the diagnostics rather than throwing them away.
@@ -325,7 +344,7 @@ export const VizGallery: React.FC<Props> = ({
             lineHeight: 1.45,
           }}
         >
-          <div style={{fontWeight: 800, marginBottom: 10, color: accentColor}}>
+          <div style={{fontWeight: 700, marginBottom: 10, color: accentColor}}>
             This diagram did not compile
           </div>
           {problems.slice(0, 4).map((m) => (

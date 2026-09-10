@@ -2,7 +2,7 @@ Build a Remotion composition called **TextScramble**: a headline whose letters c
 glyphs and lock into place one after another, left to right.
 
 **The look**
-- 1920×1080, 30fps, 120 frames. Near-black background (`#050608`), centred content.
+- 1920×1080, 30fps, 105 frames. Near-black background (`#050608`), centred content.
 - Headline in Space Grotesk, 150px, weight 700, letter-spacing `0.02em`. Default word: `DECRYPTING`.
 - A subtitle under it at 34px, weight 500, uppercase, letter-spacing `0.16em`, in the accent green
   (`#4ade80`), 34px below. It fades in over ~0.6s once the last character has locked.

@@ -10,7 +10,7 @@ demos.
 
 A component here is one self-contained file. It may not import a tokens module,
 and it may not read a React context, because both are imports and this file has
-to run in a project that has never heard of the library. So:
+to run in a project that has never heard of where it came from. So:
 
 ```tsx
 /** Only the tokens THIS file uses. TypeScript is structural, so a full theme
@@ -77,6 +77,30 @@ having loaded it. There is no way to load "whatever family this string names".
 
 Use a token that is not on this list and no theme can set it. If an effect needs
 a third distinct colour, that is `series[2]`, not a new token.
+
+### The house values
+
+A brief that says a prop defaults to `theme.series[2]` is useless without the
+array, so here it is in full — this is what `theme` is when nobody passes one:
+
+```ts
+const HOUSE = {
+  scheme: 'dark',
+  bg: '#0a0b10', bgDeep: '#04050a', paper: '#f6f5f2', surface: '#101218',
+  ink: '#ffffff', body: '#eef1f7', muted: '#8d93a5',
+  paperInk: '#1d1b17', paperMuted: '#4a4e5a',
+  accent: '#ff5c39', accentInk: '#04050a', accentOnPaper: '#c2410c',
+  pair: '#4cc9f0',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  //         orange     cyan       lime       amber      violet     grey
+  display: 'Archivo', text: 'Inter', mono: 'JetBrains Mono', hand: 'Kalam',
+  radius: 18, stroke: 3, roughness: 0.45, safe: 84,
+};
+```
+
+The four typeface tokens name families, not the CSS strings
+`@remotion/google-fonts` returns — load each with its own `loadFont` and pass
+what that gives you.
 
 **Not in the theme, deliberately:** easing curves, spring configs and duration
 bands. Those are craft, not brand — no set of guidelines says "our videos use
