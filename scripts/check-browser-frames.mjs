@@ -49,14 +49,37 @@ const REPORT = process.argv.includes('--report');
 const report = [];
 
 /**
- * Mean absolute luminance difference we accept between the two renderers.
+ * Mean absolute luminance difference we accept between the two renderers,
+ * measured on a 64x64 grid (see `meanAbsDiff`).
  *
- * Antialiasing and font hinting differ slightly between a headless screenshot
- * and Remotion's own capture, and video frames can land a decode apart. 0.02 is
- * roughly twenty times the noise floor measured across this library and roughly
- * a tenth of what either real bug produced.
+ * Calibrated, not guessed. Across all 181 healthy compositions:
+ *
+ *     median 0.0015   p90 0.0100   p99 0.0264   max 0.0478
+ *
+ * The tail is not content. `bar-chart-race`, the worst at 0.0478, renders the
+ * same bars with the same values at the same frame — the whole layout simply
+ * sits about 45px lower in the browser than in `renderStill`. The two lay text
+ * out slightly differently, and anything below a taller-than-expected block
+ * inherits the shift. Waiting on `document.fonts.ready` does not change it.
+ *
+ * So the threshold sits just above that measured ceiling. It is loose as a
+ * pixel test and still enormous compared to the bugs it exists for: content
+ * rendered outside its own viewBox, or a variant showing another variant's
+ * picture, move most of the frame and score several times this. The blank check
+ * below is the sharper instrument; this one catches gross geometry.
+ *
+ * If the median ever climbs, recalibrate with `--report` rather than raising it.
+ *
+ * KNOWN SENSITIVITY LIMIT, measured by reintroducing the variant bug: with
+ * `inputProps` dropped, all 82 viz variants render the same default diagram and
+ * only ONE crosses this threshold. Two different hand-drawn diagrams on the same
+ * paper ground are similar to a 64x64 block average — most of both frames is
+ * white. So this gate is not a general visual-regression test, and must not be
+ * relied on as one. It catches a frame that has gone BLANK, and content that has
+ * moved a long way. `check:gallery-variants` is the exact defence for the
+ * variant case, and it is static, which is why both exist.
  */
-const DIFF_MAX = 0.02;
+const DIFF_MAX = 0.06;
 /** Below this the browser frame is blank on its own terms, whatever the still says. */
 const INK_MIN = 0.0008;
 
@@ -136,16 +159,26 @@ try {
     try {
       await page.setViewport({width: m.width, height: m.height, deviceScaleFactor: 1});
       await page.goto({url: `${BASE}/#/frame/${encodeURIComponent(m.id)}`, timeout: 30000});
-      // The composition has to mount, load its fonts and settle. Thumbnail
-      // resolves its own delayRender()s before it paints, so wait for the stage
-      // to exist and then give the frame a beat.
+      /**
+       * Wait for FONTS, not for a timer.
+       *
+       * A fixed settle screenshots whatever is on screen when it expires, and
+       * if a face is still loading the frame is laid out in a fallback. Text
+       * metrics differ, every block below the first line shifts a few pixels,
+       * and the diff comes back at 0.048 with the two frames identical in
+       * content — which reads as a real divergence and is not one.
+       * `document.fonts.ready` is the exact signal; the frames after it are for
+       * the paint that follows relayout.
+       */
       await page.evaluate(
         `new Promise((res, rej) => {
            const t0 = Date.now();
            const tick = () => {
              if (document.querySelector('[data-smoke-error]')) return rej(new Error('harness error slot'));
              if (document.querySelector('[data-smoke-stage] canvas, [data-smoke-stage] svg, [data-smoke-stage] div')) {
-               return setTimeout(res, 900);
+               return document.fonts.ready.then(() =>
+                 requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(res, 400))),
+               );
              }
              if (Date.now() - t0 > 20000) return rej(new Error('stage never mounted'));
              setTimeout(tick, 60);

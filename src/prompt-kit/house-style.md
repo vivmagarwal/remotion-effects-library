@@ -4,6 +4,12 @@ These are values, not suggestions. There is **no shared tokens module**: inline 
 by name, with the comment shown. That keeps the file copy-pasteable and lets a reviewer see the intent.
 The brief overrides any number here; nothing else does.
 
+The colours and typefaces below are also the **house theme's** values. An effect reads them through a
+`theme` prop whose inline default is exactly what is written here — see the theme section — so a set of
+videos can be restyled together without any file losing the ability to run on its own. The easings,
+springs and duration bands are NOT in the theme: they are craft rather than brand, and no set of
+guidelines ever said "our videos use easeOutQuint".
+
 ### Grounds — three, not forty-nine
 
 ```ts

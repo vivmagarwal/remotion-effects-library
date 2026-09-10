@@ -472,7 +472,7 @@ Every one exits non-zero on failure.
 | `verify` | any effect fails to render a still | slow |
 | `check:frames` | an effect's `checkFrame` shows no motion | slow |
 | `check:poster` | a poster frame's mean luminance variance is below the floor — a blank or black card | slow |
-| `check:browser` | a composition looks different in a **browser** than in `renderStill` — the gap two shipped bugs lived in | slow |
+| `check:browser` | a composition renders blank in a **browser**, or lands a long way from where `renderStill` puts it — the gap two shipped bugs lived in. Not a general pixel-regression test; see the header of `scripts/check-browser-frames.mjs` for the measured sensitivity limit | slow |
 
 ---
 
