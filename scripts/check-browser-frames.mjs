@@ -28,10 +28,11 @@
  *
  * `npm run check:browser` does all of that.
  */
-import {existsSync, mkdirSync, writeFileSync} from 'node:fs';
+import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {dirname, join} from 'node:path';
 import {createRequire} from 'node:module';
-import {OUT_DIR} from './lib/fs.mjs';
+import {OUT_DIR, walkEffects} from './lib/fs.mjs';
 import {decodePng, luminanceStats, meanAbsDiff} from './lib/png.mjs';
 import {gate} from './lib/gate.mjs';
 
@@ -92,11 +93,40 @@ const shots = join(OUT_DIR, 'browser');
  * for a third of the library and reported them as "no comparison possible",
  * which reads like a gate working when it is a gate checking nothing. Every
  * still in here is rendered by this script, at scale 1, from the build it is
- * about to compare against.
+ * about to compare against — and re-rendered whenever the component that made
+ * it changes, which a `<id>.src` stamp beside each PNG records.
  */
 const stills = join(OUT_DIR, 'ref');
 mkdirSync(shots, {recursive: true});
 mkdirSync(stills, {recursive: true});
+
+
+/**
+ * A fingerprint of everything that decides what a composition renders.
+ *
+ * The reference stills are cached across runs because rendering 181 at full size
+ * is minutes, and the cache had no invalidation at all: a still was reused
+ * whenever the file existed. Change a component and the gate compares today's
+ * browser against last week's still, reports a disagreement, and points at the
+ * browser — which is how `vhs-vintage` and `before-after-wipe` failed at 0.084
+ * and 0.074 while a freshly rendered still matched the browser to 0.002 and
+ * 0.0006. A stale cache does not merely produce noise; it accuses the wrong
+ * side, and the next person spends an hour in the renderer.
+ *
+ * Hashing the component, its meta and the variant list covers every input the
+ * gate itself varies. It deliberately does not hash the whole bundle: that would
+ * invalidate all 181 on any change anywhere and the cache would never hit.
+ */
+const fingerprints = new Map();
+for (const e of walkEffects()) {
+  const h = createHash('sha256');
+  for (const f of [e.tsxPath, e.metaPath]) h.update(readFileSync(f));
+  const variants = join(dirname(e.tsxPath), 'variants.generated.ts');
+  if (existsSync(variants)) h.update(readFileSync(variants));
+  fingerprints.set(e.id, h.digest('hex').slice(0, 16));
+}
+/** A variant renders its parent's component, so it shares the parent's fingerprint. */
+const fingerprintOf = (m) => fingerprints.get(m.parentId ?? m.id) ?? 'unknown';
 
 const {openBrowser} = require_('@remotion/renderer');
 /**
@@ -211,20 +241,25 @@ try {
         g.fail(`#/frame/${m.id}`, `${m.id}: the gallery lists it but Remotion has no such composition`);
         continue;
       }
-      // Re-render when it is missing, stale-by-request, or the wrong size —
-      // the last one is what a mixed-scale directory looks like from here.
+      // Re-render when it is missing, stale-by-request, the wrong size, or made
+      // from a different version of the component. The last one is the whole
+      // reason the stamp exists — see `fingerprints` above.
+      const stamp = join(stills, `${m.id}.src`);
+      const fresh = fingerprintOf(m);
       const wrongSize =
         existsSync(stillPath) &&
         (() => {
           const img = decodePng(stillPath);
           return img.width !== m.width || img.height !== m.height;
         })();
-      if (!existsSync(stillPath) || wrongSize || process.argv.includes('--fresh')) {
+      const stale = !existsSync(stamp) || readFileSync(stamp, 'utf8') !== fresh;
+      if (!existsSync(stillPath) || wrongSize || stale || process.argv.includes('--fresh')) {
         await renderStill({
           composition: comp, serveUrl, output: stillPath,
           frame: Math.min(m.frame, comp.durationInFrames - 1),
           chromiumOptions: {gl: 'angle'}, logLevel: 'error',
         });
+        writeFileSync(stamp, fresh);
       }
 
       const d = meanAbsDiff(decodePng(stillPath), browserImg);

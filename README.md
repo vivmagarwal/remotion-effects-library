@@ -2,6 +2,9 @@
 
 A browsable catalogue of production-ready motion for [Remotion](https://remotion.dev) 4.0.522.
 
+**[Browse it →](https://vivmagarwal.github.io/remotion-effects-library/)** — 181 compositions playing
+live in the browser, each with the file and the prompt behind it.
+
 Every entry is three things kept in one folder and guaranteed not to drift apart:
 
 - a **live preview** that plays in the browser — the real Remotion composition, not a recording;
