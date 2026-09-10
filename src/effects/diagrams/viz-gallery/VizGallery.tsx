@@ -88,16 +88,29 @@ export const VizGallery: React.FC<Props> = ({
     [source, preset],
   );
 
-  const scene = useMemo(() => {
+  /**
+   * Compile once, and keep the diagnostics rather than throwing them away.
+   *
+   * A `viz` whose generator is not registered does not error — it warns and
+   * yields an empty scene. That renders a perfectly clean blank frame, which is
+   * the single worst failure mode there is: nothing to see, nothing in the
+   * console, and every gate green. So the failure is drawn on screen instead.
+   */
+  const {scene, problems} = useMemo(() => {
     const {scene: s, diagnostics} = compileEdd(edd);
-    const errors = (diagnostics?.items ?? []).filter(
-      (d: {severity?: string}) => d.severity === 'error',
-    );
-    if (errors.length > 0) {
-      throw new Error(`edododraw: ${errors.map((d: {message?: string}) => d.message).join('; ')}`);
+    const items = (diagnostics?.items ?? []) as {severity?: string; code?: string; message?: string}[];
+    const msgs = items
+      .filter((d) => d.severity === 'error' || d.severity === 'warning')
+      .map((d) => `${d.severity}${d.code ? ` ${d.code}` : ''}: ${d.message ?? ''}`);
+    const empty = (s?.nodes?.length ?? 0) === 0;
+    if (empty) {
+      msgs.unshift(
+        `compiled to 0 nodes — is the "${vizType}" viz generator registered? ` +
+          'A bundler that drops side-effect-only modules will strip the registrations.',
+      );
     }
-    return s;
-  }, [edd]);
+    return {scene: s, problems: msgs};
+  }, [edd, vizType]);
 
   const hostRef = useRef<HTMLDivElement>(null);
   /**
@@ -223,6 +236,34 @@ export const VizGallery: React.FC<Props> = ({
         ref={hostRef}
         style={{position: 'absolute', left: 0, top: 88, right: 0, bottom: 96}}
       />
+
+      {problems.length > 0 ? (
+        <div
+          style={{
+            position: 'absolute',
+            left: 84,
+            right: 84,
+            top: 150,
+            padding: '28px 32px',
+            borderRadius: 14,
+            border: `2px solid ${accentColor}`,
+            backgroundColor: 'rgba(194, 65, 12, 0.06)',
+            color: '#1d1b17',
+            fontSize: 34,
+            fontWeight: 500,
+            lineHeight: 1.45,
+          }}
+        >
+          <div style={{fontWeight: 800, marginBottom: 10, color: accentColor}}>
+            This diagram did not compile
+          </div>
+          {problems.slice(0, 4).map((m) => (
+            <div key={m} style={{marginTop: 6}}>
+              {m}
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       <Interactive.Div
         name="Eyebrow"

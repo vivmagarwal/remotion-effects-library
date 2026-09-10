@@ -50,6 +50,9 @@ export const BulletPopList: React.FC<Props> = ({
   const {fps} = useVideoConfig();
 
   const ROW_H = 148;
+  /** The title's type, kept as consts so the marker can be centred on its line. */
+  const TITLE_SIZE = 54;
+  const TITLE_LINE = 1.2;
 
   const head = interpolate(frame, [0, 22], [0, 1], {
     extrapolateLeft: 'clamp',
@@ -144,36 +147,60 @@ export const BulletPopList: React.FC<Props> = ({
                 top: i * ROW_H,
                 height: ROW_H,
                 display: 'flex',
-                alignItems: 'center',
+                // flex-start, NOT center. A row is a marker beside a two-line
+                // block (title + note), and centring the marker against the
+                // whole block drops it into the gap between the two lines
+                // instead of beside the title. The marker is aligned to the
+                // TITLE's line box below.
+                alignItems: 'flex-start',
                 gap: 30,
                 // Slide in from the left and settle. The row's slot never moves.
                 translate: `${(p - 1) * travel}px 0px`,
                 opacity: Math.min(1, pop * 1.8),
               }}
             >
+              {/* A box exactly as tall as one title line, with the marker
+                  centred in it. Computed rather than nudged, so it stays right
+                  if the title size or the line-height changes. */}
               <div
                 style={{
-                  width: 58,
-                  height: 58,
-                  borderRadius: marker === 'dot' ? 29 : 14,
-                  backgroundColor: accentColor,
-                  color: backgroundColor,
+                  height: TITLE_SIZE * TITLE_LINE,
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: marker === 'number' ? 30 : 26,
-                  fontWeight: 800,
                   flexShrink: 0,
-                  // The marker overshoots slightly more than the row, so it
-                  // reads as the thing that arrived and pulled the text along.
-                  scale: 0.4 + pop * 0.6,
                 }}
               >
-                {marker === 'number' ? i + 1 : marker === 'arrow' ? '→' : ''}
+                <div
+                  style={{
+                    width: 58,
+                    height: 58,
+                    borderRadius: marker === 'dot' ? 29 : 14,
+                    backgroundColor: accentColor,
+                    color: backgroundColor,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: marker === 'number' ? 30 : 26,
+                    fontWeight: 800,
+                    // The marker overshoots slightly more than the row, so it
+                    // reads as the thing that arrived and pulled the text along.
+                    scale: 0.4 + pop * 0.6,
+                  }}
+                >
+                  {marker === 'number' ? i + 1 : marker === 'arrow' ? '→' : ''}
+                </div>
               </div>
 
               <div>
-                <div style={{fontSize: 54, fontWeight: 700, color: paperColor, letterSpacing: '-0.02em'}}>
+                <div
+                  style={{
+                    fontSize: TITLE_SIZE,
+                    lineHeight: TITLE_LINE,
+                    fontWeight: 700,
+                    color: paperColor,
+                    letterSpacing: '-0.02em',
+                  }}
+                >
                   {item.text}
                 </div>
                 {item.note ? (

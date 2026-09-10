@@ -74,6 +74,12 @@ export const HeadlineHighlight: React.FC<Props> = ({
           color: '#1d1b17',
           marginTop: 26,
           maxWidth: 1450,
+          // This element is the stacking context the marker sits behind. Without
+          // `position` + an explicit `zIndex` here, `z-index: -1` on the marker
+          // would escape to the nearest ancestor that has one and slide under the
+          // page card entirely.
+          position: 'relative',
+          zIndex: 0,
           opacity: interpolate(frame, [4, 18], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}),
         }}
       >
@@ -82,7 +88,18 @@ export const HeadlineHighlight: React.FC<Props> = ({
           strokeIndex += 1;
           const from = startAt + strokeIndex * (strokeFrames + 6);
           return (
-            // The marker: an inline-block wrapper with the stroke painted behind the text.
+            // The marker: an inline-block wrapper with the stroke painted behind
+            // the text — behind ALL of it, including the word that follows.
+            //
+            // The stroke deliberately overshoots the phrase by 6%, because a real
+            // highlighter does; a stroke that stops exactly on the last glyph
+            // reads as a rectangle someone drew, not as a pen someone dragged.
+            // But an overshoot means it overlaps the next word, so the z-order
+            // has to be right. `zIndex: 0` is NOT right: it puts the marker in a
+            // positioned layer, and the plain `<span>` holding the next word is
+            // unpositioned and therefore paints BELOW it — so the marker hides
+            // that word's first letter. `zIndex: -1` against the stacking context
+            // on the headline puts it behind every glyph on the line.
             <span key={i} style={{position: 'relative', display: 'inline-block'}}>
               <span
                 style={{
@@ -91,7 +108,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
                   top: '0.12em',
                   bottom: '0.08em',
                   backgroundColor: highlightColor,
-                  zIndex: 0,
+                  zIndex: -1,
                   width: interpolate(frame, [from, from + strokeFrames], ['0%', '106%'], {
                     extrapolateLeft: 'clamp',
                     extrapolateRight: 'clamp',
@@ -99,7 +116,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
                   }),
                 }}
               />
-              <span style={{position: 'relative', zIndex: 1}}>{span.text}</span>
+              {span.text}
             </span>
           );
         })}
