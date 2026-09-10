@@ -77,6 +77,8 @@ import {SilenceCut as C_SilenceCut} from './effects/edit/silence-cut/SilenceCut'
 import {meta as M_SilenceCut} from './effects/edit/silence-cut/meta';
 import {SpeedRamp as C_SpeedRamp} from './effects/edit/speed-ramp/SpeedRamp';
 import {meta as M_SpeedRamp} from './effects/edit/speed-ramp/meta';
+import {FilmGrade as C_FilmGrade} from './effects/grade/film-grade/FilmGrade';
+import {meta as M_FilmGrade} from './effects/grade/film-grade/meta';
 import {ProgressiveBlurFocus as C_ProgressiveBlurFocus} from './effects/grade/progressive-blur-focus/ProgressiveBlurFocus';
 import {meta as M_ProgressiveBlurFocus} from './effects/grade/progressive-blur-focus/meta';
 import {GlitchText as C_GlitchText} from './effects/looks/glitch-text/GlitchText';
@@ -230,6 +232,7 @@ const base: readonly EffectEntry[] = [
   {meta: M_PunchInCut, Component: C_PunchInCut as React.ComponentType, file: 'edit/punch-in-cut/PunchInCut.tsx'},
   {meta: M_SilenceCut, Component: C_SilenceCut as React.ComponentType, file: 'edit/silence-cut/SilenceCut.tsx'},
   {meta: M_SpeedRamp, Component: C_SpeedRamp as React.ComponentType, file: 'edit/speed-ramp/SpeedRamp.tsx'},
+  {meta: M_FilmGrade, Component: C_FilmGrade as React.ComponentType, file: 'grade/film-grade/FilmGrade.tsx'},
   {meta: M_ProgressiveBlurFocus, Component: C_ProgressiveBlurFocus as React.ComponentType, file: 'grade/progressive-blur-focus/ProgressiveBlurFocus.tsx'},
   {meta: M_GlitchText, Component: C_GlitchText as React.ComponentType, file: 'looks/glitch-text/GlitchText.tsx'},
   {meta: M_HalftonePrint, Component: C_HalftonePrint as React.ComponentType, file: 'looks/halftone-print/HalftonePrint.tsx'},
