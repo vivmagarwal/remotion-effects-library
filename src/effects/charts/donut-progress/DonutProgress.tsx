@@ -12,7 +12,28 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '600', '800'], subsets
 
 type Ring = {readonly label: string; readonly value: number; readonly color: string};
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly rings?: readonly Ring[];
   readonly title?: string;
   readonly centerLabel?: string;
@@ -21,6 +42,8 @@ type Props = {
 };
 
 export const DonutProgress: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   rings = [
     {label: 'Render', value: 0.92, color: '#4cc9f0'},
     {label: 'Encode', value: 0.74, color: '#c6ff3d'},
@@ -28,7 +51,7 @@ export const DonutProgress: React.FC<Props> = ({
   ],
   title = 'Pipeline health',
   centerLabel = 'OK',
-  backgroundColor = '#0a0b10',
+  backgroundColor = theme.bg,
   sweepSeconds = 1.6,
 }) => {
   const frame = useCurrentFrame();

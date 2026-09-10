@@ -14,7 +14,24 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['lat
  * as a filter being faded in.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it.
+ */
+type Theme = {
+  readonly text: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly src?: string;
   readonly title?: string;
   readonly caption?: string;
@@ -25,6 +42,8 @@ type Props = {
 };
 
 export const ProgressiveBlurFocus: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   src,
   title = 'Rack focus',
   caption = 'radialProgressiveBlur — sharp at a point, soft outward',

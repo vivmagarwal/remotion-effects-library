@@ -780,3 +780,26 @@ select.sel {
   border-radius: 999px;
 }
 .card .family:hover { border-color: var(--accent); }
+
+/* The video-theme picker. Sits with the light/dark control but means something
+   different: that one restyles the GALLERY, this one restyles the videos. */
+.lookpick {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.lookpick > span {
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.lookpick select {
+  font: inherit;
+  color: var(--fg);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 10px;
+  cursor: pointer;
+}

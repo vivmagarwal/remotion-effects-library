@@ -1,7 +1,7 @@
 import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/JetBrainsMono';
 
-// palette: data whole-file — an editor recreation: the chrome is VS Code's and the token colours are a syntax theme, which is a colour SYSTEM in its own right
+// palette: data whole-file — an editor recreation: the chrome is VS Code's and the token colours are a syntax syntax, which is a colour SYSTEM in its own right
 
 const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['latin']});
 
@@ -13,7 +13,7 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['lat
  * editor does and is the detail that sells it.
  */
 
-type Theme = {
+type SyntaxTheme = {
   readonly bg: string;
   readonly gutter: string;
   readonly text: string;
@@ -24,7 +24,24 @@ type Theme = {
   readonly fn: string;
 };
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it.
+ */
+type Theme = {
+  readonly mono: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  mono: fontFamily,
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly code?: string;
   readonly filename?: string;
   readonly charsPerSecond?: number;
@@ -32,7 +49,7 @@ type Props = {
   readonly enterFrames?: number;
   readonly exitFrames?: number;
   readonly blinkFrames?: number;
-  readonly theme?: Theme;
+  readonly syntax?: SyntaxTheme;
   readonly fontSize?: number;
 };
 
@@ -59,7 +76,7 @@ const KEYWORDS = new Set([
 const TOKEN =
   /(\/\*[\s\S]*?\*\/|\/\/[^\n]*)|('(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|`(?:\\.|[^`\\])*`)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$][\w$]*)/g;
 
-const highlight = (src: string, t: Theme): React.ReactNode[] => {
+const highlight = (src: string, t: SyntaxTheme): React.ReactNode[] => {
   const out: React.ReactNode[] = [];
   let last = 0;
   let key = 0;
@@ -80,6 +97,8 @@ const highlight = (src: string, t: Theme): React.ReactNode[] => {
 };
 
 export const CodeEditorTyping: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.mono,
   code = DEFAULT_CODE,
   filename = 'FadeIn.tsx',
   charsPerSecond = 34,
@@ -88,7 +107,7 @@ export const CodeEditorTyping: React.FC<Props> = ({
   exitFrames = 24,
   blinkFrames = 15,
   fontSize = 30,
-  theme = {
+  syntax = {
     bg: '#12141c',
     gutter: '#3a4055',
     text: '#d6dae6',
@@ -145,7 +164,7 @@ export const CodeEditorTyping: React.FC<Props> = ({
         name="Editor"
         style={{
           width: 1440,
-          backgroundColor: theme.bg,
+          backgroundColor: syntax.bg,
           borderRadius: 16,
           overflow: 'hidden',
           border: '1px solid #232838',
@@ -179,7 +198,7 @@ export const CodeEditorTyping: React.FC<Props> = ({
               paddingRight: 26,
               fontSize,
               lineHeight: `${lineHeight}px`,
-              color: theme.gutter,
+              color: syntax.gutter,
             }}
           >
             {new Array(totalLines).fill(0).map((_, i) => (
@@ -194,7 +213,7 @@ export const CodeEditorTyping: React.FC<Props> = ({
               flex: 1,
               fontSize,
               lineHeight: `${lineHeight}px`,
-              color: theme.text,
+              color: syntax.text,
               whiteSpace: 'pre',
               paddingRight: 30,
               // Reserve the full block height so nothing reflows while typing.
@@ -205,7 +224,7 @@ export const CodeEditorTyping: React.FC<Props> = ({
               <div key={i} style={{position: 'relative'}}>
                 {/* Highlight the visible slice only: a half-typed keyword is not
                     a keyword yet, and colouring it early is the giveaway. */}
-                {highlight(line, theme)}
+                {highlight(line, syntax)}
                 {i === caretLine && cursorOn ? (
                   <span
                     style={{

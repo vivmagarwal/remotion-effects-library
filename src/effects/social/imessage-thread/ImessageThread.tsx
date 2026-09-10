@@ -21,7 +21,28 @@ type Message = {
   readonly typing?: number;
 };
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly surface: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  surface: '#101218',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly messages?: readonly Message[];
   readonly themColor?: string;
@@ -49,6 +70,8 @@ const Dots: React.FC<{frame: number; color: string}> = ({frame, color}) => (
 );
 
 export const ImessageThread: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'Sam',
   messages = [
     {from: 'them', text: 'is the render done?', at: 14, typing: 18},
@@ -59,7 +82,7 @@ export const ImessageThread: React.FC<Props> = ({
   ],
   themColor = '#2a2d38',
   meColor = '#2f6bff',
-  backgroundColor = '#101218',
+  backgroundColor = theme.surface,
 }) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();

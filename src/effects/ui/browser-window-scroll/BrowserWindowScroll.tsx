@@ -14,7 +14,28 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '600', '700', '800'], 
 
 type Section = {readonly kind: 'hero' | 'cards' | 'stat' | 'cta'; readonly title: string; readonly body?: string};
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly accent: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  accent: '#ff5c39',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly url?: string;
   readonly sections?: readonly Section[];
   readonly accentColor?: string;
@@ -24,6 +45,8 @@ type Props = {
 };
 
 export const BrowserWindowScroll: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   url = 'remotion.dev/effects',
   sections = [
     {kind: 'hero', title: 'Video, written in React', body: 'Compose, preview and render frame by frame.'},
@@ -31,7 +54,7 @@ export const BrowserWindowScroll: React.FC<Props> = ({
     {kind: 'stat', title: '4.0.522', body: 'the version this library targets'},
     {kind: 'cta', title: 'npx create-video@latest'},
   ],
-  accentColor = '#ff5c39',
+  accentColor = theme.accent,
   backgroundColor = '#0d0f16',
   pageHeight = 2400,
 }) => {

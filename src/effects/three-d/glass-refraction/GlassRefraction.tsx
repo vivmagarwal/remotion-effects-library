@@ -16,7 +16,28 @@ const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['lat
  * what produces the prism fringing.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bgDeep: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bgDeep: '#04050a',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly subtitle?: string;
   /** 1 is fully see-through. Below ~0.9 it starts to look like frosted plastic. */
@@ -67,6 +88,8 @@ const Backdrop: React.FC<{colors: readonly string[]; t: number}> = ({colors, t})
 };
 
 export const GlassRefraction: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'REFRACT',
   subtitle = 'MeshPhysicalMaterial · transmission + dispersion',
   transmission = 1,
@@ -75,7 +98,7 @@ export const GlassRefraction: React.FC<Props> = ({
   dispersion = 7,
   roughness = 0.03,
   backdropColors = ['#ff5c39', '#4cc9f0', '#c77dff', '#ffd166', '#c6ff3d', '#c2410c'],
-  backgroundColor = '#04050a',
+  backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();

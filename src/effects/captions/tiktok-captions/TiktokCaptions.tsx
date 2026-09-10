@@ -54,7 +54,32 @@ export type DeepgramWord = {
   readonly punctuated_word?: string;
 };
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+  readonly ink: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+  ink: '#ffffff',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   /** Word timings in seconds. Defaults to the real nova-3 response for the shipped clip. */
   readonly words?: readonly DeepgramWord[];
   /** Footage to caption. Set to null to render as a transparent overlay. */
@@ -107,14 +132,16 @@ const FONT_SIZE = 118;
 const STROKE = Math.round(FONT_SIZE * 0.15);
 
 export const TiktokCaptions: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   words = WORDS,
   src = staticFile('footage/interview.mp4'),
   wordsPerPage = 3,
   hits = ['natural', 'space'],
-  color = '#ffffff',
-  activeColor = '#c6ff3d',
-  hitColor = '#ffd166',
-  backgroundColor = '#0a0b10',
+  color = theme.ink,
+  activeColor = theme.series[2],
+  hitColor = theme.series[3],
+  backgroundColor = theme.bg,
   bottomInset = 560,
 }) => {
   const frame = useCurrentFrame();

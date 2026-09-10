@@ -15,7 +15,32 @@ const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['lat
  * frame, so the stars themselves never move relative to each other.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bgDeep: string;
+  readonly pair: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bgDeep: '#04050a',
+  pair: '#4cc9f0',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly subtitle?: string;
   readonly count?: number;
@@ -102,6 +127,8 @@ const Galaxy: React.FC<{
 };
 
 export const GalaxyParticles: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'ANDROMEDA',
   subtitle = '30,000 points · one seeded buffer',
   count = 30000,
@@ -109,9 +136,9 @@ export const GalaxyParticles: React.FC<Props> = ({
   radius = 5.2,
   spin = 0.72,
   randomness = 0.34,
-  insideColor = '#ffd166',
-  outsideColor = '#4cc9f0',
-  backgroundColor = '#04050a',
+  insideColor = theme.series[3],
+  outsideColor = theme.pair,
+  backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();

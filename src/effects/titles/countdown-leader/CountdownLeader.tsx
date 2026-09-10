@@ -10,7 +10,32 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '500'], subsets: ['lat
  * one expression drives the entire countdown regardless of its length.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly display: string;
+  readonly accentOnPaper: string;
+  readonly paper: string;
+  readonly paperInk: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  display: fontFamily,
+  accentOnPaper: '#c2410c',
+  paper: '#f6f5f2',
+  paperInk: '#1d1b17',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly from?: number;
   readonly finalWord?: string;
   readonly backgroundColor?: string;
@@ -20,11 +45,13 @@ type Props = {
 };
 
 export const CountdownLeader: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.display,
   from = 5,
   finalWord = 'ACTION',
-  backgroundColor = '#1d1b17',
-  inkColor = '#f6f5f2',
-  accentColor = '#c2410c',
+  backgroundColor = theme.paperInk,
+  inkColor = theme.paper,
+  accentColor = theme.accentOnPaper,
   grain = true,
 }) => {
   const frame = useCurrentFrame();

@@ -1,6 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
-import {App} from './App';
+import {App, FrameHarness, frameIdFromHash} from './App';
+import {effects} from '../registry.generated';
 import type {StaticFile} from 'remotion';
 import {publicAssets} from '../registry.generated';
 import './styles.css';
@@ -30,8 +31,46 @@ if (base && base !== '/') {
   );
 }
 
+/**
+ * `#/frame/<id>` is the smoke-test route — one composition, alone, at 1:1.
+ *
+ * Chosen HERE rather than inside <App>, because branching inside a component
+ * that calls hooks means returning before them, and a route change would then
+ * render fewer hooks than the previous pass. It is a different page, so it gets
+ * a different root. StrictMode is off for it: the double-invoke would mount and
+ * measure every composition twice, and this route exists to be screenshotted.
+ */
+/**
+ * The compositions this gallery can actually render, for `check:browser`.
+ *
+ * The gate needs the EXPANDED list — 181 rows, not the 96 effect folders — and
+ * that expansion lives in the registry. Re-deriving it in a script means
+ * reimplementing it, and the first attempt silently produced 99 rows because
+ * `viz-gallery`'s variants arrive as an imported identifier a meta parser
+ * cannot evaluate. Publishing it from the page that does the rendering is the
+ * only version that cannot drift from what a viewer sees.
+ */
+(window as unknown as {__compositions?: unknown}).__compositions = effects.map((e) => ({
+  id: e.meta.id,
+  parentId: e.parentId ?? null,
+  width: e.meta.width,
+  height: e.meta.height,
+  frame: e.meta.posterFrame ?? e.meta.checkFrame,
+}));
+
+const smokeId = frameIdFromHash(location.hash);
+const smokeEntry = smokeId ? effects.find((e) => e.meta.id === smokeId) : undefined;
+
 createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  smokeId ? (
+    smokeEntry ? (
+      <FrameHarness entry={smokeEntry} />
+    ) : (
+      <div data-smoke-error>no such id: {smokeId}</div>
+    )
+  ) : (
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  ),
 );

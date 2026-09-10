@@ -17,7 +17,24 @@ const {fontFamily} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
  * and the scanlines bend too, which no real tube does.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it.
+ */
+type Theme = {
+  readonly mono: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  mono: fontFamily,
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   /** Any image or video source. Swap for <Video> from @remotion/media to grade footage. */
   readonly src?: string;
   readonly timecode?: string;
@@ -27,6 +44,8 @@ type Props = {
 };
 
 export const VhsVintage: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.mono,
   src,
   timecode = 'SP  0:12:47',
   label = '▶ PLAY',

@@ -15,7 +15,28 @@ const {fontFamily} = loadFont('normal', {weights: ['600', '800'], subsets: ['lat
  * side instead is what makes most comparison wipes look subtly wrong.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly ink: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  ink: '#ffffff',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly src?: string;
   readonly beforeLabel?: string;
   readonly afterLabel?: string;
@@ -25,10 +46,12 @@ type Props = {
 };
 
 export const BeforeAfterWipe: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   src,
   beforeLabel = 'BEFORE',
   afterLabel = 'AFTER',
-  accentColor = '#ffffff',
+  accentColor = theme.ink,
   sweep = [
     [0, 8],
     [45, 82],

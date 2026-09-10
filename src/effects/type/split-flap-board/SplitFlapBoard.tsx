@@ -13,7 +13,30 @@ const ALPHABET = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:-/';
  * late letters keep clattering after their neighbours have settled.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly mono: string;
+  readonly bg: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  mono: fontFamily,
+  bg: '#0a0b10',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly rows?: readonly {readonly label: string; readonly value: string}[];
   readonly title?: string;
   /** Frames each flip takes. */
@@ -70,6 +93,8 @@ const Tile: React.FC<{
 };
 
 export const SplitFlapBoard: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.mono,
   rows = [
     {label: '09:15', value: 'REMOTION'},
     {label: '10:40', value: 'RENDERS'},
@@ -78,9 +103,9 @@ export const SplitFlapBoard: React.FC<Props> = ({
   title = 'DEPARTURES',
   flipFrames = 3,
   columnStagger = 4,
-  backgroundColor = '#0a0b10',
+  backgroundColor = theme.bg,
   tileColor = 'rgba(255,255,255,0.07)',
-  accentColor = '#ffd166',
+  accentColor = theme.series[3],
 }) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();

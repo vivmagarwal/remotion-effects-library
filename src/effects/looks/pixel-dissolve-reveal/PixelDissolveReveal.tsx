@@ -13,7 +13,28 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['lat
  * sharpens — so the picture arrives once rather than twice.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly mono: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  mono: fontFamily,
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly src?: string;
   readonly title?: string;
   readonly readout?: string;
@@ -28,6 +49,8 @@ type Props = {
 };
 
 export const PixelDissolveReveal: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.mono,
   src,
   title = 'DECODING PLATE 04',
   readout = 'blocks resolving · dissolve filling',
@@ -36,7 +59,7 @@ export const PixelDissolveReveal: React.FC<Props> = ({
   maxBlock = 64,
   gridColumns = 44,
   gridRows = 26,
-  accentColor = '#c6ff3d',
+  accentColor = theme.series[2],
 }) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();

@@ -63,7 +63,34 @@ const FRAGMENT = /* glsl */ `
   }
 `;
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+  readonly bgDeep: string;
+  readonly pair: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+  bgDeep: '#04050a',
+  pair: '#4cc9f0',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly subtitle?: string;
   /** How far the surface is pushed along its normal. */
@@ -79,15 +106,17 @@ type Props = {
 };
 
 export const ShaderBlob: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'LIQUID',
   subtitle = 'uTime as a uniform, never a clock',
   amplitude = 0.3,
   detail = 2.35,
   segments = 40,
-  colorA = '#0a0b10',
-  colorB = '#c77dff',
-  rimColor = '#4cc9f0',
-  backgroundColor = '#04050a',
+  colorA = theme.bg,
+  colorB = theme.series[4],
+  rimColor = theme.pair,
+  backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();

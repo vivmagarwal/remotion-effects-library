@@ -64,7 +64,30 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets
 /** One leg of the ramp. `from`/`to` are multiples of real time. */
 type Leg = {readonly frames: number; readonly from: number; readonly to: number; readonly label: string};
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly accent: string;
+  readonly bgDeep: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  accent: '#ff5c39',
+  bgDeep: '#04050a',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly src?: string;
   /**
    * The ramp, as data. Written this way so it can be read, diffed and reasoned
@@ -92,12 +115,14 @@ const RAMP: Leg[] = [
 ];
 
 export const SpeedRamp: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   src = staticFile('footage/broll-earth.mp4'),
   ramp = RAMP,
   sourceDurationInFrames = 180,
   showDebug = true,
-  accentColor = '#ff5c39',
-  backgroundColor = '#04050a',
+  accentColor = theme.accent,
+  backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
   const {durationInFrames} = useVideoConfig();

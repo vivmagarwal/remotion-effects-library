@@ -45,7 +45,30 @@ const toLogBands = (linear: readonly number[], count: number, nyquist: number): 
   return out;
 };
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly src?: string;
   readonly show?: string;
   readonly episode?: string;
@@ -77,13 +100,15 @@ const SCRIPT: Word[] = [
 ];
 
 export const Audiogram: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   src,
   show = 'FRAME BY FRAME',
   episode: episodeTitle = 'Ep. 12 — Rendering in React',
   words = SCRIPT,
   wordsPerPage = 4,
-  accentColor = '#c6ff3d',
-  backgroundColor = '#0a0b10',
+  accentColor = theme.series[2],
+  backgroundColor = theme.bg,
   bars = 34,
   gamma = 0.42,
 }) => {

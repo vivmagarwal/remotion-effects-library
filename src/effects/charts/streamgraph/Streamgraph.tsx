@@ -19,7 +19,30 @@ const {fontFamily} = loadFont('normal', {weights: ['600', '800'], subsets: ['lat
 
 type Row = Record<string, number>;
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+  readonly body: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+  body: '#eef1f7',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly subtitle?: string;
   readonly keys?: readonly string[];
@@ -37,6 +60,8 @@ const DEFAULT_KEYS = ['shorts', 'tutorials', 'launches', 'demos', 'devlogs', 'ta
 const DEFAULT_COLORS = ['#ff5c39', '#4cc9f0', '#c77dff', '#ffd166', '#c6ff3d', '#c2410c', '#8d93a5'];
 
 export const Streamgraph: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'What people are rendering',
   subtitle = 'streamgraph · stackOffsetWiggle + stackOrderInsideOut',
   keys = DEFAULT_KEYS,
@@ -44,8 +69,8 @@ export const Streamgraph: React.FC<Props> = ({
   samples = 48,
   drawFrames = 96,
   startAt = 16,
-  backgroundColor = '#0a0b10',
-  paperColor = '#eef1f7',
+  backgroundColor = theme.bg,
+  paperColor = theme.body,
 }) => {
   const frame = useCurrentFrame();
   const {width, height} = useVideoConfig();

@@ -12,7 +12,28 @@ const {fontFamily: sans} = loadSans('normal', {weights: ['500', '700'], subsets:
  * out of it, and the whole frame kicks a few pixels. Any one alone is weak.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly accent: string;
+  readonly bg: string;
+  readonly ink: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  accent: '#ff5c39',
+  bg: '#0a0b10',
+  ink: '#ffffff',
+};
+
 type Props = {
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly stat?: string;
   readonly context?: string;
   readonly source?: string;
@@ -23,12 +44,13 @@ type Props = {
 };
 
 export const StatSlam: React.FC<Props> = ({
+  theme = THEME,
   stat = '73%',
   context = 'of viewers drop off in the first 3 seconds',
   source = 'Source: every analytics dashboard, ever',
-  backgroundColor = '#0a0b10',
-  color = '#ffffff',
-  accentColor = '#ff5c39',
+  backgroundColor = theme.bg,
+  color = theme.ink,
+  accentColor = theme.accent,
   impactFrame = 14,
 }) => {
   const frame = useCurrentFrame();

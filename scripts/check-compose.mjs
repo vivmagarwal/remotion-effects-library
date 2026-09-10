@@ -66,10 +66,11 @@ const nodeKit = loadKit();
  * monolith. Same files, different keying — if the composer treated the two
  * differently the gallery would silently drop every module.
  */
-const ALWAYS = ['core.md', 'house-style.md', 'project-setup.md'];
+const ALWAYS = ['core.md', 'house-style.md', 'theme.md', 'project-setup.md'];
 const viteKit = {
   coreMd: files['core.md'] ?? files['remotion-essentials.md'] ?? '',
   houseStyleMd: files['house-style.md'] ?? '',
+  themeMd: files['theme.md'] ?? '',
   projectSetupMd: files['project-setup.md'] ?? '',
   modules: Object.fromEntries(Object.entries(files).filter(([n]) => !ALWAYS.includes(n))),
 };

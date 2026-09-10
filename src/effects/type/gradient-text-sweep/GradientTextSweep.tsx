@@ -11,7 +11,28 @@ const {fontFamily} = loadFont('normal', {weights: ['800'], subsets: ['latin']});
  * sweep travels across.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bgDeep: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bgDeep: '#04050a',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly subtitle?: string;
   readonly colors?: readonly string[];
@@ -21,10 +42,12 @@ type Props = {
 };
 
 export const GradientTextSweep: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'Gradient',
   subtitle = 'background-clip: text',
   colors = ['#ff5c39', '#ffd166', '#c6ff3d', '#4cc9f0', '#c77dff', '#ff5c39'],
-  backgroundColor = '#04050a',
+  backgroundColor = theme.bgDeep,
   sweepSeconds = 3,
 }) => {
   const frame = useCurrentFrame();

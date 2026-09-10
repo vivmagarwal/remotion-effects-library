@@ -53,7 +53,30 @@ type Stage = {
   readonly note: string;
 };
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly accent: string;
+  readonly bgDeep: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  accent: '#ff5c39',
+  bgDeep: '#04050a',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly src?: string;
   /** Frames between stages. */
   readonly step?: number;
@@ -77,11 +100,13 @@ const STAGES: Stage[] = [
 ];
 
 export const FilmGrade: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   src = staticFile('footage/interview-raw.mp4'),
   step = 26,
   showStack = true,
-  accentColor = '#ff5c39',
-  backgroundColor = '#04050a',
+  accentColor = theme.accent,
+  backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
 

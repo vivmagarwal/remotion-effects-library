@@ -15,7 +15,34 @@ const {fontFamily} = loadFont('normal', {weights: ['800', '900'], subsets: ['lat
  * rather than a grid of tiles.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly display: string;
+  readonly accent: string;
+  readonly bgDeep: string;
+  readonly ink: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  display: fontFamily,
+  accent: '#ff5c39',
+  bgDeep: '#04050a',
+  ink: '#ffffff',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly word?: string;
   readonly caption?: string;
   /** Number of shards. */
@@ -43,16 +70,18 @@ const mixHex = (a: string, b: string, t: number): string => {
 };
 
 export const VoronoiShatter: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.display,
   word = 'BREAK',
   caption = 'Delaunay.from(points).voronoi(bounds)',
   count = 150,
   holdFrames = 34,
   shatterFrames = 92,
   push = 1.5,
-  plateColorA = '#ff5c39',
-  plateColorB = '#c77dff',
-  backgroundColor = '#04050a',
-  accentColor = '#ffffff',
+  plateColorA = theme.accent,
+  plateColorB = theme.series[4],
+  backgroundColor = theme.bgDeep,
+  accentColor = theme.ink,
 }) => {
   const frame = useCurrentFrame();
   const {width, height} = useVideoConfig();

@@ -55,7 +55,30 @@ type Word = {readonly w: string; readonly s: number; readonly e: number};
 
 type GapKind = 'micro' | 'breath' | 'beat' | 'sentence' | 'scene';
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly accent: string;
+  readonly bgDeep: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  accent: '#ff5c39',
+  bgDeep: '#04050a',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly src?: string;
   /** What plays during the designed hold. A still or a chapter card works too. */
   readonly beatSrc?: string;
@@ -126,6 +149,8 @@ const GAP_COLOR: Record<GapKind, string> = {
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
 export const DesignedPause: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   src = staticFile('footage/interview-raw.mp4'),
   beatSrc = staticFile('footage/broll-earth.mp4'),
   words = WORDS,
@@ -138,8 +163,8 @@ export const DesignedPause: React.FC<Props> = ({
   chapterKicker = 'THE PAUSE IS DESIGNED',
   chapterTitle = 'On the mission',
   showTimeline = true,
-  accentColor = '#ff5c39',
-  backgroundColor = '#04050a',
+  accentColor = theme.accent,
+  backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
   const {fps, width} = useVideoConfig();

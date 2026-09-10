@@ -50,7 +50,30 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets
 /** One word from an ASR response: text, start and end in SECONDS. */
 type Word = {readonly w: string; readonly s: number; readonly e: number};
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly accent: string;
+  readonly bgDeep: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  accent: '#ff5c39',
+  bgDeep: '#04050a',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly musicSrc?: string;
   readonly voiceSrc?: string;
   /** Word timings in seconds, relative to the start of `voiceSrc`. */
@@ -132,6 +155,8 @@ const envelopeOf = (
 const BUCKETS = 480;
 
 export const MusicDuck: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   musicSrc = staticFile('audio/music-bed.mp3'),
   voiceSrc = staticFile('audio/voice-interview.mp3'),
   words = WORDS,
@@ -141,8 +166,8 @@ export const MusicDuck: React.FC<Props> = ({
   holdMs = 800,
   bedDb = -6,
   showDebug = true,
-  accentColor = '#ff5c39',
-  backgroundColor = '#04050a',
+  accentColor = theme.accent,
+  backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
   const {fps, durationInFrames} = useVideoConfig();

@@ -21,7 +21,24 @@ type Layer = {
   readonly ridge: readonly (readonly [number, number])[];
 };
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it.
+ */
+type Theme = {
+  readonly display: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  display: fontFamily,
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly subtitle?: string;
   readonly layers?: readonly Layer[];
@@ -32,6 +49,8 @@ type Props = {
 };
 
 export const ParallaxLayers: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.display,
   title = 'DEPTH',
   subtitle = 'one rule: travel = depth × camera',
   layers = [

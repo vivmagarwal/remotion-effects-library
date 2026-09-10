@@ -14,7 +14,28 @@ const {fontFamily: sans} = loadSans('normal', {weights: ['500', '700'], subsets:
  * regular fade-in.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly accent: string;
+  readonly bg: string;
+  readonly ink: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  accent: '#ff5c39',
+  bg: '#0a0b10',
+  ink: '#ffffff',
+};
+
 type Props = {
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly quote?: string;
   readonly author?: string;
   readonly role?: string;
@@ -28,14 +49,15 @@ type Props = {
 };
 
 export const QuoteSlam: React.FC<Props> = ({
+  theme = THEME,
   quote = 'We stopped\nrendering videos\nand started\nprogramming them.',
   author = 'Jonny Burger',
   role = 'Creator of Remotion',
   lineStagger = 7,
   startAt = 12,
-  accentColor = '#ff5c39',
-  backgroundColor = '#0a0b10',
-  textColor = '#ffffff',
+  accentColor = theme.accent,
+  backgroundColor = theme.bg,
+  textColor = theme.ink,
   fontSize = 104,
 }) => {
   const frame = useCurrentFrame();

@@ -178,6 +178,7 @@ export const propsTable = (props) => {
 export const KIT_FILES = Object.freeze({
   core: ['core.md'],
   houseStyle: ['house-style.md'],
+  theme: ['theme.md'],
   projectSetup: ['project-setup.md'],
   video: ['video.md'],
   captions: ['captions.md'],
@@ -234,6 +235,7 @@ export const buildKit = (files) => {
   return {
     coreMd: pick('core'),
     houseStyleMd: pick('houseStyle'),
+    themeMd: pick('theme'),
     projectSetupMd: pick('projectSetup'),
     modules,
   };
@@ -307,7 +309,7 @@ ${installLine(meta.packages)}
 
 ${propsTable(props)}---
 
-${section(kit.houseStyleMd)}${section(kit.coreMd)}${included.map((k) => section(moduleText(mods, k))).join('')}## Definition of done
+${section(kit.houseStyleMd)}${section(kit.themeMd)}${section(kit.coreMd)}${included.map((k) => section(moduleText(mods, k))).join('')}## Definition of done
 
 - The exported component is named as the brief says; the **composition id is \`${meta.id}\`**
   (PascalCase component, kebab-case id). Register it in \`src/Root.tsx\` at

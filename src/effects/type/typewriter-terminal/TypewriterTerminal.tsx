@@ -14,7 +14,28 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['lat
 
 type Line = {readonly text: string; readonly prompt?: string; readonly color?: string};
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly mono: string;
+  readonly accent: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  mono: fontFamily,
+  accent: '#ff5c39',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly lines?: readonly Line[];
   /** Characters revealed per second. */
   readonly charsPerSecond?: number;
@@ -26,6 +47,8 @@ type Props = {
 };
 
 export const TypewriterTerminal: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.mono,
   lines = [
     {prompt: '$', text: 'npx create-video@latest', color: '#f2f2f4'},
     {text: 'Scaffolding a blank Remotion project…', color: '#6c6c78'},
@@ -36,7 +59,7 @@ export const TypewriterTerminal: React.FC<Props> = ({
   blinkFrames = 15,
   backgroundColor = '#0b0d12',
   color = '#f2f2f4',
-  accentColor = '#ff5c39',
+  accentColor = theme.accent,
 }) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();

@@ -22,7 +22,30 @@ type Body = {
   readonly hasRing?: boolean;
 };
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bgDeep: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bgDeep: '#04050a',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly bodies?: readonly Body[];
   readonly starName?: string;
   readonly starColor?: string;
@@ -43,6 +66,8 @@ type Props = {
 };
 
 export const OrbitSystem: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   bodies = [
     {name: 'Mercury', color: '#8d93a5', radius: 206, size: 30, speed: 2.6, phase: 0.4},
     {name: 'Venus', color: '#ffd166', radius: 324, size: 44, speed: 1.75, phase: 2.35},
@@ -51,8 +76,8 @@ export const OrbitSystem: React.FC<Props> = ({
     {name: 'Saturn', color: '#eef1f7', radius: 716, size: 64, speed: 0.58, phase: 1.15, hasRing: true},
   ],
   starName = 'SOL',
-  starColor = '#ffd166',
-  backgroundColor = '#04050a',
+  starColor = theme.series[3],
+  backgroundColor = theme.bgDeep,
   elevation = 17,
   showLabels = true,
   starCount = 520,

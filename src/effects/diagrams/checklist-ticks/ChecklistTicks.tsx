@@ -11,7 +11,32 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '600', '800'], subsets
  * reveal. The box fills, the label lifts, and a rule strikes through behind it.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+  readonly body: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+  body: '#eef1f7',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly items?: readonly string[];
   /** Frames between one row being ticked and the next. */
@@ -29,6 +54,8 @@ const CHECK_PATH = 'M5 12.5 L10 17.5 L19 7';
 const CHECK_LEN = 24;
 
 export const ChecklistTicks: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'Before you hit render',
   items = [
     'Every animation reads useCurrentFrame()',
@@ -40,9 +67,9 @@ export const ChecklistTicks: React.FC<Props> = ({
   stagger = 22,
   startAt = 20,
   drawFrames = 13,
-  accentColor = '#c6ff3d',
-  backgroundColor = '#0a0b10',
-  textColor = '#eef1f7',
+  accentColor = theme.series[2],
+  backgroundColor = theme.bg,
+  textColor = theme.body,
 }) => {
   const frame = useCurrentFrame();
   const {fps, width} = useVideoConfig();

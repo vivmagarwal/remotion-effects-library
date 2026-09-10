@@ -14,7 +14,32 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '700'], subsets: ['lat
 
 export type Word = {readonly text: string; readonly start: number; readonly end: number};
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+  readonly ink: string;
+  readonly muted: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+  ink: '#ffffff',
+  muted: '#8d93a5',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly lines?: readonly (readonly Word[])[];
   /**
    * Footage under the band. A subtitle judged on black is judged against
@@ -49,12 +74,14 @@ const LINES: Word[][] = [
 ];
 
 export const SubtitleBand: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   lines = LINES,
   src = staticFile('footage/broll-eva.mp4'),
-  baseColor = '#8d93a5',
-  fillColor = '#ffffff',
+  baseColor = theme.muted,
+  fillColor = theme.ink,
   bandColor = 'rgba(10,12,18,0.86)',
-  backgroundColor = '#0a0b10',
+  backgroundColor = theme.bg,
   transparent = false,
 }) => {
   const frame = useCurrentFrame();

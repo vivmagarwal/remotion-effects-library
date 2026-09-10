@@ -16,7 +16,30 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets
  * layout is identical on every frame and only the reveal is animated.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+  readonly body: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+  body: '#eef1f7',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly subtitle?: string;
   readonly names?: readonly string[];
@@ -44,6 +67,8 @@ const DEFAULT_MATRIX = [
 const DEFAULT_COLORS = ['#ff5c39', '#c6ff3d', '#c77dff', '#4cc9f0', '#ffd166', '#c2410c'];
 
 export const ChordDiagram: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'Where the audience goes next',
   subtitle = 'chord diagram · d3-chord',
   names = DEFAULT_NAMES,
@@ -51,8 +76,8 @@ export const ChordDiagram: React.FC<Props> = ({
   colors = DEFAULT_COLORS,
   stagger = 1.6,
   startAt = 20,
-  backgroundColor = '#0a0b10',
-  paperColor = '#eef1f7',
+  backgroundColor = theme.bg,
+  paperColor = theme.body,
 }) => {
   const frame = useCurrentFrame();
   const {width, height} = useVideoConfig();

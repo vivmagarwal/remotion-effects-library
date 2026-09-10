@@ -26,7 +26,30 @@ type PackNode = {
   readonly children?: readonly PackNode[];
 };
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+  readonly paper: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+  paper: '#f6f5f2',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly subtitle?: string;
   readonly data?: readonly Datum[];
@@ -61,14 +84,16 @@ const DEFAULT_PALETTE: Record<string, string> = {
 };
 
 export const BubblePack: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'What a Remotion video is made of',
   subtitle = 'circle packing · d3-hierarchy',
   data = DEFAULT_DATA,
   palette = DEFAULT_PALETTE,
   stagger = 5,
   startAt = 18,
-  backgroundColor = '#0a0b10',
-  paperColor = '#f6f5f2',
+  backgroundColor = theme.bg,
+  paperColor = theme.paper,
 }) => {
   const frame = useCurrentFrame();
   const {fps, width, height} = useVideoConfig();

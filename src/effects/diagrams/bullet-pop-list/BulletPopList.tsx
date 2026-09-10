@@ -13,7 +13,32 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets
 
 type Item = {readonly text: string; readonly note?: string};
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly accent: string;
+  readonly bg: string;
+  readonly paper: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  accent: '#ff5c39',
+  bg: '#0a0b10',
+  paper: '#f6f5f2',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly kicker?: string;
   readonly title?: string;
   readonly items?: readonly Item[];
@@ -30,6 +55,8 @@ type Props = {
 };
 
 export const BulletPopList: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   kicker = 'THE THREE WINDOWS',
   title = 'How to see thinking',
   items = [
@@ -41,9 +68,9 @@ export const BulletPopList: React.FC<Props> = ({
   stagger = 13,
   startAt = 26,
   travel = 64,
-  accentColor = '#ff5c39',
-  backgroundColor = '#0a0b10',
-  paperColor = '#f6f5f2',
+  accentColor = theme.accent,
+  backgroundColor = theme.bg,
+  paperColor = theme.paper,
   marker = 'dot',
 }) => {
   const frame = useCurrentFrame();

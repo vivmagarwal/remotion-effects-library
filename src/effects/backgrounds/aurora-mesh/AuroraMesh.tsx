@@ -20,7 +20,24 @@ type Blob = {
   readonly phase: number;
 };
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly bgDeep: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  bgDeep: '#04050a',
+};
+
 type Props = {
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly blobs?: readonly Blob[];
   readonly backgroundColor?: string;
   readonly blur?: number;
@@ -28,6 +45,7 @@ type Props = {
 };
 
 export const AuroraMesh: React.FC<Props> = ({
+  theme = THEME,
   blobs = [
     {color: '#c77dff', x: 28, y: 32, size: 62, travel: 11, speed: 0.31, phase: 0},
     {color: '#4cc9f0', x: 70, y: 28, size: 58, travel: 13, speed: 0.23, phase: 1.9},
@@ -35,7 +53,7 @@ export const AuroraMesh: React.FC<Props> = ({
     {color: '#c6ff3d', x: 33, y: 72, size: 60, travel: 12, speed: 0.19, phase: 5.1},
     {color: '#ffd166', x: 50, y: 50, size: 40, travel: 16, speed: 0.15, phase: 2.6},
   ],
-  backgroundColor = '#04050a',
+  backgroundColor = theme.bgDeep,
   blur = 90,
   grain = true,
 }) => {

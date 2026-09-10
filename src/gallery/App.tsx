@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {Player, Thumbnail} from '@remotion/player';
+import {THEMES, type Theme} from '../theme';
 import {effects} from '../registry.generated';
 import type {EffectEntry, EffectMeta} from '../types';
 import {briefOf, promptComposerReady, promptFor, sourceOf} from './sources';
@@ -306,6 +307,42 @@ const ThemeControl: React.FC<{mode: ThemeMode; onChange: (m: ThemeMode) => void;
   </div>
 );
 
+/* ── the video theme ─────────────────────────────────────────────────────── */
+
+/**
+ * Which theme the COMPOSITIONS render in — not the gallery's own light/dark
+ * chrome, which is `ThemeMode` above and a different thing entirely.
+ *
+ * `null` means no theme is passed at all, and that is not the same as passing
+ * the house one: each effect then uses its own inline default, the typeface and
+ * accent it was authored with. That is what you get from pasting a single file,
+ * so it is the default here. Picking a theme is what makes a SET agree.
+ *
+ * A context rather than a prop because it has to reach the card grid and the
+ * open sheet without threading through five components — and unlike an effect
+ * file, the gallery is allowed imports.
+ */
+const LookContext = React.createContext<Theme | null>(null);
+const useLook = () => React.useContext(LookContext);
+
+const LOOKS: readonly (readonly [string, string])[] = [
+  ['authored', 'As authored'],
+  ...Object.keys(THEMES).map((k) => [k, titleCase(k)] as const),
+];
+
+const LookControl: React.FC<{value: string; onChange: (v: string) => void}> = ({value, onChange}) => (
+  <label className="lookpick">
+    <span>Video theme</span>
+    <select value={value} onChange={(ev) => onChange(ev.target.value)}>
+      {LOOKS.map(([k, label]) => (
+        <option key={k} value={k}>
+          {label}
+        </option>
+      ))}
+    </select>
+  </label>
+);
+
 /* ── viewport gating ─────────────────────────────────────────────────────── */
 
 /**
@@ -368,6 +405,10 @@ const Card: React.FC<{
   copied: string | null;
 }> = ({entry, onOpen, onCopy, copied, familyCount = 0, familyOpen = false, onToggleFamily}) => {
   const {meta, Component, file, variantProps} = entry;
+  const look = useLook();
+  // The variant's props first, then the theme: a variant says WHICH picture,
+  // the theme says what it looks like, and they are never the same key.
+  const inputProps = look ? {...variantProps, theme: look} : variantProps;
   const [playing, setPlaying] = useState(false);
   const [stageRef, near] = useNearViewport<HTMLDivElement>(isGpu(meta) ? '150px' : '600px');
 
@@ -415,7 +456,7 @@ const Card: React.FC<{
               // Without this every variant renders the component's DEFAULTS. A
               // variant IS its props — 82 viz templates and 3 handheld presets
               // all shipped the same default picture under 85 different names.
-              inputProps={variantProps}
+              inputProps={inputProps}
               durationInFrames={meta.durationInFrames}
               compositionWidth={meta.width}
               compositionHeight={meta.height}
@@ -433,7 +474,7 @@ const Card: React.FC<{
               {near ? (
                 <Thumbnail
                   component={Component}
-                  inputProps={variantProps}
+                  inputProps={inputProps}
                   durationInFrames={meta.durationInFrames}
                   compositionWidth={meta.width}
                   compositionHeight={meta.height}
@@ -524,6 +565,8 @@ const Detail: React.FC<{
   onNext: (() => void) | null;
 }> = ({entry, onClose, onCopy, copied, onPrev, onNext}) => {
   const {meta, Component, file, variantProps} = entry;
+  const look = useLook();
+  const inputProps = look ? {...variantProps, theme: look} : variantProps;
   const m = mx(meta);
   const [tab, setTab] = useState<Tab>(() => {
     try {
@@ -637,7 +680,7 @@ const Detail: React.FC<{
           >
             <Player
               component={Component}
-              inputProps={variantProps}
+              inputProps={inputProps}
               durationInFrames={meta.durationInFrames}
               compositionWidth={meta.width}
               compositionHeight={meta.height}
@@ -817,6 +860,52 @@ const nearestTags = (q: string) => {
     .map(([t]) => t);
 };
 
+/* ── smoke harness ───────────────────────────────────────────────────────── */
+
+/**
+ * `#/frame/<id>` renders ONE composition, alone, at 1:1, at its poster frame.
+ *
+ * This exists to be screenshotted by `scripts/check-browser-frames.mjs`. Every
+ * gate in this repo renders through `renderStill`, and two bugs shipped that
+ * were only wrong in a browser: a `viewBox` measured in the wrong coordinate
+ * system (correct only while Remotion's 0x0 mount made the camera identity),
+ * and `<Player>`/`<Thumbnail>` called without `inputProps` (so 85 variants drew
+ * the component defaults). Both were invisible because no gate ever rendered
+ * the gallery's own path. This route is that path, made addressable.
+ *
+ * Deliberately bare: no card, no chrome, no scaling. The screenshot must be
+ * comparable to `out/poster/<id>.png` pixel for pixel.
+ */
+export const FrameHarness: React.FC<{entry: EffectEntry}> = ({entry}) => {
+  const {meta, Component, variantProps} = entry;
+  // Always "as authored": the gate compares this against a still rendered with
+  // no theme, so the harness must not pick one up from anywhere.
+  const inputProps = variantProps;
+  return (
+    <div
+      data-smoke-stage
+      style={{width: meta.width, height: meta.height, overflow: 'hidden', background: '#000'}}
+    >
+      <Thumbnail
+        component={Component}
+        inputProps={inputProps}
+        durationInFrames={meta.durationInFrames}
+        compositionWidth={meta.width}
+        compositionHeight={meta.height}
+        fps={meta.fps}
+        frameToDisplay={meta.posterFrame ?? meta.checkFrame}
+        style={{width: meta.width, height: meta.height}}
+        errorFallback={() => <div data-smoke-error>preview failed</div>}
+      />
+    </div>
+  );
+};
+
+export const frameIdFromHash = (hash: string): string | null => {
+  const m = hash.match(/^#\/frame\/([^?/]+)/);
+  return m ? decodeURIComponent(m[1]) : null;
+};
+
 /* ── app ─────────────────────────────────────────────────────────────────── */
 
 export const App: React.FC = () => {
@@ -826,6 +915,7 @@ export const App: React.FC = () => {
   const [toast, setToast] = useState<string | null>(null);
   const [showFacets, setShowFacets] = useState(false);
   const [mode, setMode] = useState<ThemeMode>(readMode);
+  const [look, setLook] = useState<string>('authored');
   const searchRef = useRef<HTMLInputElement>(null);
   const pushedRef = useRef(false);
 
@@ -1084,8 +1174,10 @@ export const App: React.FC = () => {
     </div>
   );
 
+  const lookTheme = look === 'authored' ? null : (THEMES[look] ?? null);
+
   return (
-    <>
+    <LookContext.Provider value={lookTheme}>
       <a className="skip" href="#effects">
         Skip to the effects
       </a>
@@ -1104,6 +1196,7 @@ export const App: React.FC = () => {
             </div>
             <div className="mastright">
               <div>
+                <LookControl value={look} onChange={setLook} />
                 <ThemeControl mode={mode} onChange={setMode} id="theme-top" />
                 <p className="theme-hint">
                   <kbd>t</kbd> cycles · <kbd>/</kbd> searches
@@ -1444,6 +1537,6 @@ export const App: React.FC = () => {
           {toast}
         </div>
       )}
-    </>
+    </LookContext.Provider>
   );
 };

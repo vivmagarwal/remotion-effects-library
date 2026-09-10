@@ -31,7 +31,36 @@ type City = {
 };
 type Route = {readonly from: string; readonly to: string};
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+  readonly bgDeep: string;
+  readonly body: string;
+  readonly pair: string;
+  readonly paperMuted: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+  bgDeep: '#04050a',
+  body: '#eef1f7',
+  pair: '#4cc9f0',
+  paperMuted: '#4a4e5a',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly subtitle?: string;
   readonly cities?: readonly City[];
@@ -79,6 +108,8 @@ const DEFAULT_ROUTES: Route[] = [
 ];
 
 export const GlobeArcs: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'Rendering, everywhere',
   subtitle = 'orthographic globe · d3-geo + geoInterpolate',
   cities = DEFAULT_CITIES,
@@ -87,11 +118,11 @@ export const GlobeArcs: React.FC<Props> = ({
   stagger = 9,
   drawFrames = 34,
   startAt = 16,
-  oceanColor = '#0a0b10',
-  landColor = '#4a4e5a',
-  arcColor = '#4cc9f0',
-  backgroundColor = '#04050a',
-  paperColor = '#eef1f7',
+  oceanColor = theme.bg,
+  landColor = theme.paperMuted,
+  arcColor = theme.pair,
+  backgroundColor = theme.bgDeep,
+  paperColor = theme.body,
 }) => {
   const frame = useCurrentFrame();
   const {width, height} = useVideoConfig();

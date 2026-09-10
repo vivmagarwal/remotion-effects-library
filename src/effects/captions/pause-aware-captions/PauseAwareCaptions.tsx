@@ -51,7 +51,32 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '600', '700'], subsets
 /** One word from an ASR response: text, start and end in SECONDS. */
 type Word = {readonly w: string; readonly s: number; readonly e: number};
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bgDeep: string;
+  readonly paper: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bgDeep: '#04050a',
+  paper: '#f6f5f2',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly src?: string;
   /** Word timings in seconds, in source time. */
   readonly words?: readonly Word[];
@@ -99,6 +124,8 @@ const WORDS: Word[] = [
 ];
 
 export const PauseAwareCaptions: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   src = staticFile('footage/interview-raw.mp4'),
   words = WORDS,
   windowStart = 5.32,
@@ -107,9 +134,9 @@ export const PauseAwareCaptions: React.FC<Props> = ({
   maxCharsPerLine = 42,
   holdFrames = 12,
   showDebug = true,
-  color = '#f6f5f2',
-  activeColor = '#c6ff3d',
-  backgroundColor = '#04050a',
+  color = theme.paper,
+  activeColor = theme.series[2],
+  backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();

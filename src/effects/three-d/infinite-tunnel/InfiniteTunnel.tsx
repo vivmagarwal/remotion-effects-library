@@ -16,7 +16,32 @@ const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['lat
  * seam — frame 0 and the last frame are the same place.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+  readonly bgDeep: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+  bgDeep: '#04050a',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly subtitle?: string;
   /** Radius of the loop the tunnel is bent around. */
@@ -55,6 +80,8 @@ const Flight: React.FC<{curve: THREE.Curve<THREE.Vector3>; t: number; roll: numb
 };
 
 export const InfiniteTunnel: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'HYPERSPACE',
   subtitle = 'TubeGeometry · BackSide · closed curve',
   loopRadius = 9,
@@ -62,9 +89,9 @@ export const InfiniteTunnel: React.FC<Props> = ({
   tubeRadius = 1.35,
   rings = 46,
   laps = 1,
-  wallColor = '#0a0b10',
-  glowColor = '#c77dff',
-  backgroundColor = '#04050a',
+  wallColor = theme.bg,
+  glowColor = theme.series[4],
+  backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
   const {width, height, durationInFrames} = useVideoConfig();

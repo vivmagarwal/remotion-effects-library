@@ -15,7 +15,28 @@ const {fontFamily: serif} = loadSerif('normal', {weights: ['400'], subsets: ['la
  * white-and-blue.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it.
+ */
+type Theme = {
+  readonly display: string;
+  readonly text: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  display: serif,
+  text: fontFamily,
+};
+
 type Props = {
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
+  /** CSS family for the UI chrome. Defaults to this file's sans, or the theme's text face. */
+  readonly uiFamily?: string;
+  /** CSS family for the greeting. Defaults to this file's serif, or the theme's display face. */
+  readonly greetingFamily?: string;
   readonly greeting?: string;
   readonly prompt?: string;
   readonly answer?: string;
@@ -52,7 +73,9 @@ const Sunburst: React.FC<{size: number; color: string; spin?: number}> = ({size,
 );
 
 export const ClaudeFullUi: React.FC<Props> = ({
-  greeting = 'How can I help you today?',
+  theme = THEME,
+  uiFamily = theme.text,
+  greetingFamily = theme.display,  greeting = 'How can I help you today?',
   prompt = 'can you render this as a video?',
   answer = 'Yes. Describe the frame as a React component, register it as a composition, and Remotion will render every frame and encode them into an MP4 for you.',
   model = 'Claude Opus 4.5',
@@ -112,7 +135,7 @@ export const ClaudeFullUi: React.FC<Props> = ({
   const zoom = 1 + (zoomWhileTyping - 1) * typingProgress * (1 - handover);
 
   return (
-    <AbsoluteFill name="Scene" style={{backgroundColor: '#141310', fontFamily, overflow: 'hidden'}}>
+    <AbsoluteFill name="Scene" style={{backgroundColor: '#141310', fontFamily: uiFamily, overflow: 'hidden'}}>
       <Interactive.Div
         name="Window"
         style={{
@@ -201,7 +224,7 @@ export const ClaudeFullUi: React.FC<Props> = ({
               <Sunburst size={62} color={accentColor} spin={Math.sin((frame / fps) * 0.5) * 6} />
               <Interactive.Div
                 name="Greeting"
-                style={{fontFamily: serif, fontSize: 62, color: '#2b2924', marginTop: 24}}
+                style={{fontFamily: greetingFamily, fontSize: 62, color: '#2b2924', marginTop: 24}}
               >
                 {greeting}
               </Interactive.Div>

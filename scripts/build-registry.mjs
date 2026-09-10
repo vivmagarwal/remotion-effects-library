@@ -107,6 +107,7 @@ const metas = entries.map((e) => {
 });
 writeFileSync(join(OUT_DIR, 'meta.json'), JSON.stringify(metas, null, 2) + '\n');
 
+
 console.log(
   `registry: ${entries.length} effects across ${new Set(entries.map((e) => e.category)).size} categories` +
     ` (out/meta.json: ${metas.length}, publicAssets: ${publicAssets.length})`,

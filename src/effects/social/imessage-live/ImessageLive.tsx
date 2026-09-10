@@ -19,7 +19,28 @@ type Turn = {
   readonly reply?: string;
 };
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly surface: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  surface: '#101218',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly contact?: string;
   readonly turns?: readonly Turn[];
   readonly charsPerSecond?: number;
@@ -77,6 +98,8 @@ const Dots: React.FC<{frame: number}> = ({frame}) => (
 );
 
 export const ImessageLive: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   contact = 'Sam',
   turns = DEFAULT_TURNS,
   charsPerSecond = 15,
@@ -86,7 +109,7 @@ export const ImessageLive: React.FC<Props> = ({
   enterFrames = 18,
   exitFrames = 24,
   accentColor = '#2f6bff',
-  backgroundColor = '#101218',
+  backgroundColor = theme.surface,
   transparent = false,
 }) => {
   const frame = useCurrentFrame();

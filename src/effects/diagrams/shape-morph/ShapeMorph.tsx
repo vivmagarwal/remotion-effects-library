@@ -78,7 +78,32 @@ const plus = (arm: number, lo: number, hi: number) => {
   ]);
 };
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+  readonly body: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+  body: '#eef1f7',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly shapes?: readonly {readonly name: string; readonly d: string}[];
   readonly caption?: string;
   /** Frames spent morphing from one shape to the next. */
@@ -98,13 +123,15 @@ const DEFAULT_SHAPES = [
 ];
 
 export const ShapeMorph: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   shapes = DEFAULT_SHAPES,
   caption = 'interpolatePath(p, a, b) · @remotion/paths',
   morphFrames = 26,
   holdFrames = 16,
-  accentColor = '#c77dff',
-  backgroundColor = '#0a0b10',
-  textColor = '#eef1f7',
+  accentColor = theme.series[4],
+  backgroundColor = theme.bg,
+  textColor = theme.body,
 }) => {
   const frame = useCurrentFrame();
   const {width, height} = useVideoConfig();

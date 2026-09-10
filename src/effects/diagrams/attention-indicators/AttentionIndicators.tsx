@@ -13,7 +13,30 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets
 
 type Row = {readonly label: string; readonly value: string};
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly rows?: readonly Row[];
   /** Frame the first indication fires. */
@@ -36,6 +59,8 @@ const smooth = (t: number) => {
 const thereAndBack = (t: number) => smooth(1 - Math.abs(2 * Math.min(1, Math.max(0, t)) - 1));
 
 export const AttentionIndicators: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'INDICATION',
   rows = [
     {label: 'Circumscribe', value: 'draws a box around it'},
@@ -46,8 +71,8 @@ export const AttentionIndicators: React.FC<Props> = ({
   startAt = 24,
   stagger = 58,
   runFrames = 46,
-  accentColor = '#ffd166',
-  backgroundColor = '#0a0b10',
+  accentColor = theme.series[3],
+  backgroundColor = theme.bg,
 }) => {
   const frame = useCurrentFrame();
   const {fps, width, height} = useVideoConfig();

@@ -11,7 +11,30 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '600', '800'], subsets
  * arrive together.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+  readonly pair: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+  pair: '#4cc9f0',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly values?: readonly number[];
   readonly labels?: readonly string[];
@@ -23,12 +46,14 @@ type Props = {
 };
 
 export const LineChartDraw: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'Weekly renders',
   values = [12, 19, 15, 28, 24, 41, 38, 56, 72, 68, 91, 118],
   labels = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
-  lineColor = '#4cc9f0',
-  fillColor = '#4cc9f0',
-  backgroundColor = '#0a0b10',
+  lineColor = theme.pair,
+  fillColor = theme.pair,
+  backgroundColor = theme.bg,
   drawSeconds = 2.2,
   unit = '',
 }) => {

@@ -10,7 +10,32 @@ const {fontFamily} = loadFont('normal', {weights: ['800'], subsets: ['latin']});
  * appears to be pushed up from behind a solid edge instead of just fading in.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly accent: string;
+  readonly bgDeep: string;
+  readonly ink: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  accent: '#ff5c39',
+  bgDeep: '#04050a',
+  ink: '#ffffff',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly words?: readonly string[];
   readonly accentIndex?: number;
   readonly backgroundColor?: string;
@@ -21,11 +46,13 @@ type Props = {
 };
 
 export const KineticWordReveal: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   words = ['Design', 'in', 'motion.'],
   accentIndex = 2,
-  backgroundColor = '#04050a',
-  color = '#ffffff',
-  accentColor = '#ff5c39',
+  backgroundColor = theme.bgDeep,
+  color = theme.ink,
+  accentColor = theme.accent,
   stagger = 6,
 }) => {
   const frame = useCurrentFrame();

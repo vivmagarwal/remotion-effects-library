@@ -11,7 +11,28 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '600', '700'], subsets
  * the label swaps. Miss the simultaneity and it reads as two separate events.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly pair: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  pair: '#4cc9f0',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly channel?: string;
   readonly subscribers?: string;
   readonly label?: string;
@@ -23,11 +44,13 @@ type Props = {
 };
 
 export const SubscribeButton: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   channel = 'Remotion',
   subscribers = '2.2K subscribers',
   label = 'Subscribe',
   subscribedLabel = 'Subscribed',
-  accentColor = '#4cc9f0',
+  accentColor = theme.pair,
   clickAt = 40,
   transparent = false,
 }) => {

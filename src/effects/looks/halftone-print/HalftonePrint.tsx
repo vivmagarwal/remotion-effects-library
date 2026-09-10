@@ -12,7 +12,32 @@ const {fontFamily} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
  * appears to resolve — which is far more interesting than a static screen.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly display: string;
+  readonly accent: string;
+  readonly paper: string;
+  readonly paperInk: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  display: fontFamily,
+  accent: '#ff5c39',
+  paper: '#f6f5f2',
+  paperInk: '#1d1b17',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly src?: string;
   readonly headline?: string;
   readonly kicker?: string;
@@ -23,12 +48,14 @@ type Props = {
 };
 
 export const HalftonePrint: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.display,
   src,
   headline = 'PRINTED',
   kicker = 'halftone + duotone',
-  inkDark = '#1d1b17',
-  inkLight = '#ff5c39',
-  paperColor = '#f6f5f2',
+  inkDark = theme.paperInk,
+  inkLight = theme.accent,
+  paperColor = theme.paper,
   angle = 25,
 }) => {
   const frame = useCurrentFrame();

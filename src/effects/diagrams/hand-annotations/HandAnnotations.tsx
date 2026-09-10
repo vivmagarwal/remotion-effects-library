@@ -12,7 +12,30 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['lat
  * library's own auto-play would render differently every time.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly paper: string;
+  readonly paperInk: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  paper: '#f6f5f2',
+  paperInk: '#1d1b17',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly kicker?: string;
   readonly headline?: string;
   /** Frames between one annotation starting and the next. */
@@ -25,13 +48,15 @@ type Props = {
 };
 
 export const HandAnnotations: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   kicker = 'MARKING UP THE BRIEF',
   headline = 'annotations',
   stagger = 22,
   drawFrames = 26,
   startAt = 18,
-  paperColor = '#f6f5f2',
-  inkColor = '#1d1b17',
+  paperColor = theme.paper,
+  inkColor = theme.paperInk,
 }) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();

@@ -11,7 +11,34 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '800'], subsets: ['lat
  * horizon the way a real plane does.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly display: string;
+  readonly accent: string;
+  readonly accentOnPaper: string;
+  readonly bgDeep: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  display: fontFamily,
+  accent: '#ff5c39',
+  accentOnPaper: '#c2410c',
+  bgDeep: '#04050a',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly subtitle?: string;
   readonly gridColor?: string;
@@ -26,13 +53,15 @@ type Props = {
 };
 
 export const RetroGridFloor: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.display,
   title = 'OVERDRIVE',
   subtitle = 'SIDE A · 1984',
-  gridColor = '#ff5c39',
-  sunTop = '#ffd166',
-  sunBottom = '#ff5c39',
-  skyTop = '#04050a',
-  skyBottom = '#c2410c',
+  gridColor = theme.accent,
+  sunTop = theme.series[3],
+  sunBottom = theme.accent,
+  skyTop = theme.bgDeep,
+  skyBottom = theme.accentOnPaper,
   speed = 0.55,
   columns = 26,
   rows = 22,

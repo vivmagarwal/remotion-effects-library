@@ -25,12 +25,38 @@ type Shot = {
   readonly panY?: number;
 };
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it.
+ */
+type Theme = {
+  readonly display: string;
+  readonly text: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  display: serif,
+  text: sans,
+};
+
 type Props = {
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
+  /** CSS family for the caption. Defaults to this file's serif, or the theme's display face. */
+  readonly captionFamily?: string;
+  /** CSS family for the credit line. Defaults to this file's sans, or the theme's text face. */
+  readonly creditFamily?: string;
   readonly shots?: readonly Shot[];
   readonly shotFrames?: number;
 };
 
-const Frame: React.FC<{shot: Shot; frames: number}> = ({shot, frames}) => {
+const Frame: React.FC<{
+  shot: Shot;
+  frames: number;
+  captionFamily: string;
+  creditFamily: string;
+}> = ({shot, frames, captionFamily, creditFamily}) => {
   const frame = useCurrentFrame();
 
   const p = interpolate(frame, [0, frames], [0, 1], {
@@ -69,7 +95,7 @@ const Frame: React.FC<{shot: Shot; frames: number}> = ({shot, frames}) => {
         <Interactive.Div
           name="Caption"
           style={{
-            fontFamily: serif,
+            fontFamily: captionFamily,
             fontSize: 78,
             color: '#ffffff',
             lineHeight: 1.15,
@@ -91,7 +117,7 @@ const Frame: React.FC<{shot: Shot; frames: number}> = ({shot, frames}) => {
           <Interactive.Div
             name="Credit"
             style={{
-              fontFamily: sans,
+              fontFamily: creditFamily,
               fontSize: 26,
               fontWeight: 500,
               letterSpacing: '0.2em',
@@ -113,6 +139,9 @@ const Frame: React.FC<{shot: Shot; frames: number}> = ({shot, frames}) => {
 };
 
 export const KenBurns: React.FC<Props> = ({
+  theme = THEME,
+  captionFamily = theme.display,
+  creditFamily = theme.text,
   shots = [
     {caption: 'The sun sets on the render farm.', credit: 'Plate 1', from: 1.06, to: 1.3, panX: -4, panY: 3},
     {caption: 'Ninety minutes later, it rises again.', credit: 'Plate 2', from: 1.34, to: 1.08, panX: 5, panY: -2},
@@ -122,7 +151,12 @@ export const KenBurns: React.FC<Props> = ({
   <Series>
     {shots.map((shot, i) => (
       <Series.Sequence key={i} durationInFrames={shotFrames} premountFor={30}>
-        <Frame shot={shot} frames={shotFrames} />
+        <Frame
+          shot={shot}
+          frames={shotFrames}
+          captionFamily={captionFamily}
+          creditFamily={creditFamily}
+        />
       </Series.Sequence>
     ))}
   </Series>

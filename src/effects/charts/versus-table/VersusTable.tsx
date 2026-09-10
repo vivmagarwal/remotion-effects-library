@@ -17,7 +17,30 @@ type Side = {
   readonly good: boolean;
 };
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+  readonly paper: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+  paper: '#f6f5f2',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly kicker?: string;
   readonly title?: string;
   readonly left?: Side;
@@ -31,6 +54,8 @@ type Props = {
 };
 
 export const VersusTable: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   kicker = 'TWO WAYS TO GRADE',
   title = 'Product only vs triangulated',
   left = {
@@ -47,8 +72,8 @@ export const VersusTable: React.FC<Props> = ({
   },
   stagger = 11,
   startAt = 34,
-  backgroundColor = '#0a0b10',
-  paperColor = '#f6f5f2',
+  backgroundColor = theme.bg,
+  paperColor = theme.paper,
   showVersusBadge = true,
 }) => {
   const frame = useCurrentFrame();

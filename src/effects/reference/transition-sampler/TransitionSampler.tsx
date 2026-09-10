@@ -29,7 +29,24 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['lat
  * clamped rather than trusted — see `hold` below.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it.
+ */
+type Theme = {
+  readonly text: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   /**
    * Frames each card is on screen. Clamped up to the minimum that keeps every
    * card visible on its own — see the note where it is used.
@@ -115,6 +132,8 @@ const Card: React.FC<{
 };
 
 export const TransitionSampler: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   holdFrames = 56,
   showCode = true,
   backdropColor = '#08070c',

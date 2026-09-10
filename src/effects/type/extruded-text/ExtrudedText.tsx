@@ -11,7 +11,34 @@ const {fontFamily} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
  * shadow is painted flat in screen space and stays flat however you turn it.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly display: string;
+  readonly accent: string;
+  readonly accentOnPaper: string;
+  readonly bg: string;
+  readonly paper: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  display: fontFamily,
+  accent: '#ff5c39',
+  accentOnPaper: '#c2410c',
+  bg: '#0a0b10',
+  paper: '#f6f5f2',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly text?: string;
   readonly caption?: string;
   /** How many extrusion layers. More = smoother side, slower. */
@@ -28,15 +55,17 @@ type Props = {
 };
 
 export const ExtrudedText: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.display,
   text = 'SOLID',
   caption = 'preserve-3d · one word, forty copies',
   depth = 40,
   step = 3,
-  faceColor = '#f6f5f2',
-  sideColor = '#ff5c39',
-  sideShadeColor = '#c2410c',
-  backgroundColor = '#0a0b10',
-  accentColor = '#ff5c39',
+  faceColor = theme.paper,
+  sideColor = theme.accent,
+  sideShadeColor = theme.accentOnPaper,
+  backgroundColor = theme.bg,
+  accentColor = theme.accent,
   swing = 26,
 }) => {
   const frame = useCurrentFrame();

@@ -13,7 +13,28 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets
 
 type Series = {readonly label: string; readonly color: string; readonly values: readonly number[]};
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly series?: readonly Series[];
   readonly ticks?: readonly string[];
@@ -23,6 +44,8 @@ type Props = {
 };
 
 export const BarChartRace: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'Monthly active projects',
   series = [
     {label: 'Remotion', color: '#4cc9f0', values: [12, 26, 44, 68, 96, 128]},
@@ -33,7 +56,7 @@ export const BarChartRace: React.FC<Props> = ({
   ],
   ticks = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
   framesPerStep = 34,
-  backgroundColor = '#0a0b10',
+  backgroundColor = theme.bg,
 }) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();

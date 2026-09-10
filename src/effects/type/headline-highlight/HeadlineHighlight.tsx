@@ -15,7 +15,24 @@ const {fontFamily: sans} = loadSans('normal', {weights: ['400', '600'], subsets:
 
 type Span = {readonly text: string; readonly highlight?: boolean};
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly kicker?: string;
   readonly headline?: readonly Span[];
   readonly byline?: string;
@@ -28,6 +45,7 @@ type Props = {
 };
 
 export const HeadlineHighlight: React.FC<Props> = ({
+  theme = THEME,
   kicker = 'Technology',
   headline = [
     {text: 'Remotion turns '},
@@ -38,7 +56,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
   ],
   byline = 'By Ada Lovelace, Grace Hopper',
   meta = 'Updated on: January 31, 2026 / 9:59 AM EST / Frame News',
-  highlightColor = '#ffd166',
+  highlightColor = theme.series[3],
   startAt = 24,
   strokeFrames = 20,
 }) => {

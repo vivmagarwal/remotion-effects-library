@@ -87,7 +87,28 @@ export type Shot = {
   readonly color?: string;
 };
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly display: string;
+  readonly bgDeep: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  display: fontFamily,
+  bgDeep: '#04050a',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   /** The shots, in order. Two or more. */
   readonly shots?: readonly Shot[];
   /**
@@ -196,13 +217,15 @@ const ShotView: React.FC<{shot: Shot}> = ({shot}) => {
 };
 
 export const WhipPan: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.display,
   shots = SHOTS,
   directions = ['left', 'up', 'right'],
   blur = 30,
   overshoot = 1,
   transitionFrames = 12,
   holdFrames = 52,
-  backgroundColor = '#04050a',
+  backgroundColor = theme.bgDeep,
 }) => {
   const timing = linearTiming({durationInFrames: transitionFrames});
 

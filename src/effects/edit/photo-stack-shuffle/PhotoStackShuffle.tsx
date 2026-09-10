@@ -13,7 +13,28 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '700'], subsets: ['lat
 
 type Card = {readonly src: string; readonly caption: string};
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly cards?: readonly Card[];
   /** Frames each card stays on top. */
   readonly holdFrames?: number;
@@ -33,10 +54,12 @@ const DEFAULT_CARDS: Card[] = [
 ];
 
 export const PhotoStackShuffle: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   cards = DEFAULT_CARDS,
   holdFrames = 46,
   flickFrames = 20,
-  backgroundColor = '#0a0b10',
+  backgroundColor = theme.bg,
   cardWidth = 900,
   showCaptions = true,
 }) => {

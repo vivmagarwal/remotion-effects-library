@@ -24,7 +24,30 @@ type Node = SimulationNodeDatum & {
 };
 type Link = SimulationLinkDatum<Node> & {readonly value: number};
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+  readonly body: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+  body: '#eef1f7',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly subtitle?: string;
   readonly colors?: readonly string[];
@@ -51,14 +74,16 @@ const CLUSTERS = [
 ];
 
 export const ForceNetwork: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'One package, many neighbours',
   subtitle = 'force-directed graph · d3-force, pre-ticked',
   colors = ['#ff5c39', '#4cc9f0', '#c77dff', '#ffd166', '#c6ff3d', '#c2410c'],
   ticks = 280,
   ticksPerFrame = 1.9,
   startAt = 12,
-  backgroundColor = '#0a0b10',
-  paperColor = '#eef1f7',
+  backgroundColor = theme.bg,
+  paperColor = theme.body,
 }) => {
   const frame = useCurrentFrame();
   const {width, height} = useVideoConfig();

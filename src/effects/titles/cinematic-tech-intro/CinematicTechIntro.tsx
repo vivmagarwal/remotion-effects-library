@@ -10,7 +10,30 @@ const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['lat
  * the detail that makes it feel expensive rather than merely animated.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bgDeep: string;
+  readonly pair: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bgDeep: '#04050a',
+  pair: '#4cc9f0',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly subtitle?: string;
   readonly accentColor?: string;
@@ -18,10 +41,12 @@ type Props = {
 };
 
 export const CinematicTechIntro: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'REMOTION',
   subtitle = 'video, written in React',
-  accentColor = '#4cc9f0',
-  backgroundColor = '#04050a',
+  accentColor = theme.pair,
+  backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
   const {fps, width, height} = useVideoConfig();

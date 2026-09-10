@@ -20,7 +20,28 @@ type Note = {
   readonly time: string;
 };
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bg: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bg: '#0a0b10',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly notes?: readonly Note[];
   /** Frames between one notification arriving and the next. */
   readonly stagger?: number;
@@ -32,6 +53,8 @@ const CARD_HEIGHT = 168;
 const GAP = 18;
 
 export const NotificationStack: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   notes = [
     {app: 'Mail', icon: '✉️', tint: '#4cc9f0', title: 'Render finished', body: 'out/video.mp4 — 1080p, 42s', time: 'now'},
     {app: 'Messages', icon: '💬', tint: '#c6ff3d', title: 'Sam', body: 'wait, you coded the whole video?', time: '1m ago'},
@@ -39,7 +62,7 @@ export const NotificationStack: React.FC<Props> = ({
     {app: 'Calendar', icon: '📅', tint: '#ff5c39', title: 'Design review', body: 'in 15 minutes · Studio B', time: '5m ago'},
   ],
   stagger = 14,
-  backgroundColor = '#0a0b10',
+  backgroundColor = theme.bg,
   transparent = false,
 }) => {
   const frame = useCurrentFrame();

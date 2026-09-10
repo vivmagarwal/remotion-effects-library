@@ -56,6 +56,7 @@ export const briefOf = (file: string): string => {
 type PromptKit = {
   coreMd?: string;
   houseStyleMd?: string;
+  themeMd?: string;
   projectSetupMd?: string;
   modules?: Record<string, string | undefined>;
 };

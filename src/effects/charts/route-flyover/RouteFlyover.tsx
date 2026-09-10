@@ -14,7 +14,32 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets
 
 type Stop = {readonly name: string; readonly at: number};
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly accent: string;
+  readonly bg: string;
+  readonly paperMuted: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  accent: '#ff5c39',
+  bg: '#0a0b10',
+  paperMuted: '#4a4e5a',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   /** The route, in the SVG's own coordinate space. */
   readonly route?: string;
   readonly stops?: readonly Stop[];
@@ -36,6 +61,8 @@ const DEFAULT_ROUTE =
   'M 210 610 C 380 520, 470 690, 640 560 S 830 330, 1010 420 S 1230 640, 1400 300';
 
 export const RouteFlyover: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   route = DEFAULT_ROUTE,
   stops = [
     {name: 'LISBON', at: 0},
@@ -47,9 +74,9 @@ export const RouteFlyover: React.FC<Props> = ({
   drawFrames = 150,
   startAt = 18,
   followZoom = 1.5,
-  landColor = '#4a4e5a',
-  seaColor = '#0a0b10',
-  routeColor = '#ff5c39',
+  landColor = theme.paperMuted,
+  seaColor = theme.bg,
+  routeColor = theme.accent,
 }) => {
   const frame = useCurrentFrame();
   const {fps, width, height} = useVideoConfig();

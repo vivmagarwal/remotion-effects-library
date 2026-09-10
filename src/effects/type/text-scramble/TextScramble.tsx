@@ -13,7 +13,32 @@ const GLYPHS = '!<>-_\\/[]{}—=+*^?#________ABCDEFGHIJKLMNOPQRSTUVWXYZ012345678
  * each frame of the render disagree with the last, and the text would boil.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bgDeep: string;
+  readonly body: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bgDeep: '#04050a',
+  body: '#eef1f7',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly text?: string;
   readonly subtitle?: string;
   /** Frames each character spends scrambling before it locks. */
@@ -26,13 +51,15 @@ type Props = {
 };
 
 export const TextScramble: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   text = 'DECRYPTING',
   subtitle = 'deterministic randomness, frame by frame',
   scrambleFrames = 18,
   stagger = 3,
-  backgroundColor = '#04050a',
-  color = '#eef1f7',
-  accentColor = '#c6ff3d',
+  backgroundColor = theme.bgDeep,
+  color = theme.body,
+  accentColor = theme.series[2],
 }) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();

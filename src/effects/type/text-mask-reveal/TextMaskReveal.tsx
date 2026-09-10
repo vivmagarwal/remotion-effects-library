@@ -11,7 +11,28 @@ const {fontFamily} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
  * background survives inside them.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly display: string;
+  readonly paper: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  display: fontFamily,
+  paper: '#f6f5f2',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly caption?: string;
   readonly backgroundColor?: string;
@@ -19,9 +40,11 @@ type Props = {
 };
 
 export const TextMaskReveal: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.display,
   title = 'INSIDE',
   caption = 'the type is the window',
-  backgroundColor = '#f6f5f2',
+  backgroundColor = theme.paper,
   blobs = [
     {color: '#ff5c39', x: 22, y: 40, r: 46},
     {color: '#4cc9f0', x: 68, y: 30, r: 40},

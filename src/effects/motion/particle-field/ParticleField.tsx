@@ -11,7 +11,28 @@ const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['lat
  * on its own. That property is what makes it renderable at all.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bgDeep: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bgDeep: '#04050a',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly count?: number;
   readonly title?: string;
   readonly subtitle?: string;
@@ -23,11 +44,13 @@ type Props = {
 };
 
 export const ParticleField: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   count = 220,
   title = 'PARTICLES',
   subtitle = 'closed-form, not simulated',
   colors = ['#4cc9f0', '#c77dff', '#ffd166', '#ffffff'],
-  backgroundColor = '#04050a',
+  backgroundColor = theme.bgDeep,
   speed = 0.22,
   connect = true,
 }) => {

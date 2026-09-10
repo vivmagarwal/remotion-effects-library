@@ -13,7 +13,28 @@ const {fontFamily: sans} = loadSans('normal', {weights: ['500'], subsets: ['lati
  * what reads as ink being laid down rather than as a wipe.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly bg: string;
+  readonly paper: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  bg: '#0a0b10',
+  paper: '#f6f5f2',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly lines?: readonly string[];
   readonly caption?: string;
   /** Frames between one character starting and the next. */
@@ -36,15 +57,16 @@ const smooth = (t: number) => {
 };
 
 export const WriteOnText: React.FC<Props> = ({
+  theme = THEME,
   lines = ['Write it on,', 'stroke first.'],
   caption = "MANIM'S Write() — OUTLINE, THEN FILL",
   stagger = 3.4,
   strokeFrames = 16,
   fillDelay = 5,
   startAt = 14,
-  inkColor = '#f6f5f2',
-  strokeColor = '#ffd166',
-  backgroundColor = '#0a0b10',
+  inkColor = theme.paper,
+  strokeColor = theme.series[3],
+  backgroundColor = theme.bg,
   fontSize = 168,
 }) => {
   const frame = useCurrentFrame();

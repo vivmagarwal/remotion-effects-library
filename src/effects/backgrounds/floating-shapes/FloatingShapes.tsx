@@ -8,7 +8,24 @@ import {AbsoluteFill, interpolate, random, useCurrentFrame, useVideoConfig} from
  * modulo of the frame — nothing ever needs to be recycled.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly bg: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  bg: '#0a0b10',
+};
+
 type Props = {
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly count?: number;
   readonly colors?: readonly string[];
   readonly backgroundColor?: string;
@@ -20,9 +37,10 @@ type Props = {
 const SHAPES = ['circle', 'square', 'triangle', 'ring', 'cross'] as const;
 
 export const FloatingShapes: React.FC<Props> = ({
+  theme = THEME,
   count = 46,
   colors = ['#ff5c39', '#4cc9f0', '#ffd166', '#c6ff3d', '#c77dff', '#c2410c'],
-  backgroundColor = '#0a0b10',
+  backgroundColor = theme.bg,
   speed = 0.5,
   maxSize = 130,
 }) => {

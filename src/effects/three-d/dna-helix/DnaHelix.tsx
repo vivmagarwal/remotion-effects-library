@@ -36,7 +36,30 @@ class HelixCurve extends THREE.Curve<THREE.Vector3> {
   }
 }
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly text: string;
+  readonly bgDeep: string;
+  readonly pair: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+  bgDeep: '#04050a',
+  pair: '#4cc9f0',
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly subtitle?: string;
   readonly radius?: number;
@@ -51,15 +74,17 @@ type Props = {
 };
 
 export const DnaHelix: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'SEQUENCE',
   subtitle = 'custom Curve · quaternion alignment',
   radius = 1.15,
   helixHeight = 7.4,
   turns = 2.6,
   basePairs = 40,
-  strandColor = '#4cc9f0',
+  strandColor = theme.pair,
   pairColors = ['#ff5c39', '#c6ff3d'],
-  backgroundColor = '#04050a',
+  backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();

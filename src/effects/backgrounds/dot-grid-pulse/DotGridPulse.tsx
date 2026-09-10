@@ -8,7 +8,26 @@ import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
  * a thousand dots with no extra work.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly bg: string;
+  readonly pair: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  bg: '#0a0b10',
+  pair: '#4cc9f0',
+};
+
 type Props = {
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly columns?: number;
   readonly rows?: number;
   readonly dotSize?: number;
@@ -22,6 +41,7 @@ type Props = {
 };
 
 export const DotGridPulse: React.FC<Props> = ({
+  theme = THEME,
   columns = 42,
   rows = 24,
   dotSize = 7,
@@ -29,8 +49,8 @@ export const DotGridPulse: React.FC<Props> = ({
   // effective 0.077 against #0a0b10 — a grid that is not there. The grid has
   // to be visible for the wave to be a wave THROUGH something.
   color = 'rgba(141,147,165,0.5)',
-  accentColor = '#4cc9f0',
-  backgroundColor = '#0a0b10',
+  accentColor = theme.pair,
+  backgroundColor = theme.bg,
   frequency = 0.28,
   // 22, not 13. The grid is 42 cells wide, so a 13-cell reach lights about a
   // third of it and the rest of the frame is dead field.

@@ -116,3 +116,63 @@ export const luminanceStats = (img) => {
     pixels: n,
   };
 };
+
+/**
+ * Mean absolute luminance difference between two decoded PNGs, 0..1, measured
+ * on a coarse grid rather than per pixel.
+ *
+ * Used to compare the same frame rendered two ways — Remotion's `renderStill`
+ * and a real browser. They are the same Chrome running the same React tree, so
+ * the only honest difference is antialiasing and font hinting.
+ *
+ * The downsample is the whole point. A per-pixel mean is dominated by glyph
+ * edges: `quote-slam` scored 0.024 with the two frames pixel-identical in
+ * content — every bit of it a one-pixel halo around large serif type. Averaging
+ * into GRID x GRID blocks first makes a one-pixel edge worth about 1/500th of
+ * its block and leaves gross geometry untouched, which is the thing worth
+ * catching: a diagram translated by half the frame moves whole blocks.
+ *
+ * Returns `null` when the dimensions differ, because then there is nothing
+ * meaningful to compare and the caller should say so instead of reporting 1.
+ */
+const GRID = 64;
+
+export const meanAbsDiff = (a, b) => {
+  if (a.width !== b.width || a.height !== b.height) return null;
+  const ga = blockAverage(a, GRID);
+  const gb = blockAverage(b, GRID);
+  let sum = 0;
+  for (let i = 0; i < ga.length; i++) sum += Math.abs(ga[i] - gb[i]);
+  return sum / ga.length;
+};
+
+/** Mean luma of each cell of a `n` x `n` grid over the image. */
+const blockAverage = (img, n) => {
+  const y = toLuma(img);
+  const {width, height} = img;
+  const sums = new Float64Array(n * n);
+  const counts = new Float64Array(n * n);
+  for (let py = 0; py < height; py++) {
+    const row = Math.min(n - 1, Math.floor((py / height) * n)) * n;
+    for (let px = 0; px < width; px++) {
+      const cell = row + Math.min(n - 1, Math.floor((px / width) * n));
+      sums[cell] += y[py * width + px];
+      counts[cell]++;
+    }
+  }
+  for (let i = 0; i < sums.length; i++) sums[i] /= counts[i] || 1;
+  return sums;
+};
+
+/** Rec. 709 luma per pixel, 0..1. Shared by the stats and the diff. */
+const toLuma = (img) => {
+  const {width, height, channels, data} = img;
+  const out = new Float64Array(width * height);
+  for (let i = 0, p = 0; i < out.length; i++, p += channels) {
+    const r = data[p] / 255;
+    const g = channels >= 3 ? data[p + 1] / 255 : r;
+    const b = channels >= 3 ? data[p + 2] / 255 : r;
+    out[i] = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  }
+  return out;
+};

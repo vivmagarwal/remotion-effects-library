@@ -11,7 +11,30 @@ const {fontFamily} = loadFont('normal', {weights: ['700', '900'], subsets: ['lat
  * foreground actually having transparency.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it — the
+ * vocabulary is shared by NAME rather than by an import, which is what keeps
+ * this file runnable on its own.
+ */
+type Theme = {
+  readonly display: string;
+  readonly ink: string;
+  readonly series: readonly string[];
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  display: fontFamily,
+  ink: '#ffffff',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   /** The full scene, painted underneath everything. */
   readonly backgroundSrc?: string;
   /** The SAME scene's foreground, with a transparent background. */
@@ -29,6 +52,8 @@ type Props = {
 };
 
 export const TextBehindSubject: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.display,
   backgroundSrc,
   subjectSrc,
   text = 'AFTER DARK',
@@ -36,8 +61,8 @@ export const TextBehindSubject: React.FC<Props> = ({
   riseFrames = 34,
   startAt = 12,
   pushTo = 1.08,
-  textColor = '#ffffff',
-  accentColor = '#ffd166',
+  textColor = theme.ink,
+  accentColor = theme.series[3],
   fontSize = 300,
 }) => {
   const frame = useCurrentFrame();

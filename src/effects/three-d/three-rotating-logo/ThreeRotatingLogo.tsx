@@ -14,7 +14,24 @@ const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['lat
  * `useCurrentFrame()`, or the render flickers.
  */
 
+/**
+ * The shared theme, narrowed to the tokens this file uses. TypeScript is
+ * structural, so the library's full theme object is assignable to it.
+ */
+type Theme = {
+  readonly text: string;
+};
+
+/** The house values. Pass a `theme` prop to restyle every effect at once. */
+const THEME: Theme = {
+  text: fontFamily,
+};
+
 type Props = {
+  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  readonly fontFamily?: string;
+  /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
+  readonly theme?: Theme;
   readonly title?: string;
   readonly subtitle?: string;
   readonly color?: string;
@@ -25,6 +42,8 @@ type Props = {
 };
 
 export const ThreeRotatingLogo: React.FC<Props> = ({
+  theme = THEME,
+  fontFamily = theme.text,
   title = 'DIMENSION',
   subtitle = 'three.js, frame-driven',
   color = '#7c5cff',
