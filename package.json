@@ -69,7 +69,7 @@
     "d3-sankey": "^0.12.3",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
-    "edododraw": "file:vendor/edododraw-0.15.0.tgz",
+    "edododraw": "^0.15.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "remotion": "^4.0.522",

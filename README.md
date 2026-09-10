@@ -258,10 +258,7 @@ Four things to know before you copy one of these effects:
   magnifies the sketchiness along with everything else. `defaults { node { roughness: 0.35 } edge {
   roughness: 0.35 } }` is the fix that needs no upstream change.
 
-The npm registry currently serves edododraw **0.12.1**. This library needs **0.15.0**, which is not
-published yet, so `package.json` installs it from `vendor/edododraw-0.15.0.tgz` — see `vendor/README.md`
-for the two fixes it carries and how to remove it after publishing. Everything above was verified
-against 0.15.0.
+Everything above was verified against edododraw **0.15.0**, which `package.json` pins as `^0.15.0`.
 
 The first of those fixes is worth reading even if you never touch edododraw, because the failure had no
 symptom. The package populates its visualization registry by **import side effect**, and its
