@@ -116,7 +116,7 @@ export const Audiogram: React.FC<Props> = ({
       name="Scene"
       style={{
         backgroundColor,
-        backgroundImage: `radial-gradient(ellipse at 50% 22%, ${accentColor}18 0%, transparent 62%)`,
+        backgroundImage: `radial-gradient(ellipse at 50% 24%, ${accentColor}2e 0%, transparent 66%)`,
         alignItems: 'center',
         padding: '120px 90px',
         fontFamily,
@@ -128,9 +128,13 @@ export const Audiogram: React.FC<Props> = ({
       <Interactive.Div
         name="Cover"
         style={{
-          width: 420,
-          height: 420,
-          borderRadius: 34,
+          // 520, not 420. Everything in this file was sized for a 1080-tall
+          // frame and the composition is 1920 — the fixed rows added up to
+          // about 800px, so 1100px of the card was the empty flex gap in the
+          // middle and it read as an unfinished layout.
+          width: 520,
+          height: 520,
+          borderRadius: 42,
           backgroundImage: `linear-gradient(145deg, ${accentColor}, #c6ff3d 55%, #4cc9f0)`,
           display: 'flex',
           alignItems: 'center',
@@ -141,7 +145,7 @@ export const Audiogram: React.FC<Props> = ({
           flexShrink: 0,
         }}
       >
-        <span style={{fontSize: 150, fontWeight: 800, color: '#04050a', letterSpacing: '-0.05em'}}>
+        <span style={{fontSize: 186, fontWeight: 800, color: '#04050a', letterSpacing: '-0.05em'}}>
           ▮▮
         </span>
       </Interactive.Div>
@@ -149,7 +153,7 @@ export const Audiogram: React.FC<Props> = ({
       <Interactive.Div
         name="Show"
         style={{
-          fontSize: 30,
+          fontSize: 36,
           fontWeight: 700,
           letterSpacing: '0.34em',
           marginRight: '-0.34em',
@@ -166,10 +170,10 @@ export const Audiogram: React.FC<Props> = ({
       <Interactive.Div
         name="Episode"
         style={{
-          fontSize: 38,
+          fontSize: 46,
           fontWeight: 500,
           color: '#8d93a5',
-          marginTop: 12,
+          marginTop: 14,
           opacity: interpolate(frame, [16, 34], [0, 1], {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp',
@@ -188,8 +192,8 @@ export const Audiogram: React.FC<Props> = ({
           flexWrap: 'wrap',
           alignContent: 'center',
           justifyContent: 'center',
-          gap: '0 22px',
-          maxWidth: 900,
+          gap: '10px 26px',
+          maxWidth: 940,
           textAlign: 'center',
         }}
       >
@@ -199,9 +203,9 @@ export const Audiogram: React.FC<Props> = ({
             <span
               key={i}
               style={{
-                fontSize: 66,
+                fontSize: 88,
                 fontWeight: 800,
-                lineHeight: 1.25,
+                lineHeight: 1.2,
                 color: isActive ? accentColor : '#ffffff',
                 opacity: time >= w.start ? 1 : 0.34,
               }}
@@ -213,16 +217,16 @@ export const Audiogram: React.FC<Props> = ({
       </Interactive.Div>
 
       {/* Symmetric waveform: one bar centred on the axis, growing both ways. */}
-      <div style={{display: 'flex', alignItems: 'center', gap: 10, height: 220, flexShrink: 0}}>
+      <div style={{display: 'flex', alignItems: 'center', gap: 13, height: 300, flexShrink: 0}}>
         {used.map((v, i) => {
           const shaped = Math.pow(v, gamma);
           return (
             <div
               key={i}
               style={{
-                width: 14,
-                height: Math.max(14, shaped * 430),
-                borderRadius: 7,
+                width: 19,
+                height: Math.max(19, shaped * 560),
+                borderRadius: 10,
                 backgroundColor: accentColor,
                 opacity: 0.4 + shaped * 0.6,
               }}
@@ -231,11 +235,11 @@ export const Audiogram: React.FC<Props> = ({
         })}
       </div>
 
-      <div style={{width: '100%', maxWidth: 900, height: 5, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.12)', marginTop: 34, flexShrink: 0}}>
+      <div style={{width: '100%', maxWidth: 940, height: 7, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.12)', marginTop: 40, flexShrink: 0}}>
         <div
           style={{
             height: '100%',
-            borderRadius: 3,
+            borderRadius: 4,
             backgroundColor: accentColor,
             width: `${interpolate(frame, [0, durationInFrames], [0, 100], {
               extrapolateLeft: 'clamp',

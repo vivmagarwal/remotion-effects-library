@@ -10,5 +10,8 @@ export const meta: EffectMeta = {
   width: 1080, height: 1920, fps: 30, durationInFrames: 180,
   packages: ['remotion', '@remotion/media', '@remotion/media-utils', '@remotion/google-fonts'],
   difficulty: 'intermediate', checkFrame: 74,
+  // 110 is mid-page with the emphasised word lit and the spectrum at its
+  // widest. 74 lands between caption pages, where the card shows two words.
+  posterFrame: 110,
   requires: ['audio', 'transcript'], ground: 'dark', audience: ['podcaster', 'youtuber', 'agency'],
 };

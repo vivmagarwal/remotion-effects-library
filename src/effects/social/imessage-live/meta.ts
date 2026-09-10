@@ -9,6 +9,8 @@ export const meta: EffectMeta = {
   concepts: ['derived schedule', 'character budget typing', 'programmable in/out', 'phase-shifted sine'],
   width: 1080, height: 1920, fps: 30, durationInFrames: 440,
   packages: ['remotion', '@remotion/google-fonts'],
-  difficulty: 'advanced', checkFrame: 40, posterFrame: 300,
+  difficulty: 'advanced', checkFrame: 40, // 430, not 300: the thread is still filling at 300. The last frame before the
+  // composition ends is the only one where the conversation is a conversation.
+ posterFrame: 430,
   ground: 'transparent', audience: ['youtuber', 'agency'],
 };

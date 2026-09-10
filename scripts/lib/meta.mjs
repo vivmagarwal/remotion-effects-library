@@ -118,7 +118,24 @@ const lineOf = (source, index) => source.slice(0, index).split('\n').length;
  */
 export const parseMeta = (source, label = 'meta.ts') => {
   const lit = metaLiteral(source);
-  if (!lit) throw new Error(`${label}: no \`export const meta = {…}\` found`);
+  if (!lit) {
+    // Almost always one cause, and "no meta found" points nowhere near it: an
+    // unescaped apostrophe inside a single-quoted description ("the band's own
+    // opacity") closes the string early, so the brace scan never balances.
+    // Say that, rather than making the reader diff the file against a working one.
+    // A word character, an apostrophe, a word character. An ESCAPED one has a
+    // backslash before the quote, which is not a word character, so this only
+    // finds the ones that actually break the scan.
+    const apostrophe = /\w'\w/.exec(source);
+    throw new Error(
+      `${label}: no \`export const meta = {…}\` found` +
+        (apostrophe
+          ? `\n  Likely cause: an unescaped ' inside a single-quoted string, near:\n    …${source
+              .slice(Math.max(0, apostrophe.index - 30), apostrophe.index + 60)
+              .replace(/\n/g, ' ')}…\n  Write it as \\' .`
+          : ''),
+    );
+  }
 
   const out = {};
   const keyLines = {};

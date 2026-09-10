@@ -10,6 +10,8 @@ export const meta: EffectMeta = {
   concepts: ['procedural grid', 'travelling wave', 'closed-form motion'],
   width: 1920, height: 1080, fps: 30, durationInFrames: 240,
   packages: ['remotion'],
-  difficulty: 'intermediate', checkFrame: 96, posterFrame: 90,
+  difficulty: 'intermediate', checkFrame: 96, // 150, not 90: the pulse is a travelling ring and at 90 it has barely left the
+  // origin, so the card was a field of near-black dots.
+ posterFrame: 150,
   ground: 'both', audience: ['saas', 'developer'],
 };

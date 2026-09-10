@@ -9,6 +9,9 @@ export const meta: EffectMeta = {
   concepts: ['Freeze', 'staggered entrance', 'paint order'],
   width: 1920, height: 1080, fps: 30, durationInFrames: 180,
   packages: ['remotion', '@remotion/google-fonts'],
-  difficulty: 'intermediate', checkFrame: 24, posterFrame: 68,
+  difficulty: 'intermediate', checkFrame: 24, // 90, not 68: the word slides in from the left and at 68 the V is still off
+  // frame, so the card read "ELOCITY". At 90 it is centred with the whole
+  // trail behind it.
+ posterFrame: 90,
   ground: 'dark', audience: ['youtuber', 'agency'],
 };

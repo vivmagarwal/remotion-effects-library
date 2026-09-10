@@ -1,6 +1,5 @@
 import type {EffectMeta} from '../../../types';
 
-/** poster: frame 90 — the star is a distinctive silhouette; the polygon at 50 is indistinguishable from a circle. */
 export const meta: EffectMeta = {
   id: 'shape-morph', name: 'Shape Morph', category: 'diagrams',
   tagline: 'One silhouette becoming another, vertex by vertex.',
@@ -10,6 +9,11 @@ export const meta: EffectMeta = {
   concepts: ['interpolatePath', 'matched vertex counts', 'progress-gated reveal'],
   width: 1920, height: 1080, fps: 30, durationInFrames: 180,
   packages: ['remotion', '@remotion/paths', '@remotion/google-fonts'],
-  difficulty: 'intermediate', checkFrame: 34, posterFrame: 90,
+  difficulty: 'intermediate', checkFrame: 34,
+  // 112, not 90 or 130. Those are the settled star and the settled plus, and a
+  // card showing a shape you could have drawn directly says nothing about
+  // morphing. 112 is between them — the only kind of frame this effect can
+  // produce and a static drawing cannot.
+  posterFrame: 112,
   ground: 'both', audience: ['educator', 'developer'],
 };

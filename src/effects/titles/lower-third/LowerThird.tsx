@@ -1,4 +1,5 @@
-import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Easing, Interactive, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {Video} from '@remotion/media';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
 const {fontFamily} = loadFont('normal', {weights: ['500', '600', '800'], subsets: ['latin']});
@@ -25,6 +26,13 @@ type Props = {
   readonly x?: number;
   readonly y?: number;
   readonly skew?: number;
+  /**
+   * Footage under the plate. A lower third is never seen on black in the wild,
+   * and judging one on black is how you ship a plate that has too little
+   * contrast against the shot it will actually sit on. Set to null for a
+   * transparent overlay render.
+   */
+  readonly src?: string | null;
   readonly transparent?: boolean;
 };
 
@@ -40,6 +48,7 @@ export const LowerThird: React.FC<Props> = ({
   x = 140,
   y = 190,
   skew = -12,
+  src = staticFile('footage/interview-raw.mp4'),
   transparent = false,
 }) => {
   const frame = useCurrentFrame();
@@ -77,12 +86,33 @@ export const LowerThird: React.FC<Props> = ({
       name="Scene"
       style={{
         backgroundColor: transparent ? 'transparent' : '#04050a',
-        backgroundImage: transparent
-          ? undefined
-          : 'radial-gradient(ellipse at 30% 80%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 62%)',
+        backgroundImage:
+          transparent || src
+            ? undefined
+            : 'radial-gradient(ellipse at 30% 80%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 62%)',
         fontFamily,
+        overflow: 'hidden',
       }}
     >
+      {src && !transparent ? (
+        <AbsoluteFill>
+          {/* objectFit is a prop on <Video>, not a style: it draws to a canvas. */}
+          <Video src={src} objectFit="cover" muted loop style={{width: '100%', height: '100%'}} />
+          {/* A scrim only under the plate. A lower third must not dim the shot —
+              that is the one thing a broadcast operator will not forgive. */}
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: 520,
+              backgroundImage:
+                'linear-gradient(to top, rgba(4,5,10,0.7) 0%, rgba(4,5,10,0.3) 46%, rgba(4,5,10,0) 100%)',
+            }}
+          />
+        </AbsoluteFill>
+      ) : null}
       <div
         style={{
           position: 'absolute',

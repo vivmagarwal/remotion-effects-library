@@ -1,4 +1,5 @@
-import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Easing, Interactive, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {Video} from '@remotion/media';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
 const {fontFamily} = loadFont('normal', {weights: ['500', '700'], subsets: ['latin']});
@@ -15,6 +16,13 @@ export type Word = {readonly text: string; readonly start: number; readonly end:
 
 type Props = {
   readonly lines?: readonly (readonly Word[])[];
+  /**
+   * Footage under the band. A subtitle judged on black is judged against
+   * nothing — the band's own opacity is the only thing standing between the
+   * words and whatever the shot does, and on black that decision is free. Set
+   * to null (or `transparent`) for an alpha overlay render.
+   */
+  readonly src?: string | null;
   readonly baseColor?: string;
   readonly fillColor?: string;
   readonly bandColor?: string;
@@ -42,6 +50,7 @@ const LINES: Word[][] = [
 
 export const SubtitleBand: React.FC<Props> = ({
   lines = LINES,
+  src = staticFile('footage/broll-eva.mp4'),
   baseColor = '#8d93a5',
   fillColor = '#ffffff',
   bandColor = 'rgba(10,12,18,0.86)',
@@ -89,8 +98,15 @@ export const SubtitleBand: React.FC<Props> = ({
         alignItems: 'center',
         paddingBottom: 110,
         fontFamily,
+        overflow: 'hidden',
       }}
     >
+      {src && !transparent ? (
+        <AbsoluteFill>
+          {/* objectFit is a prop on <Video>, not a style: it draws to a canvas. */}
+          <Video src={src} objectFit="cover" muted loop style={{width: '100%', height: '100%'}} />
+        </AbsoluteFill>
+      ) : null}
       <Interactive.Div
         name="Caption band"
         style={{

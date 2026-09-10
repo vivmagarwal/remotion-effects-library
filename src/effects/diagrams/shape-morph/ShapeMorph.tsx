@@ -125,21 +125,27 @@ export const ShapeMorph: React.FC<Props> = ({
     [p, shapes, index, next],
   );
 
-  const SIZE = Math.min(width * 0.3, height * 0.54);
+  // 0.42 of the width, not 0.3. At 0.3 the shape occupies about a ninth of the
+  // frame's area, and on a gallery card that is a small purple mark on black —
+  // an effect that reads as nothing until you open it full size.
+  const SIZE = Math.min(width * 0.42, height * 0.62);
 
   return (
     <AbsoluteFill name="Scene" style={{backgroundColor, fontFamily, overflow: 'hidden'}}>
       <AbsoluteFill
-        style={{backgroundImage: `radial-gradient(ellipse at 50% 46%, ${accentColor}1f 0%, transparent 62%)`}}
+        style={{backgroundImage: `radial-gradient(ellipse at 50% 46%, ${accentColor}33 0%, transparent 64%)`}}
       />
 
       <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center'}}>
         <svg width={SIZE} height={SIZE} viewBox="0 0 200 200" style={{overflow: 'visible'}}>
           <path
             d={d}
-            fill={`${accentColor}2e`}
+            // The fill was 2e (18% alpha) on a near-black ground, which is a
+            // 1.2:1 shape. Interpolating a polygon is only legible if you can
+            // see the polygon.
+            fill={`${accentColor}52`}
             stroke={accentColor}
-            strokeWidth={3}
+            strokeWidth={4.5}
             strokeLinejoin="round"
           />
           {/* The vertices, so you can see that the points correspond one-to-one
@@ -154,7 +160,7 @@ export const ShapeMorph: React.FC<Props> = ({
               return acc;
             }, [])
             .map(([x, y], i) => (
-              <circle key={i} cx={x} cy={y} r={3.2} fill={textColor} opacity={0.85} />
+              <circle key={i} cx={x} cy={y} r={3.6} fill={textColor} opacity={0.92} />
             ))}
         </svg>
 
