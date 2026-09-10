@@ -42,6 +42,22 @@ credentials, requestInit, delayRenderRetries, delayRenderTimeoutInMilliseconds
 fallbackOffthreadVideoProps, disallowFallbackToOffthreadVideo
 ```
 
+**`objectFit` is a PROP, never a style.** `<Video>` decodes into a canvas, so CSS `object-fit` in
+`style` (or an `object-*` class name) has nothing to act on. The package logs a warning and otherwise
+does nothing, and the failure is silent whenever the source and the composition happen to share an
+aspect ratio — it only appears the day someone puts 16:9 footage in a 9:16 frame and gets a
+letterboxed strip.
+
+```tsx
+<Video src={…} objectFit="cover" style={{width: '100%', height: '100%'}} />   // ✅
+<Video src={…} style={{width: '100%', height: '100%', objectFit: 'cover'}} /> // ❌ silently ignored
+```
+
+There is no `objectPosition` equivalent: `cover` centres, and you bias the crop with
+`cropLeft`/`cropRight`/`cropTop`/`cropBottom`, which take fractions. And `cover` needs a definite box
+to crop against — `AbsoluteFill` is a **column flex container**, so a bare `<Video>` inside one is a
+flex item that takes its intrinsic aspect. Wrap it in its own `<AbsoluteFill>`.
+
 `AudioProps` is the same minus the picture props.
 
 `<Video>` **is** a `<Sequence>`: give it `from` and `durationInFrames` directly rather than wrapping

@@ -76,13 +76,13 @@ export const PunchInCut: React.FC<Props> = ({
   return (
     <AbsoluteFill name="Scene" style={{backgroundColor, overflow: 'hidden', fontFamily}}>
       <Video
+        objectFit="cover"
         src={src ?? staticFile('footage/interview-raw.mp4')}
         muted
         loop
         style={{
           width: '100%',
           height: '100%',
-          objectFit: 'cover',
           scale: current.scale,
           // transformOrigin, not a translate: scaling about the subject keeps the
           // subject still and moves the frame edges, which is what a longer lens

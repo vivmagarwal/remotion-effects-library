@@ -44,6 +44,7 @@ export const VhsVintage: React.FC<Props> = ({
   return (
     <AbsoluteFill name="Scene" style={{backgroundColor: '#04050a', overflow: 'hidden'}}>
       <Video
+        objectFit="cover"
         src={src ?? staticFile('footage/interview-raw.mp4')}
         // A real face is the point. Tape artefacts read as damage only against
         // something the eye already knows the shape of — skin tone, hair edges,
@@ -51,7 +52,7 @@ export const VhsVintage: React.FC<Props> = ({
         // looks like a deliberate graphic treatment.
         muted
         loop
-        style={{width: '100%', height: '100%', objectFit: 'cover', translate: `${wobble}px 0px`}}
+        style={{width: '100%', height: '100%', translate: `${wobble}px 0px`}}
         effects={[
           // 1. Bend the picture like a CRT tube.
           barrelDistortion({amount: 0.11 * intensity}),

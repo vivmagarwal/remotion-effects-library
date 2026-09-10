@@ -71,6 +71,10 @@ export const CONCEPTS = [
   'timeline length semantics', 'transformOrigin', 'travelling wave', 'trig orbits',
   'useAudioData', 'value interpolation', 'vertex displacement', 'visualizeAudio',
   'word-level timing',
+  // Two rules that every caption effect has to get right and that are easy to
+  // get wrong invisibly, so they are named rather than left as prose.
+  'half-open interval',
+  'safe area',
   // Editing on real footage — added with the `edit`, `grade` and `sound` sections.
   'trimBefore cut list', 'untweened scale step', 'subject-anchored origin',
   'two-octave noise', 'lagged rotation', 'remapSpeed accumulator',

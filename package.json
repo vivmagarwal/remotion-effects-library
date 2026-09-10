@@ -26,10 +26,11 @@
     "check:assets": "node scripts/check-assets.mjs",
     "check:poster": "node scripts/check-poster.mjs",
     "check:palette": "node scripts/check-palette.mjs",
-    "gate:fast": "npm run registry && npm run typecheck && npm run prompts && npm run check:compose && npm run check:vocab && npm run check:taxonomy && npm run check:meta && npm run check:palette && npm run check:standalone && npm run check:assets && npm run check:fonts && npm run check:edd && npm run check:prompts",
+    "gate:fast": "npm run registry && npm run typecheck && npm run prompts && npm run check:compose && npm run check:vocab && npm run check:taxonomy && npm run check:meta && npm run check:palette && npm run check:standalone && npm run check:media-props && npm run check:assets && npm run check:fonts && npm run check:edd && npm run check:prompts",
     "gate:slow": "npm run verify && npm run check:frames && npm run check:poster",
     "viz:variants": "node scripts/build-viz-variants.mjs",
-    "check:edd": "node scripts/check-edd.mjs"
+    "check:edd": "node scripts/check-edd.mjs",
+    "check:media-props": "node scripts/check-media-props.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^9.7.0",

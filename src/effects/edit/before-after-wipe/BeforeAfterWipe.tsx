@@ -56,10 +56,11 @@ export const BeforeAfterWipe: React.FC<Props> = ({
     <AbsoluteFill name="Scene" style={{backgroundColor: '#04050a', overflow: 'hidden', fontFamily}}>
       {/* AFTER — the graded version, full frame, underneath. */}
       <Video
+        objectFit="cover"
         src={source}
         muted
         loop
-        style={{width: '100%', height: '100%', objectFit: 'cover'}}
+        style={{width: '100%', height: '100%',}}
         effects={[saturation({amount: 1.5}), contrast({amount: 1.18})]}
       />
 
@@ -67,10 +68,11 @@ export const BeforeAfterWipe: React.FC<Props> = ({
           Both layers are identical geometry; only the clip moves. */}
       <AbsoluteFill style={{clipPath: `inset(0 ${100 - x}% 0 0)`}}>
         <Video
+          objectFit="cover"
           src={source}
           muted
           loop
-          style={{width: '100%', height: '100%', objectFit: 'cover'}}
+          style={{width: '100%', height: '100%',}}
           effects={[saturation({amount: 0.22}), contrast({amount: 0.82}), brightness({amount: 0.06})]}
         />
       </AbsoluteFill>

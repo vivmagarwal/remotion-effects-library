@@ -88,13 +88,13 @@ export const HandheldDrift: React.FC<Props> = ({
   return (
     <AbsoluteFill name="Scene" style={{backgroundColor, overflow: 'hidden', fontFamily}}>
       <Video
+        objectFit="cover"
         src={src ?? staticFile('footage/interview.mp4')}
         muted
         loop
         style={{
           width: '100%',
           height: '100%',
-          objectFit: 'cover',
           translate: `${dx}px ${dy}px`,
           rotate: `${rot}deg`,
           scale: overscan + breathe,

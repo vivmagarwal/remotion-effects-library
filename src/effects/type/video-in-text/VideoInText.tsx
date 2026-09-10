@@ -87,6 +87,7 @@ export const VideoInText: React.FC<Props> = ({
           only the mask grows — so the footage stays framed the whole way. */}
       <AbsoluteFill style={{clipPath: 'url(#vit-text)', WebkitClipPath: 'url(#vit-text)'}}>
         <Video
+          objectFit="cover"
           src={src ?? staticFile('footage/broll-earth.mp4')}
           // The clip is 6.0s at 30fps = 180 frames against a 180-frame
           // composition, so it just fits — `loop` is belt and braces in case the
@@ -97,7 +98,6 @@ export const VideoInText: React.FC<Props> = ({
           style={{
             width: '100%',
             height: '100%',
-            objectFit: 'cover',
             // A slow push on the media itself, independent of the mask.
             scale: interpolate(frame, [0, 180], [1.05, 1.16], {
               extrapolateLeft: 'clamp',

@@ -195,11 +195,12 @@ export const SilenceCut: React.FC<Props> = ({
             premountFor={fps}
           >
             <Video
+              objectFit="cover"
               src={source}
               trimBefore={Math.round(k.s * fps)}
               trimAfter={Math.round(k.e * fps)}
               muted
-              style={{width: '100%', height: '100%', objectFit: 'cover'}}
+              style={{width: '100%', height: '100%',}}
             />
           </Series.Sequence>
         ))}
