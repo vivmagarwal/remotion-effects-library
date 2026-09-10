@@ -1,5 +1,6 @@
 import type {EffectMeta} from '../../../types';
 
+/** poster: frame 90 — the star is a distinctive silhouette; the polygon at 50 is indistinguishable from a circle. */
 export const meta: EffectMeta = {
   id: 'shape-morph', name: 'Shape Morph', category: 'diagrams',
   tagline: 'One silhouette becoming another, vertex by vertex.',
@@ -9,6 +10,6 @@ export const meta: EffectMeta = {
   concepts: ['interpolatePath', 'matched vertex counts', 'progress-gated reveal'],
   width: 1920, height: 1080, fps: 30, durationInFrames: 180,
   packages: ['remotion', '@remotion/paths', '@remotion/google-fonts'],
-  difficulty: 'intermediate', checkFrame: 34,
+  difficulty: 'intermediate', checkFrame: 34, posterFrame: 90,
   ground: 'both', audience: ['educator', 'developer'],
 };

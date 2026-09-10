@@ -61,6 +61,8 @@ import {BeforeAfterWipe as C_BeforeAfterWipe} from './effects/edit/before-after-
 import {meta as M_BeforeAfterWipe} from './effects/edit/before-after-wipe/meta';
 import {FreezeTrail as C_FreezeTrail} from './effects/edit/freeze-trail/FreezeTrail';
 import {meta as M_FreezeTrail} from './effects/edit/freeze-trail/meta';
+import {HandheldDrift as C_HandheldDrift} from './effects/edit/handheld-drift/HandheldDrift';
+import {meta as M_HandheldDrift} from './effects/edit/handheld-drift/meta';
 import {KenBurns as C_KenBurns} from './effects/edit/ken-burns/KenBurns';
 import {meta as M_KenBurns} from './effects/edit/ken-burns/meta';
 import {PhotoStackShuffle as C_PhotoStackShuffle} from './effects/edit/photo-stack-shuffle/PhotoStackShuffle';
@@ -214,6 +216,7 @@ const base: readonly EffectEntry[] = [
   {meta: M_WriteOnText, Component: C_WriteOnText as React.ComponentType, file: 'diagrams/write-on-text/WriteOnText.tsx'},
   {meta: M_BeforeAfterWipe, Component: C_BeforeAfterWipe as React.ComponentType, file: 'edit/before-after-wipe/BeforeAfterWipe.tsx'},
   {meta: M_FreezeTrail, Component: C_FreezeTrail as React.ComponentType, file: 'edit/freeze-trail/FreezeTrail.tsx'},
+  {meta: M_HandheldDrift, Component: C_HandheldDrift as React.ComponentType, file: 'edit/handheld-drift/HandheldDrift.tsx'},
   {meta: M_KenBurns, Component: C_KenBurns as React.ComponentType, file: 'edit/ken-burns/KenBurns.tsx'},
   {meta: M_PhotoStackShuffle, Component: C_PhotoStackShuffle as React.ComponentType, file: 'edit/photo-stack-shuffle/PhotoStackShuffle.tsx'},
   {meta: M_PunchInCut, Component: C_PunchInCut as React.ComponentType, file: 'edit/punch-in-cut/PunchInCut.tsx'},

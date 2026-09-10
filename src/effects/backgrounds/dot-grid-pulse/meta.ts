@@ -1,5 +1,6 @@
 import type {EffectMeta} from '../../../types';
 
+/** poster: frame 90 — the travelling wave reads as an arch here; at 40 it is a shapeless blob. */
 export const meta: EffectMeta = {
   id: 'dot-grid-pulse', name: 'Dot Grid Pulse', category: 'backgrounds',
   tagline: 'A wave travels outward through a field of a thousand dots.',
@@ -9,6 +10,6 @@ export const meta: EffectMeta = {
   concepts: ['procedural grid', 'travelling wave', 'closed-form motion'],
   width: 1920, height: 1080, fps: 30, durationInFrames: 240,
   packages: ['remotion'],
-  difficulty: 'intermediate', checkFrame: 96,
+  difficulty: 'intermediate', checkFrame: 96, posterFrame: 90,
   ground: 'both', audience: ['saas', 'developer'],
 };

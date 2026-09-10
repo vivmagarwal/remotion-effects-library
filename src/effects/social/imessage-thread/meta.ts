@@ -1,5 +1,6 @@
 import type {EffectMeta} from '../../../types';
 
+/** poster: frame 196 — the whole thread is on screen; earlier frames show two bubbles in a tall empty frame. */
 export const meta: EffectMeta = {
   id: 'imessage-thread', name: 'iMessage Thread', category: 'social',
   tagline: 'A message thread that types itself, dots and all.',
@@ -9,6 +10,6 @@ export const meta: EffectMeta = {
   concepts: ['derived schedule', 'transformOrigin', 'phase-shifted sine'],
   width: 1080, height: 1920, fps: 30, durationInFrames: 200,
   packages: ['remotion', '@remotion/google-fonts'],
-  difficulty: 'starter', checkFrame: 130,
+  difficulty: 'starter', checkFrame: 130, posterFrame: 196,
   ground: 'dark', audience: ['youtuber', 'agency'],
 };

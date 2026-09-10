@@ -23,18 +23,18 @@ npm run studio      # Remotion Studio, all effects  → http://localhost:3000
 
 ## What's in it
 
-87 effects across 16 categories.
+91 effects across 16 categories.
 
 | Category | Effects |
 |---|---|
-| **Video Editing** | Before / After Wipe · Freeze Trail · Ken Burns · Photo Stack Shuffle |
+| **Video Editing** | Before / After Wipe · Freeze Trail · Handheld Drift · Ken Burns · Photo Stack Shuffle · Punch-In Cut · Silence Cut |
 | **Colour & Texture** | Progressive Blur Focus |
 | **Captions & Subtitles** | Subtitle Band · TikTok Captions |
 | **Sound & Music** | Audiogram · FFT Bars |
 | **Transitions** | CSS Card Flip · Custom Circle Reveal · Light Leak Transition · Voronoi Shatter · Whip Pan |
 | **Text & Type** | Character Drop (Spring) · Extruded Text · Gradient Text Sweep · Headline Highlight · Kinetic Word Reveal · Split-Flap Board · Text Behind Subject · Text Mask Reveal · Text Scramble · Typewriter Terminal · Video In Text |
 | **Titles & Lower Thirds** | Chapter Divider · Cinematic Tech Intro · Countdown Leader · Lower Third · Quote Slam · Stat Slam |
-| **Diagrams & Sketches** | Attention Indicators · Bullet Pop List · Checklist Ticks · Hand Annotations · Logo Path Draw · Shape Morph · Step Progress · Write-On Text |
+| **Diagrams & Sketches** | Attention Indicators · Bullet Pop List · Checklist Ticks · Hand Annotations · Logo Path Draw · Shape Morph · Step Progress · Viz Gallery · Write-On Text |
 | **Data & Charts** | Bar Chart Race · Bubble Pack · Chord Diagram · Count-Up Stat · Donut Progress · Force Network · Globe Arcs · Line Chart Draw · Route Flyover · Sankey Flow · Streamgraph · Sunburst Rings · Versus Table |
 | **UI & Product** | Browser Window Scroll · ChatGPT Full UI · Claude Full UI · Code Editor Typing · Device Rise · Hero Handover UI · Notification Stack |
 | **Social & Shorts** | Hype Captions · Subscribe Button · iMessage Live · iMessage Thread |
