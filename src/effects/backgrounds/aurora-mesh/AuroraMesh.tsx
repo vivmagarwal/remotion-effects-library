@@ -29,13 +29,13 @@ type Props = {
 
 export const AuroraMesh: React.FC<Props> = ({
   blobs = [
-    {color: '#7c3aed', x: 28, y: 32, size: 62, travel: 11, speed: 0.31, phase: 0},
-    {color: '#2563eb', x: 70, y: 28, size: 58, travel: 13, speed: 0.23, phase: 1.9},
-    {color: '#db2777', x: 62, y: 70, size: 54, travel: 10, speed: 0.27, phase: 3.4},
-    {color: '#0891b2', x: 33, y: 72, size: 60, travel: 12, speed: 0.19, phase: 5.1},
-    {color: '#f59e0b', x: 50, y: 50, size: 40, travel: 16, speed: 0.15, phase: 2.6},
+    {color: '#c77dff', x: 28, y: 32, size: 62, travel: 11, speed: 0.31, phase: 0},
+    {color: '#4cc9f0', x: 70, y: 28, size: 58, travel: 13, speed: 0.23, phase: 1.9},
+    {color: '#ff5c39', x: 62, y: 70, size: 54, travel: 10, speed: 0.27, phase: 3.4},
+    {color: '#c6ff3d', x: 33, y: 72, size: 60, travel: 12, speed: 0.19, phase: 5.1},
+    {color: '#ffd166', x: 50, y: 50, size: 40, travel: 16, speed: 0.15, phase: 2.6},
   ],
-  backgroundColor = '#080711',
+  backgroundColor = '#04050a',
   blur = 90,
   grain = true,
 }) => {

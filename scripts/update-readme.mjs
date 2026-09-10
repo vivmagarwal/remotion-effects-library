@@ -1,33 +1,25 @@
 #!/usr/bin/env node
 /** Rewrites the catalogue table in README.md from the actual effects on disk. */
-import {readdirSync, readFileSync, statSync, writeFileSync} from 'node:fs';
+import {readFileSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
-
-const LABEL = {
-  text: 'Text & Type', openers: 'Openers', transitions: 'Transitions', effects: 'Visual FX',
-  data: 'Data & Charts', motion: 'Motion', backgrounds: 'Backgrounds', ui: 'UI & Social',
-  media: 'Media', captions: 'Captions', 'three-d': '3D', audio: 'Audio',
-};
-const ORDER = ['text', 'openers', 'transitions', 'effects', 'motion', 'backgrounds', 'data', 'ui', 'captions', 'media', 'three-d', 'audio'];
-
-const root = join(process.cwd(), 'src', 'effects');
-const dirs = (p) => readdirSync(p).filter((d) => statSync(join(p, d)).isDirectory());
+import {ROOT, walkEffects} from './lib/fs.mjs';
+import {readMeta} from './lib/meta.mjs';
+import {CATEGORY_LABEL, CATEGORY_ORDER} from './lib/taxonomy.mjs';
 
 const byCat = new Map();
 let total = 0;
-for (const cat of dirs(root)) {
-  for (const id of dirs(join(root, cat))) {
-    const raw = readFileSync(join(root, cat, id, 'meta.ts'), 'utf8');
-    const name = raw.match(/\bname:\s*'([^']*)'/)?.[1] ?? id;
-    if (!byCat.has(cat)) byCat.set(cat, []);
-    byCat.get(cat).push(name);
-    total++;
-  }
+for (const e of walkEffects()) {
+  const meta = readMeta(e.metaPath);
+  if (!byCat.has(e.category)) byCat.set(e.category, []);
+  byCat.get(e.category).push(meta.name ?? e.id);
+  total++;
 }
 
-const rows = ORDER.filter((c) => byCat.has(c)).map(
-  (c) => `| **${LABEL[c]}** | ${byCat.get(c).sort().join(' · ')} |`,
-);
+// Categories the taxonomy knows, in display order, then anything left over so a
+// half-migrated library still lists every effect instead of dropping folders.
+const order = [...CATEGORY_ORDER.filter((c) => byCat.has(c)), ...[...byCat.keys()].filter((c) => !CATEGORY_ORDER.includes(c)).sort()];
+
+const rows = order.map((c) => `| **${CATEGORY_LABEL[c] ?? c}** | ${byCat.get(c).sort().join(' · ')} |`);
 
 const table = [
   `${total} effects across ${byCat.size} categories.`,
@@ -37,10 +29,11 @@ const table = [
   ...rows,
 ].join('\n');
 
-const readme = readFileSync('README.md', 'utf8');
-const next = readme.replace(
-  /(## What's in it\n\n)[\s\S]*?(\n\n---)/,
-  `$1${table}$2`,
-);
-writeFileSync('README.md', next);
+const readmePath = join(ROOT, 'README.md');
+const readme = readFileSync(readmePath, 'utf8');
+const next = readme.replace(/(## What's in it\n\n)[\s\S]*?(\n\n---)/, `$1${table}$2`);
+writeFileSync(readmePath, next);
+
+const unknown = order.filter((c) => !CATEGORY_ORDER.includes(c));
 console.log(`README: ${total} effects, ${byCat.size} categories`);
+if (unknown.length) console.log(`  not in scripts/lib/taxonomy.mjs: ${unknown.join(', ')}`);

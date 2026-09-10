@@ -84,10 +84,10 @@ export const ShaderBlob: React.FC<Props> = ({
   amplitude = 0.3,
   detail = 2.35,
   segments = 40,
-  colorA = '#1b0b4d',
-  colorB = '#8b4dff',
-  rimColor = '#57f0ff',
-  backgroundColor = '#050410',
+  colorA = '#0a0b10',
+  colorB = '#c77dff',
+  rimColor = '#4cc9f0',
+  backgroundColor = '#04050a',
 }) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();
@@ -158,7 +158,7 @@ export const ShaderBlob: React.FC<Props> = ({
             fontWeight: 700,
             letterSpacing: '0.28em',
             marginRight: '-0.28em',
-            color: '#f0f6ff',
+            color: '#ffffff',
             textShadow: `0 0 70px ${rimColor}77`,
             opacity: interpolate(frame, [22, 48], [0, 1], {
               extrapolateLeft: 'clamp',
@@ -173,7 +173,7 @@ export const ShaderBlob: React.FC<Props> = ({
           style={{
             fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
             fontSize: 25,
-            color: '#8b90bd',
+            color: '#8d93a5',
             marginTop: 16,
             opacity: interpolate(frame, [36, 60], [0, 1], {
               extrapolateLeft: 'clamp',

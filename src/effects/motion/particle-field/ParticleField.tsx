@@ -26,8 +26,8 @@ export const ParticleField: React.FC<Props> = ({
   count = 220,
   title = 'PARTICLES',
   subtitle = 'closed-form, not simulated',
-  colors = ['#4cc9f0', '#f72585', '#ffd166', '#ffffff'],
-  backgroundColor = '#05050c',
+  colors = ['#4cc9f0', '#c77dff', '#ffd166', '#ffffff'],
+  backgroundColor = '#04050a',
   speed = 0.22,
   connect = true,
 }) => {
@@ -83,7 +83,7 @@ export const ParticleField: React.FC<Props> = ({
   return (
     <AbsoluteFill name="Scene" style={{backgroundColor, overflow: 'hidden'}}>
       <AbsoluteFill
-        style={{backgroundImage: 'radial-gradient(ellipse at 50% 50%, #12123a 0%, #05050c 68%)'}}
+        style={{backgroundImage: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 68%)'}}
       />
 
       {connect ? (
@@ -95,7 +95,7 @@ export const ParticleField: React.FC<Props> = ({
               y1={`${l.y1}%`}
               x2={`${l.x2}%`}
               y2={`${l.y2}%`}
-              stroke="#7fb6ff"
+              stroke="#4cc9f0"
               strokeWidth={1}
               opacity={l.o}
             />
@@ -147,7 +147,7 @@ export const ParticleField: React.FC<Props> = ({
             letterSpacing: '0.3em',
             marginRight: '-0.3em',
             textTransform: 'uppercase',
-            color: '#8fa0c0',
+            color: '#8d93a5',
             marginTop: 20,
             opacity: interpolate(frame, [24, 46], [0, 1], {
               extrapolateLeft: 'clamp',

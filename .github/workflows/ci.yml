@@ -1,0 +1,70 @@
+# The quality gates.
+#
+# `gate:fast` is everything that does not need a browser: the registry, tsc, the
+# prompt composer, the vocabularies, the taxonomy, meta shape, palette, standalone
+# prompts, the asset manifest, font weights and prompt defaults. It runs on every
+# push and every pull request and takes a couple of minutes.
+#
+# `gate:slow` renders one still per effect (plus the poster frames that differ) and
+# then checks them for dead frames and blank posters. It needs Chrome Headless Shell
+# and several minutes of CPU, so it is manual: Actions → CI → Run workflow.
+#
+# No secrets are used or needed. Everything the gates touch is committed —
+# including the Deepgram transcripts, so nothing here calls an API.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fast:
+    name: gate:fast
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run gate:fast
+
+  slow:
+    name: gate:slow (renders every effect)
+    # Manual only — this bundles the whole library and renders ~90 stills.
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      # Downloads Chrome Headless Shell up front so a failure here reads as a
+      # missing browser rather than as a broken effect.
+      - run: npx remotion browser ensure
+      - run: npm run gate:slow
+      # The rendered stills are the evidence. Keep them so a failure can be looked
+      # at rather than guessed at.
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stills
+          path: |
+            out/verify
+            out/poster
+          if-no-files-found: ignore
+          retention-days: 7

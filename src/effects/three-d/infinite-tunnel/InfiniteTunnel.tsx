@@ -62,9 +62,9 @@ export const InfiniteTunnel: React.FC<Props> = ({
   tubeRadius = 1.35,
   rings = 46,
   laps = 1,
-  wallColor = '#1a1035',
-  glowColor = '#ff4fd8',
-  backgroundColor = '#03020a',
+  wallColor = '#0a0b10',
+  glowColor = '#c77dff',
+  backgroundColor = '#04050a',
 }) => {
   const frame = useCurrentFrame();
   const {width, height, durationInFrames} = useVideoConfig();
@@ -196,7 +196,7 @@ export const InfiniteTunnel: React.FC<Props> = ({
           style={{
             fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
             fontSize: 25,
-            color: '#9b8fc4',
+            color: '#8d93a5',
             marginTop: 16,
             opacity: interpolate(frame, [32, 56], [0, 1], {
               extrapolateLeft: 'clamp',

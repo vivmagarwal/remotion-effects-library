@@ -34,3 +34,33 @@ licence. See https://www.remotion.dev/license and node_modules/remotion/LICENSE.
 
 Copying an effect out of this repository is covered by MIT. Running it requires
 Remotion, and that is between you and Remotion.
+
+---
+
+NOTE ON THE ASSETS IN public/
+
+The MIT licence above covers the source, prompts and tooling. The media in public/
+falls into two groups, and public/ASSETS.md is the authoritative record for both —
+one row per file, with the source URL, the licence, and the command that derived it.
+
+1. Generated assets — everything in public/audio/ and every public/*.svg — are
+   original work produced by the scripts in scripts/. They are synthesised, not
+   sampled, so there is no third-party licence and no attribution obligation.
+
+2. public/footage/ is NASA video. NASA states that "NASA content - images, audio,
+   video, and media files ... generally are not subject to copyright in the United
+   States", and asks that "NASA should be acknowledged as the source of the
+   material." NASA does not endorse this repository or anything built with it.
+
+   Two caveats apply to the interview clips and are quoted in full in
+   public/ASSETS.md: the NASA Insignia and identifiers are NOT in the public
+   domain, and "if a NASA image, audio, video or media includes an identifiable
+   person, using the media for commercial purposes may infringe that person's
+   right of privacy or publicity, and permission should be obtained from the
+   person." Both interview clips show an identifiable NASA astronaut wearing the
+   insignia.
+
+   These clips ship as demonstration assets. Read public/ASSETS.md and replace them
+   with your own footage before using them in anything commercial, promotional or
+   advertising-adjacent. Every effect that consumes footage takes its source path
+   as a prop precisely so that swap is a one-line change.

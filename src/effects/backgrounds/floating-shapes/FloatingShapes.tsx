@@ -21,8 +21,8 @@ const SHAPES = ['circle', 'square', 'triangle', 'ring', 'cross'] as const;
 
 export const FloatingShapes: React.FC<Props> = ({
   count = 46,
-  colors = ['#ff5c39', '#4cc9f0', '#ffd166', '#12c48b', '#a78bfa', '#f43f5e'],
-  backgroundColor = '#0c0e16',
+  colors = ['#ff5c39', '#4cc9f0', '#ffd166', '#c6ff3d', '#c77dff', '#c2410c'],
+  backgroundColor = '#0a0b10',
   speed = 0.5,
   maxSize = 130,
 }) => {
@@ -37,7 +37,7 @@ export const FloatingShapes: React.FC<Props> = ({
         backgroundColor,
         overflow: 'hidden',
         backgroundImage:
-          'radial-gradient(ellipse at 50% 120%, #1c2140 0%, #0c0e16 62%)',
+          'radial-gradient(ellipse at 50% 120%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 62%)',
       }}
     >
       {new Array(count).fill(0).map((_, i) => {

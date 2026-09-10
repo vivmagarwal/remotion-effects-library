@@ -4,6 +4,8 @@ import {linearTiming, TransitionSeries} from '@remotion/transitions';
 import type {TransitionPresentation, TransitionPresentationComponentProps} from '@remotion/transitions';
 import {loadFont} from '@remotion/google-fonts/Archivo';
 
+// palette: data whole-file — four card faces that must be told apart mid-pan, which is the only way to see a whip pan working
+
 const {fontFamily} = loadFont('normal', {weights: ['400', '800'], subsets: ['latin']});
 
 /**

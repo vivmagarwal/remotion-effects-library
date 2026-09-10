@@ -4,6 +4,8 @@ import {linearTiming, TransitionSeries} from '@remotion/transitions';
 import type {TransitionPresentation, TransitionPresentationComponentProps} from '@remotion/transitions';
 import {loadFont} from '@remotion/google-fonts/Sora';
 
+// palette: data whole-file — three cards revealed through each other; each needs its own ground and matching ink, or the reveal has nothing to reveal
+
 const {fontFamily} = loadFont('normal', {weights: ['400', '800'], subsets: ['latin']});
 
 /**

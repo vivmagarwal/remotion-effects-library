@@ -2,6 +2,8 @@ import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVide
 import {loadFont} from '@remotion/google-fonts/Inter';
 import {loadFont as loadSerif} from '@remotion/google-fonts/PlayfairDisplay';
 
+// palette: brand-mimicry whole-file — Claude's product UI; every colour on screen is theirs
+
 const {fontFamily} = loadFont('normal', {weights: ['400', '500', '600'], subsets: ['latin']});
 const {fontFamily: serif} = loadSerif('normal', {weights: ['400'], subsets: ['latin']});
 

@@ -3,12 +3,58 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!--
+      Theme, applied BEFORE anything paints.
+
+      This has to be a blocking inline script above the stylesheet: React mounts
+      one network round-trip too late, so a machine that prefers light would
+      flash the dark palette first. Wrapped in try/catch because localStorage
+      throws outright in some privacy modes.
+
+      Storage key: `rel-theme` — 'light' | 'dark' | 'system'. Default is system,
+      and a system that says nothing resolves to light.
+    -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('rel-theme');
+          var mode = saved === 'light' || saved === 'dark' || saved === 'system' ? saved : 'system';
+          var dark =
+            mode === 'dark' ||
+            (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+          document.documentElement.dataset.themeMode = mode;
+          document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+        } catch (e) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.style.colorScheme = 'light';
+        }
+      })();
+    </script>
+
     <title>Remotion Effects Library</title>
     <meta name="description" content="A browsable catalogue of production-ready Remotion effects — each with a live preview, copy-paste source and a self-sufficient AI prompt." />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f6f6f9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0a0c" media="(prefers-color-scheme: dark)" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Remotion Effects Library" />
+    <meta property="og:description" content="Production-ready Remotion effects — live preview, one copy-pasteable file, and a self-sufficient prompt for any coding agent." />
+    <meta property="og:url" content="https://vivmagarwal.github.io/remotion-effects-library/" />
+    <meta name="twitter:card" content="summary" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-      <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d0d11'/%3E%3Cpath d='M12 9.5v13l10-6.5z' fill='%23ff5c39'/%3E%3C/svg%3E" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <!--
+      One SVG favicon that carries its own `prefers-color-scheme` rule, so the
+      glyph stays legible on a light browser tab and a dark one. The old icon was
+      a near-black plate, which disappeared into a light tab strip.
+    -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Cstyle%3E.plate%7Bfill%3A%23d93a10%7D.glyph%7Bfill%3A%23fff%7D%40media%20%28prefers-color-scheme%3Adark%29%7B.plate%7Bfill%3A%23ff5c39%7D.glyph%7Bfill%3A%230a0a0c%7D%7D%3C%2Fstyle%3E%3Crect%20class%3D%27plate%27%20width%3D%2732%27%20height%3D%2732%27%20rx%3D%277%27%2F%3E%3Cpath%20class%3D%27glyph%27%20d%3D%27M12%209.5v13l10-6.5z%27%2F%3E%3C%2Fsvg%3E" />
   </head>
   <body>
     <div id="root"></div>

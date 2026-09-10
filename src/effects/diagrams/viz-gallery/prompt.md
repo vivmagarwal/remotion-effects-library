@@ -1,0 +1,127 @@
+Build a Remotion composition called **VizGallery** (composition id `viz-gallery`): one hand-drawn
+diagram template drawn on stroke by stroke, from `edododraw` source, driven entirely by the frame.
+
+**Setup**
+
+```bash
+npm i edododraw
+npx remotion add @remotion/google-fonts
+```
+
+**What edododraw is.** A text DSL that compiles to a hand-drawn-style SVG diagram — `viz flowchart
+"Content Publishing" { item "Draft" { icon: doc } … }`. It ships 87 visualization templates and a
+curated runnable demo for each, exported as `VIZ_DEMOS` from `edododraw/demos`.
+
+**The frame-driven contract — get this wrong and nothing else matters**
+
+Remotion renders frames **out of order and in parallel**. So:
+
+```tsx
+// ONCE. compileEdd is pure, synchronous and DOM-free — 8-18ms for a dozen nodes.
+const scene = useMemo(() => {
+  const {scene, diagnostics} = compileEdd(edd);
+  const errors = (diagnostics?.items ?? []).filter((d) => d.severity === 'error');
+  if (errors.length) throw new Error(`edododraw: ${errors.map((d) => d.message).join('; ')}`);
+  return scene;
+}, [edd]);
+
+// ONCE. render() is 8-30ms and touches the DOM.
+useLayoutEffect(() => {
+  const renderer = new SvgRenderer(host, {static: true, nonScalingStroke: true});
+  renderer.mount();
+  renderer.render(scene);
+  renderer.measure?.();
+  // …measure every stroked path here, not per frame…
+  whenFontsReady().then(() => continueRender(handle)).catch(cancelRender);
+  return () => renderer.destroy();
+}, [scene, handle]);
+
+// PER FRAME. A handful of style writes on elements measured at mount, nothing else.
+useLayoutEffect(() => {
+  const reached = drawn * totalLen.current;
+  for (const grp of groups.current) {
+    const p = Math.min(1, Math.max(0, (reached - grp.from) / grp.len));
+    grp.g.style.opacity = String(Math.min(1, p / 0.35));          // the group appears
+    for (const t of grp.g.querySelectorAll('text')) {
+      t.style.opacity = String(p >= 0.7 ? 1 : 0);                  // its label waits
+    }
+    let within = reached - grp.from;                               // its outline draws
+    for (const x of grp.paths) {
+      const q = Math.min(1, Math.max(0, within / x.len));
+      x.el.style.strokeDasharray = `${x.len}`;
+      x.el.style.strokeDashoffset = `${x.len * (1 - q)}`;
+      within -= x.len;
+    }
+  }
+}, [drawn]);
+```
+
+Four rules, each of which is a bug someone has already shipped:
+
+1. **`static: true` is not optional.** Without it the renderer emits CSS transitions and an
+   animated-arrow keyframe overlay, and a captured frame can land mid-transition — so two renders of
+   the same frame disagree.
+2. **Write EVERY path every frame, including the finished ones.** Skip the ones already at progress 1
+   and a frame drawn after a later frame keeps a stale dash. This is the single most common way a
+   frame-driven diagram breaks, and it only shows up in a parallel render.
+3. **Never call `render()` per frame**, and never touch `CameraController` or the timeline player —
+   both are `requestAnimationFrame` plus `performance.now()`.
+4. **`whenFontsReady()` wired to `delayRender`.** The hand-drawn face is injected as a base64
+   `@font-face` fire-and-forget; screenshot before it decodes and every text metric shifts.
+
+**Measure per GROUP, not per path — this is the detail that makes it read as drawing.**
+
+Collect `[data-node]`, `[data-edge]` and `[data-viz-item]` elements in document order (the dagre layout
+already puts them in reading order). For each, gather its stroked children and their
+`getTotalLength()`, sum them into the group's length, and give the group a slice of one shared 0→1
+cursor. One cursor is what makes the diagram look drawn by one hand rather than by forty at once.
+
+Why per group: **a filled shape's fill polygon carries no stroke.** Dash only the outlines and every
+box is on screen from frame 0 with just the labels revealing — which reads as text typing in, not as a
+diagram being drawn. So each group also gets an opacity, ramped over the first 35% of its own share,
+and its `<text>` children wait until 70%. A label that arrives with the first pixel of its box reads
+as a screenshot.
+
+A group with no stroked path at all still needs a slot in the cursor (give it a nominal length), or it
+pops in fully formed while everything around it draws.
+
+**Stroke quality — the reason `hand-clean` and `nonScalingStroke` are here**
+
+rough.js perturbs geometry by absolute **world** units, and a camera is a `scale(zoom)` on the world
+group, so screen jitter is `zoom × world jitter` and the stroke width scales too. Measured on a
+320×140 box: 1.71px of corner error at 1× becomes **4.84px at 4×**. Use the `hand-clean` preset
+(`roughness 0.35`, `preserveVertices`, `disableMultiStroke`), turn on `nonScalingStroke`, and if the
+camera pushes in, call `setRoughnessScale(1/zoom)` quantised to octaves so it regenerates a handful of
+times rather than every frame.
+
+Declare the preset in the source rather than as a renderer option, so there is one input:
+
+```tsx
+const edd = /\bmeta\s*\{/.test(source) ? source : `meta { style: ${preset} }\n${source}`;
+```
+
+**Do not use edododraw's `character` nodes.** The figures are broken. Four templates draw them —
+`personas`, `vision`, `hole`, `tug-of-war` — and they are excluded from this gallery, which is why it
+covers 83 templates and not 87. `icon` nodes are fine.
+
+**The look**
+- 1920×1080, 30fps, 130 frames. Ground `#f6f5f2` — light by nature, because a hand-drawn diagram
+  belongs on paper. Most motion graphics want a dark studio ground; this one does not.
+- The diagram fills `left: 0, top: 88, right: 0, bottom: 96`.
+- Eyebrow top-left at `84, 60`: the catalogue category, 28px/700, `letter-spacing: 0.24em`, uppercase,
+  in `#c2410c`.
+- Top-right at `84, 54`: `viz flowchart` at 34px/500 in `#4a4e5a`.
+- A 5px draw-on progress bar at `left/right: 84, bottom: 56`, track `rgba(29,27,23,0.12)`, fill
+  `#c2410c`. Both chrome layers fade in over frames 0–14.
+- Draw-on runs frames 10→86, leaving a ~44-frame hold so a poster frame catches the finished diagram.
+
+**Requirements**
+- One self-contained `.tsx` file exporting `VizGallery`.
+- Props with these exact defaults: `vizType` and `vizCategory` and `source` (all defaulting to the
+  first entry of the generated variant list), `drawFrames` `76`, `startAt` `10`, `preset`
+  `'hand-clean'`, `backgroundColor` `'#f6f5f2'`, `accentColor` `'#c2410c'`.
+- `meta.variants` carries one entry per template, generated by a committed script from
+  `edododraw/demos` rather than hand-written — the catalogue lives upstream, and a template added in a
+  later release should appear here without anyone noticing.
+- Load Inter at weights 500, 700, 800.
+- `checkFrame` 52 is mid-draw; `posterFrame` 108 is the finished diagram.

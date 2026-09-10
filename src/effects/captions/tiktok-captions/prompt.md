@@ -1,4 +1,4 @@
-Build a Remotion composition called **TikTokCaptions**: word-level karaoke captions where the word
+Build a Remotion composition called **TiktokCaptions**: word-level karaoke captions where the word
 currently being spoken pops and changes colour.
 
 **The look**
@@ -48,7 +48,7 @@ exactly when it matters; a hard stroke survives anything. Add
   `scale: 0.88 + pageIn * 0.12`.
 
 **Requirements**
-- One self-contained `.tsx` file exporting `TikTokCaptions`, and an exported `Word` type.
+- One self-contained `.tsx` file exporting `TiktokCaptions`, and an exported `Word` type.
 - Props: `words`, `wordsPerPage`, `color`, `activeColor`, `backgroundColor`, `transparent` — when
   `transparent` is true the background is `'transparent'`, so this can be rendered as an alpha overlay
   (`--codec=vp8`, or `--codec=prores --prores-profile=4444`) and composited over footage.

@@ -2,6 +2,10 @@
 #
 # Requires Pages enabled for the repository with "Source: GitHub Actions"
 # (Settings → Pages).
+#
+# `gate:fast` runs before the build. A gallery that ships a prompt the gate would
+# have rejected is worse than a gallery that did not ship, because the whole promise
+# of the Copy-prompt button is that what you copy is what was validated.
 name: Deploy gallery to Pages
 
 on:
@@ -28,6 +32,7 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - run: npm run gate:fast
       # A project Pages site is served from /<repo>/, not /. vite.config.ts
       # reads GALLERY_BASE, and src/gallery/main.tsx uses the same base to
       # remap Remotion's staticFile() paths.

@@ -74,8 +74,8 @@ export const GlassRefraction: React.FC<Props> = ({
   thickness = 2.1,
   dispersion = 7,
   roughness = 0.03,
-  backdropColors = ['#ff5c39', '#4cc9f0', '#c77dff', '#ffd166', '#20e3b2', '#ff7bd5'],
-  backgroundColor = '#05060d',
+  backdropColors = ['#ff5c39', '#4cc9f0', '#c77dff', '#ffd166', '#c6ff3d', '#c2410c'],
+  backgroundColor = '#04050a',
 }) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();
@@ -99,7 +99,7 @@ export const GlassRefraction: React.FC<Props> = ({
       >
         <ambientLight intensity={0.22} />
         <directionalLight position={[5, 6, 8]} intensity={0.7} />
-        <pointLight position={[-6, 3, 4]} intensity={40} color="#8fb2ff" distance={22} />
+        <pointLight position={[-6, 3, 4]} intensity={40} color="#4cc9f0" distance={22} />
 
         <Backdrop colors={backdropColors} t={t} />
 
@@ -155,7 +155,7 @@ export const GlassRefraction: React.FC<Props> = ({
           style={{
             fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
             fontSize: 24,
-            color: '#c3cade',
+            color: '#8d93a5',
             textShadow: '0 2px 14px rgba(0,0,0,0.9)',
             marginTop: 16,
             opacity: interpolate(frame, [38, 62], [0, 1], {

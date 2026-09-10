@@ -38,15 +38,15 @@ type Props = {
 
 export const OrbitSystem: React.FC<Props> = ({
   bodies = [
-    {name: 'Mercury', color: '#c9b39b', radius: 158, size: 26, speed: 2.6, phase: 0.4},
-    {name: 'Venus', color: '#e9b06a', radius: 248, size: 38, speed: 1.75, phase: 2.35},
-    {name: 'Earth', color: '#4fa3e3', radius: 338, size: 42, speed: 1.2, phase: 4.2},
-    {name: 'Mars', color: '#e0663f', radius: 432, size: 32, speed: 0.85, phase: 5.55},
-    {name: 'Saturn', color: '#e8cf94', radius: 548, size: 56, speed: 0.58, phase: 1.15, hasRing: true},
+    {name: 'Mercury', color: '#8d93a5', radius: 158, size: 26, speed: 2.6, phase: 0.4},
+    {name: 'Venus', color: '#ffd166', radius: 248, size: 38, speed: 1.75, phase: 2.35},
+    {name: 'Earth', color: '#4cc9f0', radius: 338, size: 42, speed: 1.2, phase: 4.2},
+    {name: 'Mars', color: '#ff5c39', radius: 432, size: 32, speed: 0.85, phase: 5.55},
+    {name: 'Saturn', color: '#eef1f7', radius: 548, size: 56, speed: 0.58, phase: 1.15, hasRing: true},
   ],
   starName = 'SOL',
-  starColor = '#ffcf5c',
-  backgroundColor = '#04040a',
+  starColor = '#ffd166',
+  backgroundColor = '#04050a',
   elevation = 17,
   showLabels = true,
 }) => {
@@ -118,7 +118,7 @@ export const OrbitSystem: React.FC<Props> = ({
           // with the geometry at low elevations.
           backgroundImage: `radial-gradient(circle at ${50 - Math.cos(b.angle) * 26}% ${
             50 - Math.sin(b.angle) * squash * 26
-          }%, ${b.color}, ${b.color}44 62%, #05050c 100%)`,
+          }%, ${b.color}, ${b.color}44 62%, #04050a 100%)`,
           boxShadow: `0 0 ${b.size * 0.7}px ${b.color}55`,
         }}
       />
@@ -133,7 +133,7 @@ export const OrbitSystem: React.FC<Props> = ({
             fontFamily,
             fontSize: 20,
             letterSpacing: '0.2em',
-            color: '#7d8598',
+            color: '#8d93a5',
             whiteSpace: 'nowrap',
           }}
         >
@@ -179,7 +179,7 @@ export const OrbitSystem: React.FC<Props> = ({
           marginLeft: -90,
           marginTop: -90,
           borderRadius: '50%',
-          backgroundImage: `radial-gradient(circle, #fff8e0 0%, ${starColor} 45%, ${starColor}00 72%)`,
+          backgroundImage: `radial-gradient(circle, #ffffff 0%, ${starColor} 45%, ${starColor}00 72%)`,
           boxShadow: `0 0 180px ${starColor}88, 0 0 400px ${starColor}44`,
           scale: interpolate(frame, [0, 26], [0, 1], {
             extrapolateLeft: 'clamp',

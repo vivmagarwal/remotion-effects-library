@@ -4,3 +4,8 @@ out
 .playwright-mcp
 *.log
 .DS_Store
+
+# secrets — never commit
+.env
+.env.*
+!.env.example

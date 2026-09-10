@@ -17,7 +17,18 @@
     "prompts": "node scripts/emit-prompts.mjs",
     "docs": "node scripts/update-readme.mjs",
     "check:prompts": "npm run prompts && node scripts/check-prompt-defaults.mjs",
-    "check:fonts": "node scripts/check-font-weights.mjs"
+    "check:fonts": "node scripts/check-font-weights.mjs",
+    "check:compose": "node scripts/check-compose.mjs",
+    "check:vocab": "node scripts/check-vocab.mjs",
+    "check:taxonomy": "node scripts/check-taxonomy.mjs",
+    "check:meta": "node scripts/check-meta.mjs",
+    "check:standalone": "node scripts/check-standalone.mjs",
+    "check:assets": "node scripts/check-assets.mjs",
+    "check:poster": "node scripts/check-poster.mjs",
+    "check:palette": "node scripts/check-palette.mjs",
+    "gate:fast": "npm run registry && npm run typecheck && npm run prompts && npm run check:compose && npm run check:vocab && npm run check:taxonomy && npm run check:meta && npm run check:palette && npm run check:standalone && npm run check:assets && npm run check:fonts && npm run check:prompts",
+    "gate:slow": "npm run verify && npm run check:frames && npm run check:poster",
+    "viz:variants": "node scripts/build-viz-variants.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^9.7.0",
@@ -55,6 +66,7 @@
     "d3-sankey": "^0.12.3",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
+    "edododraw": "file:../../../../private/tmp/claude-501/-Users-vivmagarwal-Work-remotion-library/5687ba98-db63-4ebb-a77a-ce3fca4131e9/scratchpad/edododraw-0.15.0.tgz",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "remotion": "^4.0.522",

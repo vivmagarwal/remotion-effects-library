@@ -107,9 +107,9 @@ export const InstancedCubeWave: React.FC<Props> = ({
   grid = 64,
   spacing = 0.42,
   speed = 2.7,
-  lowColor = '#12204a',
-  highColor = '#63f5d0',
-  backgroundColor = '#04060f',
+  lowColor = '#0a0b10',
+  highColor = '#4cc9f0',
+  backgroundColor = '#04050a',
 }) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();
@@ -179,7 +179,7 @@ export const InstancedCubeWave: React.FC<Props> = ({
             fontSize: 86,
             fontWeight: 700,
             letterSpacing: '-0.02em',
-            color: '#eefaf6',
+            color: '#ffffff',
             textShadow: `0 0 60px ${highColor}66`,
             opacity: interpolate(frame, [10, 34], [0, 1], {
               extrapolateLeft: 'clamp',

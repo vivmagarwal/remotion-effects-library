@@ -33,13 +33,13 @@ const GAP = 18;
 
 export const NotificationStack: React.FC<Props> = ({
   notes = [
-    {app: 'Mail', icon: '✉️', tint: '#2f6bff', title: 'Render finished', body: 'out/video.mp4 — 1080p, 42s', time: 'now'},
-    {app: 'Messages', icon: '💬', tint: '#12c48b', title: 'Sam', body: 'wait, you coded the whole video?', time: '1m ago'},
-    {app: 'GitHub', icon: '🐙', tint: '#6e40c9', title: 'PR merged', body: 'feat: add transition sampler', time: '3m ago'},
+    {app: 'Mail', icon: '✉️', tint: '#4cc9f0', title: 'Render finished', body: 'out/video.mp4 — 1080p, 42s', time: 'now'},
+    {app: 'Messages', icon: '💬', tint: '#c6ff3d', title: 'Sam', body: 'wait, you coded the whole video?', time: '1m ago'},
+    {app: 'GitHub', icon: '🐙', tint: '#c77dff', title: 'PR merged', body: 'feat: add transition sampler', time: '3m ago'},
     {app: 'Calendar', icon: '📅', tint: '#ff5c39', title: 'Design review', body: 'in 15 minutes · Studio B', time: '5m ago'},
   ],
   stagger = 14,
-  backgroundColor = '#111319',
+  backgroundColor = '#0a0b10',
   transparent = false,
 }) => {
   const frame = useCurrentFrame();
@@ -57,7 +57,7 @@ export const NotificationStack: React.FC<Props> = ({
         backgroundColor: transparent ? 'transparent' : backgroundColor,
         backgroundImage: transparent
           ? undefined
-          : 'radial-gradient(ellipse at 50% 0%, #232838 0%, #111319 62%)',
+          : 'radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 62%)',
         alignItems: 'center',
         paddingTop: 130,
         fontFamily,
@@ -126,19 +126,19 @@ export const NotificationStack: React.FC<Props> = ({
                       fontWeight: 600,
                       letterSpacing: '0.06em',
                       textTransform: 'uppercase',
-                      color: '#9aa0b0',
+                      color: '#8d93a5',
                     }}
                   >
                     {n.app}
                   </span>
-                  <span style={{fontSize: 24, color: '#767c8c'}}>{n.time}</span>
+                  <span style={{fontSize: 24, color: '#4a4e5a'}}>{n.time}</span>
                 </div>
-                <div style={{fontSize: 34, fontWeight: 700, color: '#f2f3f7'}}>{n.title}</div>
+                <div style={{fontSize: 34, fontWeight: 700, color: '#ffffff'}}>{n.title}</div>
                 <div
                   style={{
                     fontSize: 30,
                     fontWeight: 400,
-                    color: '#a8adbb',
+                    color: '#8d93a5',
                     marginTop: 2,
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',

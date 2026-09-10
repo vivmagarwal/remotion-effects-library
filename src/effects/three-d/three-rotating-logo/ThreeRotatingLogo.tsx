@@ -2,6 +2,8 @@ import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVide
 import {ThreeCanvas} from '@remotion/three';
 import {loadFont} from '@remotion/google-fonts/Sora';
 
+// palette: data whole-file — a three.js lighting setup: material colour, emissive and a point light are physical quantities, not brand choices
+
 const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['latin']});
 
 /**

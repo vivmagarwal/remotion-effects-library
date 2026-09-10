@@ -8,76 +8,85 @@
  * all". A brief that omits a default is a brief you cannot rebuild the effect
  * from, which is the whole promise of this library.
  *
- * emit-prompts.mjs now generates a props table from the source, so this checks
- * that generation actually covered everything.
+ * This used to re-implement the props parser as a line regex
+ * (`/^\s*(\w+)\s*=\s*(.+?),\s*$/`), which was strictly weaker than the emitter's
+ * scanner: a multi-line default was checked by neither. It now imports the one
+ * scanner from src/prompt-kit/compose.mjs.
  *
  *   node scripts/check-prompt-defaults.mjs          # every effect
  *   node scripts/check-prompt-defaults.mjs globe-arcs quote-slam
  */
-import {readFileSync, readdirSync, statSync, existsSync} from 'node:fs';
+import {readFileSync, existsSync} from 'node:fs';
 import {join} from 'node:path';
+import {readPropsFromSource, declaresProps} from '../src/prompt-kit/compose.mjs';
+import {walkEffects, OUT_DIR} from './lib/fs.mjs';
+import {readMeta} from './lib/meta.mjs';
 
-const ROOT = 'src/effects';
-const PROMPTS = 'out/prompts';
+const PROMPTS = join(OUT_DIR, 'prompts');
 const only = process.argv.slice(2);
 
 if (!existsSync(PROMPTS)) {
-  console.error(`${PROMPTS} not found — run \`npm run prompts\` first.`);
+  console.error(`out/prompts not found — run \`npm run prompts\` first.`);
   process.exit(1);
 }
 
-const dirs = (p) => readdirSync(p).filter((d) => statSync(join(p, d)).isDirectory());
-
 const failures = [];
+const unparsed = [];
 const propless = [];
 let checked = 0;
 
-for (const cat of dirs(ROOT)) {
-  for (const id of dirs(join(ROOT, cat))) {
-    if (only.length && !only.includes(id)) continue;
+for (const e of walkEffects()) {
+  const meta = readMeta(e.metaPath);
+  if (only.length && !only.includes(meta.id) && !only.includes(e.id)) continue;
 
-    const dir = join(ROOT, cat, id);
-    const tsx = readdirSync(dir).find((f) => f.endsWith('.tsx'));
-    if (!tsx) continue;
-
-    const src = readFileSync(join(dir, tsx), 'utf8');
-    const prompt = readFileSync(join(PROMPTS, `${id}.md`), 'utf8');
-
-    // Some components (the transition presentations) take no props at all, so
-    // there is nothing to state. Not a parse failure.
-    const block = src.match(/export const \w+: React\.FC<Props> = \(\{([\s\S]*?)\n\}\) =>/)?.[1];
-    if (!block) {
-      propless.push(id);
-      continue;
-    }
-    checked++;
-
-    const missing = [];
-    for (const line of block.split('\n')) {
-      const m = line.match(/^\s*(\w+)\s*=\s*(.+?),\s*$/);
-      if (!m) continue;
-      const [, name, valueRaw] = m;
-      const value = valueRaw.trim();
-      // Scalars only. Array/object defaults are named constants described in prose.
-      if (!/^'[^']*'$|^-?[\d.]+$|^true$|^false$/.test(value)) continue;
-      const literal = value.replace(/^'|'$/g, '');
-      if (!prompt.includes(name)) missing.push(`${name} — prop name never mentioned`);
-      else if (literal.length > 1 && !prompt.includes(literal)) missing.push(`${name} = ${value}`);
-    }
-
-    if (missing.length) failures.push({id, missing});
+  const promptPath = join(PROMPTS, `${meta.id}.md`);
+  if (!existsSync(promptPath)) {
+    failures.push({id: meta.id, missing: [`out/prompts/${meta.id}.md was never written`]});
+    continue;
   }
+
+  const src = readFileSync(e.tsxPath, 'utf8');
+  const prompt = readFileSync(promptPath, 'utf8');
+  const props = readPropsFromSource(src);
+
+  if (props.length === 0) {
+    // A file with a `type Props` that yields no table is a PARSE failure, not a
+    // propless component — the prompt silently ships with no props table.
+    if (declaresProps(src)) unparsed.push({id: meta.id, file: e.file});
+    else propless.push(meta.id);
+    continue;
+  }
+  checked++;
+
+  const missing = [];
+  for (const {name, def} of props) {
+    const value = def.trim();
+    // Scalars only. Array/object defaults are named constants described in prose.
+    if (!/^'[^']*'$|^-?[\d.]+$|^true$|^false$/.test(value)) continue;
+    const literal = value.replace(/^'|'$/g, '');
+    if (!prompt.includes(name)) missing.push(`${name} — prop name never mentioned`);
+    else if (literal.length > 1 && !prompt.includes(literal)) missing.push(`${name} = ${value}`);
+  }
+
+  if (missing.length) failures.push({id: meta.id, missing});
 }
 
 for (const f of failures) {
   console.log(`  MISSING  ${f.id}`);
   for (const m of f.missing) console.log(`             ${m}`);
 }
+for (const u of unparsed) {
+  console.log(`  UNPARSED ${u.id} (${u.file})`);
+  console.log(`             declares \`type Props\` but the destructuring block did not match —`);
+  console.log(`             the shipped prompt has NO props table. Expected shape:`);
+  console.log(`             export const X: React.FC<Props> = ({ … \\n}) =>`);
+}
 
+const bad = failures.length + unparsed.length;
 console.log(
-  failures.length === 0
+  bad === 0
     ? `\n${checked} prompts checked — every prop default is stated.` +
-      (propless.length ? `\n${propless.length} take no props (${propless.join(', ')}).` : '')
-    : `\n${failures.length} of ${checked} prompts omit a default.`,
+        (propless.length ? `\n${propless.length} take no props (${propless.join(', ')}).` : '')
+    : `\n${failures.length} of ${checked} prompts omit a default; ${unparsed.length} component(s) produced no table at all.`,
 );
-process.exit(failures.length === 0 ? 0 : 1);
+process.exit(bad === 0 ? 0 : 1);

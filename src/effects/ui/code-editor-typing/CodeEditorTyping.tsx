@@ -1,6 +1,8 @@
 import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/JetBrainsMono';
 
+// palette: data whole-file — an editor recreation: the chrome is VS Code's and the token colours are a syntax theme, which is a colour SYSTEM in its own right
+
 const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['latin']});
 
 /**
@@ -133,7 +135,7 @@ export const CodeEditorTyping: React.FC<Props> = ({
       name="Scene"
       style={{
         backgroundColor: '#080a10',
-        backgroundImage: 'radial-gradient(ellipse at 50% 30%, #1b2033 0%, #080a10 66%)',
+        backgroundImage: 'radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 66%)',
         justifyContent: 'center',
         alignItems: 'center',
         fontFamily,

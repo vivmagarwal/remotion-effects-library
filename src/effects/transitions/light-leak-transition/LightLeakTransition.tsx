@@ -4,6 +4,8 @@ import {lightLeak} from '@remotion/effects/light-leak';
 import {loadFont} from '@remotion/google-fonts/DMSerifDisplay';
 import {loadFont as loadSans} from '@remotion/google-fonts/Inter';
 
+// palette: data whole-file — the hues of a film light leak, plus two card faces either side of it
+
 const {fontFamily: serif} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
 const {fontFamily: sans} = loadSans('normal', {weights: ['500'], subsets: ['latin']});
 

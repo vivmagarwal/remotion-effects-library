@@ -109,9 +109,9 @@ export const GalaxyParticles: React.FC<Props> = ({
   radius = 5.2,
   spin = 0.72,
   randomness = 0.34,
-  insideColor = '#ffb03a',
-  outsideColor = '#3d6bff',
-  backgroundColor = '#03030a',
+  insideColor = '#ffd166',
+  outsideColor = '#4cc9f0',
+  backgroundColor = '#04050a',
 }) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();
@@ -176,7 +176,7 @@ export const GalaxyParticles: React.FC<Props> = ({
             fontWeight: 700,
             letterSpacing: '0.3em',
             marginRight: '-0.3em',
-            color: '#f6f2ff',
+            color: '#ffffff',
             textShadow: `0 0 70px ${outsideColor}aa`,
             opacity: interpolate(frame, [26, 52], [0, 1], {
               extrapolateLeft: 'clamp',
@@ -193,7 +193,7 @@ export const GalaxyParticles: React.FC<Props> = ({
             fontSize: 26,
             letterSpacing: '0.18em',
             marginRight: '-0.18em',
-            color: '#b9bfe8',
+            color: '#eef1f7',
             marginTop: 22,
             opacity: interpolate(frame, [40, 66], [0, 1], {
               extrapolateLeft: 'clamp',

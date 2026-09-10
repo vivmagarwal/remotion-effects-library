@@ -1,6 +1,8 @@
 import {AbsoluteFill, Easing, Interactive, interpolate, random, useCurrentFrame, useVideoConfig} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/BebasNeue';
 
+// palette: data whole-file — a sunset landscape: the sky gradient, the five-step ridge depth ramp and the sun are the SUBJECT. A sunset rendered in EMBER and SKY is not a sunset
+
 const {fontFamily} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
 
 /**

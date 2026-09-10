@@ -57,9 +57,9 @@ export const DnaHelix: React.FC<Props> = ({
   helixHeight = 7.4,
   turns = 2.6,
   basePairs = 40,
-  strandColor = '#3ea9ff',
-  pairColors = ['#ff5c7a', '#8affc1'],
-  backgroundColor = '#04060e',
+  strandColor = '#4cc9f0',
+  pairColors = ['#ff5c39', '#c6ff3d'],
+  backgroundColor = '#04050a',
 }) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();
@@ -204,7 +204,7 @@ export const DnaHelix: React.FC<Props> = ({
             fontSize: 92,
             fontWeight: 700,
             letterSpacing: '-0.02em',
-            color: '#eef5ff',
+            color: '#ffffff',
             textShadow: `0 0 60px ${strandColor}66`,
             opacity: interpolate(frame, [40, 66], [0, 1], {
               extrapolateLeft: 'clamp',
@@ -219,7 +219,7 @@ export const DnaHelix: React.FC<Props> = ({
           style={{
             fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
             fontSize: 24,
-            color: '#7f8aa6',
+            color: '#8d93a5',
             marginTop: 14,
             maxWidth: 520,
             opacity: interpolate(frame, [54, 78], [0, 1], {

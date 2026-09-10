@@ -1,6 +1,8 @@
 import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
+// palette: brand-mimicry whole-file — macOS window chrome and a rendered web page; both belong to someone else
+
 const {fontFamily} = loadFont('normal', {weights: ['400', '600', '700', '800'], subsets: ['latin']});
 
 /**
@@ -209,12 +211,12 @@ export const BrowserWindowScroll: React.FC<Props> = ({
           </div>
 
           {/* Scrollbar */}
-          <div style={{position: 'absolute', right: 8, top: 8, bottom: 8, width: 8, borderRadius: 4, backgroundColor: '#00000010'}}>
+          <div style={{position: 'absolute', right: 8, top: 8, bottom: 8, width: 8, borderRadius: 4, backgroundColor: 'rgba(0,0,0,0.06)'}}>
             <div
               style={{
                 width: '100%',
                 borderRadius: 4,
-                backgroundColor: '#00000038',
+                backgroundColor: 'rgba(0,0,0,0.22)',
                 height: `${(VIEW_H / pageHeight) * 100}%`,
                 translate: `0px ${(scroll / pageHeight) * (VIEW_H - 16)}px`,
               }}

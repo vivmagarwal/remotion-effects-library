@@ -3,41 +3,49 @@
  * Quality gate: bundles once, then renders one still per composition.
  * Any effect that throws is a broken effect — the library must not ship it.
  *
- *   node scripts/verify.mjs            # every effect
- *   node scripts/verify.mjs text/      # ids/categories containing "text/"
+ *   node scripts/verify.mjs               # every effect
+ *   node scripts/verify.mjs glitch        # ids containing "glitch"
  */
 import {bundle} from '@remotion/bundler';
 import {getCompositions, renderStill} from '@remotion/renderer';
-import {mkdirSync, existsSync} from 'node:fs';
+import {mkdirSync} from 'node:fs';
 import {join} from 'node:path';
+import {ROOT, OUT_DIR, walkEffects} from './lib/fs.mjs';
+import {readMeta} from './lib/meta.mjs';
 
-const OUT = 'out/verify';
+const OUT = join(OUT_DIR, 'verify');
 const filter = process.argv[2] ?? '';
 
-if (!existsSync(OUT)) mkdirSync(OUT, {recursive: true});
+mkdirSync(OUT, {recursive: true});
+
+// checkFrame lives in each meta.ts; one reader, shared with every other gate.
+const checkFrames = new Map();
+const posterFrames = new Map();
+for (const e of walkEffects()) {
+  const meta = readMeta(e.metaPath);
+  if (Number.isFinite(meta.checkFrame)) checkFrames.set(meta.id, meta.checkFrame);
+  // The poster is the frame the gallery actually shows, and no gate ever
+  // rendered it. Render it here when it differs so check:poster has something
+  // to look at.
+  if (Number.isFinite(meta.posterFrame) && meta.posterFrame !== meta.checkFrame) {
+    posterFrames.set(meta.id, meta.posterFrame);
+  }
+}
+const POSTERS = join(OUT_DIR, 'poster');
+mkdirSync(POSTERS, {recursive: true});
 
 console.log('Bundling…');
 const serveUrl = await bundle({
-  entryPoint: join(process.cwd(), 'src/index.ts'),
+  entryPoint: join(ROOT, 'src/index.ts'),
   onProgress: () => undefined,
 });
 
-// checkFrame lives in each meta.ts; read it straight out of the source.
-const checkFrames = new Map();
-{
-  const effectsDir = join(process.cwd(), 'src', 'effects');
-  const {readdirSync, readFileSync, statSync} = await import('node:fs');
-  const dirs = (p) => readdirSync(p).filter((d) => statSync(join(p, d)).isDirectory());
-  for (const cat of dirs(effectsDir)) {
-    for (const id of dirs(join(effectsDir, cat))) {
-      const raw = readFileSync(join(effectsDir, cat, id, 'meta.ts'), 'utf8');
-      const f = raw.match(/checkFrame:\s*(\d+)/)?.[1];
-      if (f) checkFrames.set(id, Number(f));
-    }
-  }
+const all = await getCompositions(serveUrl);
+const comps = all.filter((c) => c.id.includes(filter));
+if (filter && comps.length === 0) {
+  console.error(`No composition id contains "${filter}" (of ${all.length}). A typo'd filter must not be a green build.`);
+  process.exit(1);
 }
-
-const comps = (await getCompositions(serveUrl)).filter((c) => c.id.includes(filter));
 console.log(`Rendering ${comps.length} stills…\n`);
 
 const failures = [];
@@ -54,7 +62,19 @@ for (const comp of comps) {
       chromiumOptions: {gl: 'angle'},
       overwrite: true,
     });
-    process.stdout.write(`  ok    ${comp.id}\n`);
+    const poster = posterFrames.get(comp.id);
+    if (poster !== undefined) {
+      await renderStill({
+        composition: comp,
+        serveUrl,
+        output: join(POSTERS, `${comp.id}.png`),
+        frame: poster,
+        scale: 0.35,
+        chromiumOptions: {gl: 'angle'},
+        overwrite: true,
+      });
+    }
+    process.stdout.write(`  ok    ${comp.id}${poster !== undefined ? ` (+poster @${poster})` : ''}\n`);
   } catch (err) {
     failures.push({id: comp.id, message: String(err).split('\n')[0]});
     process.stdout.write(`  FAIL  ${comp.id}\n`);

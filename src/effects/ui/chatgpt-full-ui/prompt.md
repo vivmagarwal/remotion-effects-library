@@ -1,4 +1,4 @@
-Build a Remotion composition called **ChatGptFullUi** (composition id `chatgpt-full-ui`): the whole
+Build a Remotion composition called **ChatgptFullUi** (composition id `chatgpt-full-ui`): the whole
 ChatGPT window — browser chrome, icon rail, thread and composer — playing a real multi-turn
 conversation: a message types into the composer, gets sent, a reply arrives, then the next message is
 typed.
@@ -77,7 +77,7 @@ Keep the push tiny here — `1.03`. This frame is dense with UI, and anything mo
 visibly swim.
 
 **Requirements**
-- One self-contained `.tsx` file exporting `ChatGptFullUi`.
+- One self-contained `.tsx` file exporting `ChatgptFullUi`.
 - Props: `turns` (array of `{user, assistant}`), `url`, `tabTitle`, `charsPerSecond`,
   `replyCharsPerSecond`, `thinkFrames`, `betweenTurns`, `startAt`, `enterFrames`, `exitFrames`,
   `zoomWhileTyping`.

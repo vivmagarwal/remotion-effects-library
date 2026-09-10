@@ -28,11 +28,11 @@ type Props = {
 export const RetroGridFloor: React.FC<Props> = ({
   title = 'OVERDRIVE',
   subtitle = 'SIDE A · 1984',
-  gridColor = '#ff2e88',
-  sunTop = '#ffe66d',
-  sunBottom = '#ff2e88',
-  skyTop = '#0b0524',
-  skyBottom = '#3d1a63',
+  gridColor = '#ff5c39',
+  sunTop = '#ffd166',
+  sunBottom = '#ff5c39',
+  skyTop = '#04050a',
+  skyBottom = '#c2410c',
   speed = 0.55,
   columns = 26,
   rows = 22,
@@ -53,7 +53,7 @@ export const RetroGridFloor: React.FC<Props> = ({
       name="Scene"
       style={{
         overflow: 'hidden',
-        backgroundImage: `linear-gradient(${skyTop} 0%, ${skyBottom} 55%, #12082c 100%)`,
+        backgroundImage: `linear-gradient(${skyTop} 0%, ${skyBottom} 55%, #0a0b10 100%)`,
         fontFamily,
       }}
     >
@@ -71,9 +71,9 @@ export const RetroGridFloor: React.FC<Props> = ({
           backgroundImage: `linear-gradient(${sunTop}, ${sunBottom})`,
           // The slots widen toward the bottom — the classic synthwave sun.
           maskImage:
-            'linear-gradient(#000 0 58%, transparent 58% 61%, #000 61% 70%, transparent 70% 74%, #000 74% 80%, transparent 80% 85%, #000 85% 88%, transparent 88% 100%)',
+            'linear-gradient(black 0 58%, transparent 58% 61%, black 61% 70%, transparent 70% 74%, black 74% 80%, transparent 80% 85%, black 85% 88%, transparent 88% 100%)',
           WebkitMaskImage:
-            'linear-gradient(#000 0 58%, transparent 58% 61%, #000 61% 70%, transparent 70% 74%, #000 74% 80%, transparent 80% 85%, #000 85% 88%, transparent 88% 100%)',
+            'linear-gradient(black 0 58%, transparent 58% 61%, black 61% 70%, transparent 70% 74%, black 74% 80%, transparent 80% 85%, black 85% 88%, transparent 88% 100%)',
           filter: `drop-shadow(0 0 90px ${sunBottom}88)`,
         }}
       />

@@ -15,7 +15,7 @@ export const RemotionRoot: React.FC = () => {
         <Folder name={folderName(category)} key={category}>
           {effects
             .filter((e) => e.meta.category === category)
-            .map(({meta, Component}) => (
+            .map(({meta, Component, variantProps}) => (
               <Composition
                 key={meta.id}
                 id={meta.id}
@@ -24,6 +24,13 @@ export const RemotionRoot: React.FC = () => {
                 fps={meta.fps}
                 width={meta.width}
                 height={meta.height}
+                // A variant is the same component with a different prop set.
+                // Studio normally writes prop edits back into the literal it
+                // finds here; it cannot do that through a variable, so an edit
+                // to a variant is a scratch edit rather than a source change.
+                // That is the right trade for eighty-three cards from one file —
+                // the values live in the effect's own `meta.ts`, which IS source.
+                defaultProps={variantProps as Record<string, unknown> | undefined}
               />
             ))}
         </Folder>
