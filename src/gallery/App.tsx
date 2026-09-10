@@ -367,7 +367,7 @@ const Card: React.FC<{
   onCopy: (text: string, what: string) => void;
   copied: string | null;
 }> = ({entry, onOpen, onCopy, copied, familyCount = 0, familyOpen = false, onToggleFamily}) => {
-  const {meta, Component, file} = entry;
+  const {meta, Component, file, variantProps} = entry;
   const [playing, setPlaying] = useState(false);
   const [stageRef, near] = useNearViewport<HTMLDivElement>(isGpu(meta) ? '150px' : '600px');
 
@@ -412,6 +412,10 @@ const Card: React.FC<{
           <div className="stage-media" data-ground={ground} style={box}>
             <Player
               component={Component}
+              // Without this every variant renders the component's DEFAULTS. A
+              // variant IS its props — 82 viz templates and 3 handheld presets
+              // all shipped the same default picture under 85 different names.
+              inputProps={variantProps}
               durationInFrames={meta.durationInFrames}
               compositionWidth={meta.width}
               compositionHeight={meta.height}
@@ -429,6 +433,7 @@ const Card: React.FC<{
               {near ? (
                 <Thumbnail
                   component={Component}
+                  inputProps={variantProps}
                   durationInFrames={meta.durationInFrames}
                   compositionWidth={meta.width}
                   compositionHeight={meta.height}
@@ -518,7 +523,7 @@ const Detail: React.FC<{
   onPrev: (() => void) | null;
   onNext: (() => void) | null;
 }> = ({entry, onClose, onCopy, copied, onPrev, onNext}) => {
-  const {meta, Component, file} = entry;
+  const {meta, Component, file, variantProps} = entry;
   const m = mx(meta);
   const [tab, setTab] = useState<Tab>(() => {
     try {
@@ -632,6 +637,7 @@ const Detail: React.FC<{
           >
             <Player
               component={Component}
+              inputProps={variantProps}
               durationInFrames={meta.durationInFrames}
               compositionWidth={meta.width}
               compositionHeight={meta.height}

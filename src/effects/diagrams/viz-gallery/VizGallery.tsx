@@ -9,11 +9,19 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from 'remotion';
-import {compileEdd, SvgRenderer, whenFontsReady} from 'edododraw';
+import {cameraForBBox, compileEdd, sceneBBox, SvgRenderer, whenFontsReady} from 'edododraw';
 import {loadFont} from '@remotion/google-fonts/Inter';
 import {VIZ_VARIANTS} from './variants.generated';
 
 const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets: ['latin']});
+
+/**
+ * The SVG host's insets, in frame pixels. Declared once because two things read
+ * them: the element's own layout, and the viewport handed to `setViewport()`.
+ * If those two ever disagree the camera centres on a box the diagram is not in.
+ */
+const HOST_TOP = 88;
+const HOST_BOTTOM = 96;
 
 /**
  * Viz Gallery
@@ -139,26 +147,31 @@ export const VizGallery: React.FC<Props> = ({
     // Fit the diagram to the frame ONCE. Every template lays out at whatever
     // size its content needs, so without this a four-item flowchart sits small
     // in the top-left while a 25-element architecture diagram runs off the edge,
-    // and across 83 cards that inconsistency is the first thing you notice.
+    // and across 82 cards that inconsistency is the first thing you notice.
     //
-    // Done with the SVG's own `viewBox` rather than with edododraw's camera. The
-    // camera works in world coordinates and has to be told the viewport; a
-    // viewBox is measured in the SVG's own user space by `getBBox()`, so it
-    // cannot be in the wrong coordinate system, and `preserveAspectRatio` does
-    // the centring. This is the one-shot version of the same maths the recipe
-    // uses for an animated camera.
-    const svg = host.querySelector('svg');
-    const world = host.querySelector<SVGGElement>('.edd-world') ?? svg?.querySelector('g');
-    if (svg && world) {
-      const b = world.getBBox();
-      if (b.width > 0 && b.height > 0) {
-        svg.setAttribute(
-          'viewBox',
-          `${b.x - padding} ${b.y - padding} ${b.width + padding * 2} ${b.height + padding * 2}`,
-        );
-        svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-      }
-    }
+    // `setViewport` is the load-bearing call and it is not optional. The camera
+    // is `translate(vw/2, vh/2) scale(zoom) translate(-cx, -cy)`, and the
+    // renderer's own `measure()` reads `clientWidth`/`clientHeight` — which
+    // Remotion cannot provide during the layout pass, because it mounts the
+    // composition inside a 0x0 off-screen wrapper. A `useLayoutEffect` therefore
+    // sees 0x0, the viewport is clamped to 1x1, and the camera degenerates to
+    // `translate(0.5 0.5)`.
+    //
+    // That degenerate camera is why an earlier version of this file "worked":
+    // it framed with the SVG's own `viewBox`, measured from `world.getBBox()`.
+    // A viewBox lives in the space the world group's transform maps INTO, and
+    // getBBox reports the space it maps FROM — the two coincide only while the
+    // camera is identity. Server-side stills had a 0x0 host and looked perfect;
+    // every browser gave the host a real size, the camera picked up a real
+    // translate, and all 82 cards rendered off their own viewBox. The gates
+    // never saw it, because renderStill is the one environment where the bug
+    // cancels out.
+    //
+    // The host's size is known here without measuring anything: it is the frame
+    // minus the two insets this component itself lays out below.
+    const viewport = {w: width, h: height - HOST_TOP - HOST_BOTTOM};
+    renderer.setViewport(viewport);
+    renderer.applyCamera(cameraForBBox(sceneBBox(scene), viewport, {padding}));
 
     // Document order, which the dagre layout already puts in reading order.
     const els = [
@@ -234,7 +247,7 @@ export const VizGallery: React.FC<Props> = ({
     <AbsoluteFill name="Scene" style={{backgroundColor, fontFamily, overflow: 'hidden'}}>
       <div
         ref={hostRef}
-        style={{position: 'absolute', left: 0, top: 88, right: 0, bottom: 96}}
+        style={{position: 'absolute', left: 0, top: HOST_TOP, right: 0, bottom: HOST_BOTTOM}}
       />
 
       {problems.length > 0 ? (
