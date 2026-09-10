@@ -9,7 +9,11 @@ export const meta: EffectMeta = {
   concepts: ['elliptical projection', 'trig orbits', 'paint order'],
   width: 1920, height: 1080, fps: 30, durationInFrames: 300,
   packages: ['remotion', '@remotion/google-fonts'],
-  difficulty: 'advanced', checkFrame: 96, posterFrame: 214,
+  difficulty: 'advanced', checkFrame: 96, // 270, not 214. The orbital periods bring the planets into conjunction around
+ // 214 — they bunch on one side, the frame goes lopsided, and Mercury's label
+ // disappears into the sun's glow, reading as "CURY". check:poster measured it
+ // as almost no structure and was right. At 270 they are spread across the width.
+ posterFrame: 270,
   ground: 'dark', audience: ['educator', 'youtuber'],
   credit: {
     label: 'Idea from “Solar System Orbit Animation” in the Remotion prompt showcase',

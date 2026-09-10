@@ -1,4 +1,4 @@
-import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Easing, Interactive, interpolate, random, useCurrentFrame, useVideoConfig} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Sora';
 
 const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['latin']});
@@ -34,25 +34,46 @@ type Props = {
    */
   readonly elevation?: number;
   readonly showLabels?: boolean;
+  /**
+   * Stars behind the system. Not decoration: the orbits occupy the middle third
+   * of the frame and the rest was flat black, so the card read as a void with a
+   * diagram in it rather than as space. Set to 0 for a plain ground.
+   */
+  readonly starCount?: number;
 };
 
 export const OrbitSystem: React.FC<Props> = ({
   bodies = [
-    {name: 'Mercury', color: '#8d93a5', radius: 158, size: 26, speed: 2.6, phase: 0.4},
-    {name: 'Venus', color: '#ffd166', radius: 248, size: 38, speed: 1.75, phase: 2.35},
-    {name: 'Earth', color: '#4cc9f0', radius: 338, size: 42, speed: 1.2, phase: 4.2},
-    {name: 'Mars', color: '#ff5c39', radius: 432, size: 32, speed: 0.85, phase: 5.55},
-    {name: 'Saturn', color: '#eef1f7', radius: 548, size: 56, speed: 0.58, phase: 1.15, hasRing: true},
+    {name: 'Mercury', color: '#8d93a5', radius: 206, size: 30, speed: 2.6, phase: 0.4},
+    {name: 'Venus', color: '#ffd166', radius: 324, size: 44, speed: 1.75, phase: 2.35},
+    {name: 'Earth', color: '#4cc9f0', radius: 442, size: 50, speed: 1.2, phase: 4.2},
+    {name: 'Mars', color: '#ff5c39', radius: 564, size: 38, speed: 0.85, phase: 5.55},
+    {name: 'Saturn', color: '#eef1f7', radius: 716, size: 64, speed: 0.58, phase: 1.15, hasRing: true},
   ],
   starName = 'SOL',
   starColor = '#ffd166',
   backgroundColor = '#04050a',
   elevation = 17,
   showLabels = true,
+  starCount = 520,
 }) => {
   const frame = useCurrentFrame();
   const {fps, width, height} = useVideoConfig();
   const t = frame / fps;
+
+  /**
+   * Seeded, so the field is identical on every render tab and every machine.
+   * `Math.random()` here would give a different sky per frame and the stars
+   * would boil — the single most common way a starfield goes wrong in Remotion.
+   */
+  const stars = Array.from({length: starCount}, (_, i) => ({
+    x: random(`os-x-${i}`) * 100,
+    y: random(`os-y-${i}`) * 100,
+    // Cubed, so most stars are small and a few are bright. A uniform
+    // distribution gives you graph paper.
+    size: 1.6 + random(`os-s-${i}`) ** 3 * 3.4,
+    opacity: 0.28 + random(`os-o-${i}`) ** 2 * 0.66,
+  }));
 
   const cx = width / 2;
   const cy = height / 2;
@@ -131,9 +152,13 @@ export const OrbitSystem: React.FC<Props> = ({
             top: (b.hasRing ? b.size * 1.35 : b.size * 0.62) + 10,
             translate: '-50% 0',
             fontFamily,
-            fontSize: 20,
-            letterSpacing: '0.2em',
-            color: '#8d93a5',
+            // 26px, not 20: this composition is shown at roughly a sixth of its
+            // width on a card, where 20px type is three pixels tall.
+            fontSize: 26,
+            fontWeight: 700,
+            letterSpacing: '0.18em',
+            color: '#eef1f7',
+            textShadow: '0 2px 12px rgba(4,5,10,0.95)',
             whiteSpace: 'nowrap',
           }}
         >
@@ -145,6 +170,22 @@ export const OrbitSystem: React.FC<Props> = ({
 
   return (
     <AbsoluteFill name="Scene" style={{backgroundColor, overflow: 'hidden'}}>
+      {stars.map((st, i) => (
+        <div
+          key={i}
+          style={{
+            position: 'absolute',
+            left: `${st.x}%`,
+            top: `${st.y}%`,
+            width: st.size,
+            height: st.size,
+            borderRadius: '50%',
+            backgroundColor: '#eef1f7',
+            opacity: st.opacity,
+          }}
+        />
+      ))}
+
       {/* Orbit paths, drawn as squashed rings. */}
       {bodies.map((b, i) => (
         <div
@@ -158,7 +199,11 @@ export const OrbitSystem: React.FC<Props> = ({
             marginLeft: -b.radius,
             marginTop: -b.radius * squash,
             borderRadius: '50%',
-            border: '1px solid #ffffff14',
+            // #ffffff14 is 8% white: an orbit you cannot see is not a diagram of
+            // an orbit, it is a planet floating in the dark. And this card is
+            // read at about 300px wide in a gallery grid, where a hairline is a
+            // sub-pixel — 2px at 32% is the width that survives the downscale.
+            border: '2px solid #ffffff52',
             opacity: reveal(i),
           }}
         />
