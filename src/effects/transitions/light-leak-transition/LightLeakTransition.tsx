@@ -47,17 +47,25 @@ export type Shot = {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly display: string;
+  readonly text: string;
   readonly bgDeep: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  display: serif,
+  text: sans,
   bgDeep: '#04050a',
 };
 
 type Props = {
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
+  /** CSS family for the display face. Defaults to this file's own, or the theme's. */
+  readonly displayFamily?: string;
+  /** CSS family for the supporting text. Defaults to this file's Inter, or the theme's. */
+  readonly textFamily?: string;
   /** The shots, in order. Two or more. */
   readonly shots?: readonly Shot[];
   /**
@@ -84,7 +92,11 @@ const SHOTS: Shot[] = [
   {src: staticFile('footage/broll-night.mp4'), title: 'Night', caption: 'shot three'},
 ];
 
-const ShotView: React.FC<{shot: Shot}> = ({shot}) => {
+const ShotView: React.FC<{shot: Shot; displayFamily: string; textFamily: string}> = ({
+  shot,
+  displayFamily,
+  textFamily,
+}) => {
   const frame = useCurrentFrame();
   return (
     <AbsoluteFill
@@ -107,7 +119,7 @@ const ShotView: React.FC<{shot: Shot}> = ({shot}) => {
         name="Title"
         style={{
           position: 'relative',
-          fontFamily: serif,
+          fontFamily: displayFamily,
           fontSize: 148,
           letterSpacing: '-0.02em',
           textShadow: '0 8px 48px rgba(0,0,0,0.6)',
@@ -124,7 +136,7 @@ const ShotView: React.FC<{shot: Shot}> = ({shot}) => {
         name="Caption"
         style={{
           position: 'relative',
-          fontFamily: sans,
+          fontFamily: textFamily,
           fontSize: 28,
           fontWeight: 500,
           letterSpacing: '0.3em',
@@ -179,6 +191,8 @@ const Leak: React.FC<{blendMode: React.CSSProperties['mixBlendMode']; opacity: n
 
 export const LightLeakTransition: React.FC<Props> = ({
   theme = THEME,
+  displayFamily = theme.display,
+  textFamily = theme.text,
   shots = SHOTS,
   leakFrames = 30,
   holdFrames = 70,
@@ -191,7 +205,7 @@ export const LightLeakTransition: React.FC<Props> = ({
       {shots.map((shot, i) => (
         <React.Fragment key={i}>
           <TransitionSeries.Sequence durationInFrames={holdFrames} name={shot.title ?? `Shot ${i + 1}`}>
-            <ShotView shot={shot} />
+            <ShotView shot={shot} displayFamily={displayFamily} textFamily={textFamily} />
           </TransitionSeries.Sequence>
           {/* Straddles the cut and costs the timeline nothing. Every shot keeps
               its full `holdFrames`, which is the whole point of an Overlay. */}

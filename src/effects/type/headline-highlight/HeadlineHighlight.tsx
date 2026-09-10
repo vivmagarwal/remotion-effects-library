@@ -22,17 +22,25 @@ type Span = {readonly text: string; readonly highlight?: boolean};
  * this file runnable on its own.
  */
 type Theme = {
+  readonly display: string;
+  readonly text: string;
   readonly series: readonly string[];
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  display: serif,
+  text: sans,
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
 };
 
 type Props = {
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
+  /** CSS family for the display face. Defaults to this file's own, or the theme's. */
+  readonly displayFamily?: string;
+  /** CSS family for the supporting text. Defaults to this file's Inter, or the theme's. */
+  readonly textFamily?: string;
   readonly kicker?: string;
   readonly headline?: readonly Span[];
   readonly byline?: string;
@@ -46,6 +54,8 @@ type Props = {
 
 export const HeadlineHighlight: React.FC<Props> = ({
   theme = THEME,
+  displayFamily = theme.display,
+  textFamily = theme.text,
   kicker = 'Technology',
   headline = [
     {text: 'Remotion turns '},
@@ -71,7 +81,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
       <Interactive.Div
         name="Kicker"
         style={{
-          fontFamily: sans,
+          fontFamily: textFamily,
           fontSize: 30,
           color: '#4a4e5a',
           textDecoration: 'underline',
@@ -85,7 +95,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
       <Interactive.Div
         name="Headline"
         style={{
-          fontFamily: serif,
+          fontFamily: displayFamily,
           fontSize: 92,
           fontWeight: 700,
           lineHeight: 1.24,
@@ -143,7 +153,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
       <Interactive.Div
         name="Byline"
         style={{
-          fontFamily: sans,
+          fontFamily: textFamily,
           fontSize: 28,
           color: '#c2410c',
           marginTop: 44,
@@ -158,7 +168,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
       <Interactive.Div
         name="Meta"
         style={{
-          fontFamily: sans,
+          fontFamily: textFamily,
           fontSize: 25,
           color: '#4a4e5a',
           marginTop: 14,
@@ -171,7 +181,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
       <Interactive.Div
         name="Source chip"
         style={{
-          fontFamily: sans,
+          fontFamily: textFamily,
           fontSize: 24,
           fontWeight: 600,
           color: '#4a4e5a',

@@ -272,6 +272,47 @@ viz template that compiles to an empty scene.
 
 ---
 
+## Themes
+
+Every effect takes a `theme` prop. Pass one object to a set of compositions and
+they agree on ground, ink, accent, typeface, corner radius and hand-drawn
+roughness. `src/theme.ts` is the vocabulary and ships four themes; the gallery
+has a picker that restyles all 181 compositions live.
+
+```tsx
+import {THEMES} from './src/theme';
+
+const composition = await selectComposition({serveUrl, id, inputProps: {theme: THEMES.console}});
+await renderStill({composition, serveUrl, output, frame, inputProps: {theme: THEMES.console}});
+```
+
+`inputProps` has to go to **`selectComposition` as well as `renderStill`** —
+Remotion resolves a composition's props when it selects it, and passing them
+only to the renderer silently renders the defaults.
+
+**It is a prop with an inline default, not an import.** A component's brief is
+handed to an agent with an empty directory, so a shared tokens module is out,
+and a React context is out for the same reason — the provider is an import. Each
+file declares the subset of tokens it uses, TypeScript's structural typing makes
+the full theme assignable to it, and `check:theme` enforces that every declared
+token exists in `src/theme.ts` with that type and that every inline default is
+the house value. That last part is what makes "pass no theme" mean "the house
+look" rather than an accident.
+
+**"As authored" is not the house theme.** It means no theme is passed at all, so
+each effect uses the typeface and accent it was written with — which is what you
+get from pasting a single file, and why it is the gallery's default. Picking a
+theme is what makes a SET agree.
+
+**What it reaches.** Prop defaults and the typeface — the configurable surface.
+Colour literals inside a component body stay, because most of them are not
+tokens: a scrim's alpha, a gradient stop, a recreated product's own palette. The
+practical consequence is that an effect authored on a dark ground may have white
+hard-coded somewhere, and a **light** theme will not reach it. `meta.ground`
+records which grounds each effect was designed for.
+
+---
+
 ## How prompts are validated
 
 Every composed prompt carries a **props table generated from the component source** — every prop with
@@ -424,11 +465,14 @@ Every one exits non-zero on failure.
 | `check:assets` | a file in `public/` has no row in `public/ASSETS.md` | fast |
 | `check:fonts` | a component uses a font weight it never loaded | fast |
 | `check:prompts` | a component default is missing from its prompt | fast |
+| `check:theme` | a component declares a theme token that is not in `src/theme.ts`, types one differently, or inlines a default that is not the house value | fast |
+| `check:gallery-variants` | a gallery `<Player>`/`<Thumbnail>` renders a registry entry without `inputProps`, so every variant would show the component defaults | fast |
 | `check:palette` | a hex literal in a component is outside the house palette, is not derived from a prop, and is not marked `// palette: brand-mimicry` | fast |
 | `check:edd` | an `edododraw` `sideEffects` glob matches no shipped JS, or a viz template compiles to an empty scene | fast |
 | `verify` | any effect fails to render a still | slow |
 | `check:frames` | an effect's `checkFrame` shows no motion | slow |
 | `check:poster` | a poster frame's mean luminance variance is below the floor — a blank or black card | slow |
+| `check:browser` | a composition looks different in a **browser** than in `renderStill` — the gap two shipped bugs lived in | slow |
 
 ---
 

@@ -20,6 +20,8 @@ const {fontFamily: sans} = loadSans('normal', {weights: ['500'], subsets: ['lati
  * this file runnable on its own.
  */
 type Theme = {
+  readonly hand: string;
+  readonly text: string;
   readonly bg: string;
   readonly paper: string;
   readonly series: readonly string[];
@@ -27,6 +29,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  hand: hand,
+  text: sans,
   bg: '#0a0b10',
   paper: '#f6f5f2',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
@@ -35,6 +39,10 @@ const THEME: Theme = {
 type Props = {
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
+  /** CSS family for the display face. Defaults to this file's own, or the theme's. */
+  readonly handFamily?: string;
+  /** CSS family for the supporting text. Defaults to this file's Inter, or the theme's. */
+  readonly textFamily?: string;
   readonly lines?: readonly string[];
   readonly caption?: string;
   /** Frames between one character starting and the next. */
@@ -58,6 +66,8 @@ const smooth = (t: number) => {
 
 export const WriteOnText: React.FC<Props> = ({
   theme = THEME,
+  handFamily = theme.hand,
+  textFamily = theme.text,
   lines = ['Write it on,', 'stroke first.'],
   caption = "MANIM'S Write() — OUTLINE, THEN FILL",
   stagger = 3.4,
@@ -123,7 +133,7 @@ export const WriteOnText: React.FC<Props> = ({
               y,
               textAnchor: 'middle' as const,
               dominantBaseline: 'middle' as const,
-              fontFamily: hand,
+              fontFamily: handFamily,
               fontSize,
               fontWeight: 700,
               // Lay the characters out by shifting each one, so a single <text>
@@ -164,7 +174,7 @@ export const WriteOnText: React.FC<Props> = ({
           right: 0,
           bottom: 128,
           textAlign: 'center',
-          fontFamily: sans,
+          fontFamily: textFamily,
           fontSize: 26,
           fontWeight: 500,
           letterSpacing: '0.3em',

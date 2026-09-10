@@ -21,6 +21,8 @@ const {fontFamily: sans} = loadSans('normal', {weights: ['500', '700'], subsets:
  * this file runnable on its own.
  */
 type Theme = {
+  readonly display: string;
+  readonly text: string;
   readonly accent: string;
   readonly bg: string;
   readonly ink: string;
@@ -28,6 +30,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  display: serif,
+  text: sans,
   accent: '#ff5c39',
   bg: '#0a0b10',
   ink: '#ffffff',
@@ -36,6 +40,10 @@ const THEME: Theme = {
 type Props = {
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
+  /** CSS family for the display face. Defaults to this file's own, or the theme's. */
+  readonly displayFamily?: string;
+  /** CSS family for the supporting text. Defaults to this file's Inter, or the theme's. */
+  readonly textFamily?: string;
   readonly quote?: string;
   readonly author?: string;
   readonly role?: string;
@@ -50,6 +58,8 @@ type Props = {
 
 export const QuoteSlam: React.FC<Props> = ({
   theme = THEME,
+  displayFamily = theme.display,
+  textFamily = theme.text,
   quote = 'We stopped\nrendering videos\nand started\nprogramming them.',
   author = 'Jonny Burger',
   role = 'Creator of Remotion',
@@ -117,7 +127,7 @@ export const QuoteSlam: React.FC<Props> = ({
           style={{
             justifyContent: 'center',
             padding: '0 132px',
-            fontFamily: serif,
+            fontFamily: displayFamily,
           }}
         >
           {/* An oversized quote mark, set flush against the first line. */}
@@ -183,7 +193,7 @@ export const QuoteSlam: React.FC<Props> = ({
               alignItems: 'center',
               gap: 22,
               marginTop: 46,
-              fontFamily: sans,
+              fontFamily: textFamily,
               opacity: interpolate(frame, [lastLanding + 10, lastLanding + 30], [0, 1], {
                 extrapolateLeft: 'clamp',
                 extrapolateRight: 'clamp',

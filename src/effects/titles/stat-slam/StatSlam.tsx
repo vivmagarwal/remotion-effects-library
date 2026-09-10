@@ -19,6 +19,8 @@ const {fontFamily: sans} = loadSans('normal', {weights: ['500', '700'], subsets:
  * this file runnable on its own.
  */
 type Theme = {
+  readonly display: string;
+  readonly text: string;
   readonly accent: string;
   readonly bg: string;
   readonly ink: string;
@@ -26,6 +28,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  display: display,
+  text: sans,
   accent: '#ff5c39',
   bg: '#0a0b10',
   ink: '#ffffff',
@@ -34,6 +38,10 @@ const THEME: Theme = {
 type Props = {
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
+  /** CSS family for the display face. Defaults to this file's own, or the theme's. */
+  readonly displayFamily?: string;
+  /** CSS family for the supporting text. Defaults to this file's Inter, or the theme's. */
+  readonly textFamily?: string;
   readonly stat?: string;
   readonly context?: string;
   readonly source?: string;
@@ -45,6 +53,8 @@ type Props = {
 
 export const StatSlam: React.FC<Props> = ({
   theme = THEME,
+  displayFamily = theme.display,
+  textFamily = theme.text,
   stat = '73%',
   context = 'of viewers drop off in the first 3 seconds',
   source = 'Source: every analytics dashboard, ever',
@@ -122,7 +132,7 @@ export const StatSlam: React.FC<Props> = ({
         <Interactive.Div
           name="Stat"
           style={{
-            fontFamily: display,
+            fontFamily: displayFamily,
             fontSize: 430,
             lineHeight: 0.86,
             letterSpacing: '-0.03em',
@@ -154,7 +164,7 @@ export const StatSlam: React.FC<Props> = ({
         <Interactive.Div
           name="Context"
           style={{
-            fontFamily: sans,
+            fontFamily: textFamily,
             fontSize: 52,
             fontWeight: 700,
             color: '#eef1f7',
@@ -178,7 +188,7 @@ export const StatSlam: React.FC<Props> = ({
         <Interactive.Div
           name="Source"
           style={{
-            fontFamily: sans,
+            fontFamily: textFamily,
             fontSize: 26,
             fontWeight: 500,
             letterSpacing: '0.1em',
