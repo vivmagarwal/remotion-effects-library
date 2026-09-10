@@ -27,7 +27,15 @@ type Stroke = {
  * vocabulary is shared by NAME rather than by an import, which is what keeps
  * this file runnable on its own.
  */
+/**
+ * A system monospace stack. It is the inline default for the theme's `mono`
+ * token, so a pasted file needs no extra font download, and a theme that names
+ * a loaded monospace family replaces it.
+ */
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 type Theme = {
+  readonly mono: string;
   readonly paperMuted: string;
   readonly muted: string;
   readonly text: string;
@@ -38,6 +46,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  mono: MONO,
   paperMuted: '#4a4e5a',
   muted: '#8d93a5',
   text: fontFamily,
@@ -182,7 +191,7 @@ export const LogoPathDraw: React.FC<Props> = ({
           name="Subtitle"
           style={{
             marginTop: 16,
-            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+            fontFamily: theme.mono,
             fontSize: 25,
             color: theme.muted,
             opacity: interpolate(frame, [lastDone + 12, lastDone + 34], [0, 1], {
@@ -200,7 +209,7 @@ export const LogoPathDraw: React.FC<Props> = ({
           style={{
             position: 'absolute',
             bottom: 76,
-            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+            fontFamily: theme.mono,
             fontSize: 22,
             color: theme.paperMuted,
             fontVariantNumeric: 'tabular-nums',

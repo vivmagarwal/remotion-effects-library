@@ -48,14 +48,8 @@ import {join} from 'node:path';
 import {OUT_DIR, walkEffects} from './lib/fs.mjs';
 import {readMeta} from './lib/meta.mjs';
 import {decodePng, luminanceStats} from './lib/png.mjs';
+import {EMPTY_FRAMES, blankReason, missedEmpties} from './lib/blank.mjs';
 import {gate} from './lib/gate.mjs';
-
-const FLOORS = {
-  mean: 0.004, // essentially black
-  std: 0.016, // a flat field
-  ink: 0.002, // fraction of pixels above L 0.25
-  edge: 0.0003, // no structure at all
-};
 
 /**
  * Where a still might already be, best first. Only gate-produced directories —
@@ -95,70 +89,17 @@ for (const {meta, path, dir} of found) {
     continue;
   }
   looked++;
-  const num = (x) => x.toFixed(4);
   const where = `out/${dir}/${meta.id}.png`;
-  if (stats.mean < FLOORS.mean) g.fail(where, `${meta.id}: poster is essentially black (mean luminance ${num(stats.mean)} < ${FLOORS.mean})`);
-  else if (stats.std < FLOORS.std) g.fail(where, `${meta.id}: poster is a flat field (luminance sd ${num(stats.std)} < ${FLOORS.std})`);
-  else if (stats.ink < FLOORS.ink) g.fail(where, `${meta.id}: only ${(stats.ink * 100).toFixed(2)}% of pixels are above L 0.25`);
-  else if (stats.edge < FLOORS.edge) g.fail(where, `${meta.id}: almost no structure (edge energy ${num(stats.edge)} < ${FLOORS.edge})`);
+  const why = blankReason(stats);
+  if (why) g.fail(where, `${meta.id}: poster is ${why}`);
 }
 
 /**
- * Prove the floors still reject an empty frame, on every run.
- *
- * This gate loosened by half after its edge floor produced twelve false
- * failures, and a floor lowered to stop false alarms is one step from a floor
- * that catches nothing — the original bug it exists for, a wholly black poster
- * in a public gallery, would come straight back and the gate would still print
- * a reassuring green line. So it re-derives its own teeth here instead of
- * asserting them in a comment.
+ * Prove the floors still reject an empty frame, on every run — see
+ * `scripts/lib/blank.mjs` for why this is re-derived rather than asserted.
  */
-const synth = (fn) => {
-  const width = 384;
-  const height = 216;
-  const channels = 3;
-  const data = new Uint8Array(width * height * channels);
-  for (let py = 0; py < height; py++) {
-    for (let px = 0; px < width; px++) {
-      const [r, gr, b] = fn(px, py, width, height);
-      const o = (py * width + px) * channels;
-      data[o] = r;
-      data[o + 1] = gr;
-      data[o + 2] = b;
-    }
-  }
-  return luminanceStats({width, height, channels, data});
-};
-
-const EMPTY_FRAMES = [
-  ['pure black', () => [0, 0, 0]],
-  ['the house ground, alone', () => [10, 11, 16]],
-  ['a flat mid grey', () => [128, 128, 128]],
-  [
-    'a dark radial gradient',
-    (px, py, w, h) => {
-      const d = Math.hypot(px - w / 2, py - h / 2) / Math.hypot(w / 2, h / 2);
-      const v = Math.round(40 * (1 - d));
-      return [v, v, v + 6];
-    },
-  ],
-  [
-    'one small dot',
-    (px, py, w, h) => (Math.hypot(px - w / 2, py - h / 2) < 3 ? [255, 255, 255] : [10, 11, 16]),
-  ],
-];
-
-for (const [name, fn] of EMPTY_FRAMES) {
-  const st = synth(fn);
-  const caught =
-    st.mean < FLOORS.mean || st.std < FLOORS.std || st.ink < FLOORS.ink || st.edge < FLOORS.edge;
-  if (!caught) {
-    g.fail(
-      'scripts/check-poster.mjs',
-      `the floors no longer reject "${name}" — mean ${st.mean.toFixed(5)}, sd ${st.std.toFixed(5)}, ` +
-        `ink ${st.ink.toFixed(5)}, edge ${st.edge.toFixed(6)}. This gate can no longer fail.`,
-    );
-  }
+for (const name of missedEmpties(luminanceStats)) {
+  g.fail('scripts/lib/blank.mjs', `the floors no longer reject "${name}". This gate can no longer fail.`);
 }
 
 const skipped = walkEffects().length - found.length;

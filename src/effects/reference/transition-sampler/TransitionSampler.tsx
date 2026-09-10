@@ -33,18 +33,29 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['lat
  * The shared theme, narrowed to the tokens this file uses. TypeScript is
  * structural, so the library's full theme object is assignable to it.
  */
+/**
+ * A system monospace stack. It is the inline default for the theme's `mono`
+ * token, so a pasted file needs no extra font download, and a theme that names
+ * a loaded monospace family replaces it.
+ */
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 type Theme = {
+  readonly mono: string;
   readonly text: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  mono: MONO,
   text: fontFamily,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the code/metric type. Defaults to the theme's monospace. */
+  readonly monoFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   /**
@@ -80,7 +91,9 @@ const Card: React.FC<{
   showCode: boolean;
   palette: Props['palette'];
   fontFamily: string;
-}> = ({index, label, code, showCode, palette = PALETTE, fontFamily}) => {
+  /** Threaded: at module scope a bare `theme` is not in lexical reach. */
+  monoFamily: string;
+}> = ({index, label, code, showCode, palette = PALETTE, fontFamily, monoFamily}) => {
   const frame = useCurrentFrame();
   const {bg, fg} = palette[index % palette.length];
 
@@ -119,7 +132,7 @@ const Card: React.FC<{
         <Interactive.Div
           name="Code"
           style={{
-            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+            fontFamily: monoFamily,
             fontSize: 26,
             opacity: 0.62,
             marginTop: 22,
@@ -135,6 +148,7 @@ const Card: React.FC<{
 export const TransitionSampler: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  monoFamily = theme.mono,
   holdFrames = 56,
   showCode = true,
   backdropColor = '#08070c',
@@ -156,7 +170,7 @@ export const TransitionSampler: React.FC<Props> = ({
     <AbsoluteFill style={{backgroundColor: backdropColor}}>
     <TransitionSeries>
       <TransitionSeries.Sequence durationInFrames={hold} name="Intro">
-        <Card index={0} label="Transitions" code="@remotion/transitions"  showCode={showCode} palette={palette} fontFamily={fontFamily} />
+        <Card index={0} label="Transitions" code="@remotion/transitions"  showCode={showCode} palette={palette} fontFamily={fontFamily} monoFamily={monoFamily} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -164,7 +178,7 @@ export const TransitionSampler: React.FC<Props> = ({
         timing={linearTiming({durationInFrames: 14})}
       />
       <TransitionSeries.Sequence durationInFrames={hold} name="Fade">
-        <Card index={1} label="Fade" code="fade()"  showCode={showCode} palette={palette} fontFamily={fontFamily} />
+        <Card index={1} label="Fade" code="fade()"  showCode={showCode} palette={palette} fontFamily={fontFamily} monoFamily={monoFamily} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -172,7 +186,7 @@ export const TransitionSampler: React.FC<Props> = ({
         timing={springTiming({config: {damping: 200}, durationInFrames: 16})}
       />
       <TransitionSeries.Sequence durationInFrames={hold} name="Slide">
-        <Card index={2} label="Slide" code="slide({direction: 'from-right'})"  showCode={showCode} palette={palette} fontFamily={fontFamily} />
+        <Card index={2} label="Slide" code="slide({direction: 'from-right'})"  showCode={showCode} palette={palette} fontFamily={fontFamily} monoFamily={monoFamily} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -180,7 +194,7 @@ export const TransitionSampler: React.FC<Props> = ({
         timing={linearTiming({durationInFrames: 14})}
       />
       <TransitionSeries.Sequence durationInFrames={hold} name="Wipe">
-        <Card index={3} label="Wipe" code="wipe({direction: 'from-bottom-left'})"  showCode={showCode} palette={palette} fontFamily={fontFamily} />
+        <Card index={3} label="Wipe" code="wipe({direction: 'from-bottom-left'})"  showCode={showCode} palette={palette} fontFamily={fontFamily} monoFamily={monoFamily} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -188,7 +202,7 @@ export const TransitionSampler: React.FC<Props> = ({
         timing={linearTiming({durationInFrames: 20})}
       />
       <TransitionSeries.Sequence durationInFrames={hold} name="ClockWipe">
-        <Card index={4} label="Clock wipe" code="clockWipe({width, height})"  showCode={showCode} palette={palette} fontFamily={fontFamily} />
+        <Card index={4} label="Clock wipe" code="clockWipe({width, height})"  showCode={showCode} palette={palette} fontFamily={fontFamily} monoFamily={monoFamily} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -196,7 +210,7 @@ export const TransitionSampler: React.FC<Props> = ({
         timing={linearTiming({durationInFrames: 18})}
       />
       <TransitionSeries.Sequence durationInFrames={hold} name="Iris">
-        <Card index={5} label="Iris" code="iris({width, height})"  showCode={showCode} palette={palette} fontFamily={fontFamily} />
+        <Card index={5} label="Iris" code="iris({width, height})"  showCode={showCode} palette={palette} fontFamily={fontFamily} monoFamily={monoFamily} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -204,7 +218,7 @@ export const TransitionSampler: React.FC<Props> = ({
         timing={springTiming({config: {damping: 200}, durationInFrames: 18})}
       />
       <TransitionSeries.Sequence durationInFrames={hold + 8} name="Flip">
-        <Card index={6} label="Flip" code="flip({direction: 'from-left'})"  showCode={showCode} palette={palette} fontFamily={fontFamily} />
+        <Card index={6} label="Flip" code="flip({direction: 'from-left'})"  showCode={showCode} palette={palette} fontFamily={fontFamily} monoFamily={monoFamily} />
       </TransitionSeries.Sequence>
     </TransitionSeries>
     </AbsoluteFill>

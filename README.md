@@ -489,7 +489,7 @@ Every one exits non-zero on failure.
 | `check:gallery-counts` | a number printed beside a filter does not equal the number of cards clicking it opens, or a "Copy code"/"Copy prompt" button would put a placeholder on the clipboard. Runs inside `check:browser`, on the same server | slow |
 | `check:player` | a composition renders differently while it is **playing** than it does seeked to the same frame — the WebCodecs path `<Thumbnail>` never takes, and the only one a viewer who presses play ever sees | slow |
 
-| `check:themes` | a theme fails to render an effect, renders it blank, or changes nothing about it — the tokens declared but the component painting with literals. `house` is inverted: it IS the authored look, so a *difference* there is the bug. Not in a gate chain; 480 renders | manual |
+| `check:themes` | a theme fails to render an effect, renders it blank, or moves a token it changes without moving one pixel. `house` is inverted: it is the authored look, so a *difference* beyond a typeface swap is the bug. `--probe` additionally asks, one token at a time, whether each declared token reaches the picture at all — that one is a report to read, not a verdict, because a token can be wired and simply not visible at the frame being rendered. Not in a gate chain; 384 renders, or 394 for the probe | manual |
 
 ---
 

@@ -32,7 +32,15 @@ type PackNode = {
  * vocabulary is shared by NAME rather than by an import, which is what keeps
  * this file runnable on its own.
  */
+/**
+ * A system monospace stack. It is the inline default for the theme's `mono`
+ * token, so a pasted file needs no extra font download, and a theme that names
+ * a loaded monospace family replaces it.
+ */
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 type Theme = {
+  readonly mono: string;
   readonly body: string;
   readonly muted: string;
   readonly text: string;
@@ -42,6 +50,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  mono: MONO,
   body: '#eef1f7',
   muted: '#8d93a5',
   text: fontFamily,
@@ -156,7 +165,7 @@ export const BubblePack: React.FC<Props> = ({
           right: 0,
           top: 164,
           textAlign: 'center',
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          fontFamily: theme.mono,
           fontSize: 26,
           color: theme.muted,
           opacity: interpolate(frame, [8, 28], [0, 1], {

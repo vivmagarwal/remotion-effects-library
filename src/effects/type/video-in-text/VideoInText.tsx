@@ -18,7 +18,15 @@ const {fontFamily} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
  * vocabulary is shared by NAME rather than by an import, which is what keeps
  * this file runnable on its own.
  */
+/**
+ * A system monospace stack. It is the inline default for the theme's `mono`
+ * token, so a pasted file needs no extra font download, and a theme that names
+ * a loaded monospace family replaces it.
+ */
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 type Theme = {
+  readonly mono: string;
   readonly display: string;
   readonly bg: string;
   readonly muted: string;
@@ -26,6 +34,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  mono: MONO,
   display: fontFamily,
   bg: '#0a0b10',
   muted: '#8d93a5',
@@ -141,7 +150,7 @@ export const VideoInText: React.FC<Props> = ({
           right: 0,
           bottom: 118,
           textAlign: 'center',
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          fontFamily: theme.mono,
           fontSize: 26,
           letterSpacing: '0.22em',
           marginRight: '-0.22em',

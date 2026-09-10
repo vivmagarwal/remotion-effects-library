@@ -73,7 +73,15 @@ export const maskFor = (pattern: MaskPattern, p: number): string => {
  * vocabulary is shared by NAME rather than by an import, which is what keeps
  * this file runnable on its own.
  */
+/**
+ * A system monospace stack. It is the inline default for the theme's `mono`
+ * token, so a pasted file needs no extra font download, and a theme that names
+ * a loaded monospace family replaces it.
+ */
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 type Theme = {
+  readonly mono: string;
   readonly ink: string;
   readonly text: string;
   readonly bg: string;
@@ -82,6 +90,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  mono: MONO,
   ink: '#ffffff',
   text: fontFamily,
   bg: '#0a0b10',
@@ -178,7 +187,7 @@ export const MaskRevealKit: React.FC<Props> = ({
           <Interactive.Div
             name="Index"
             style={{
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+              fontFamily: theme.mono,
               fontSize: 30,
               color: accentColor,
               fontVariantNumeric: 'tabular-nums',

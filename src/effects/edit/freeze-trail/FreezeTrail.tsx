@@ -18,7 +18,15 @@ const {fontFamily} = loadFont('normal', {weights: ['800', '900'], subsets: ['lat
  * vocabulary is shared by NAME rather than by an import, which is what keeps
  * this file runnable on its own.
  */
+/**
+ * A system monospace stack. It is the inline default for the theme's `mono`
+ * token, so a pasted file needs no extra font download, and a theme that names
+ * a loaded monospace family replaces it.
+ */
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 type Theme = {
+  readonly mono: string;
   readonly muted: string;
   readonly display: string;
   readonly accent: string;
@@ -27,6 +35,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  mono: MONO,
   muted: '#8d93a5',
   display: fontFamily,
   accent: '#ff5c39',
@@ -60,7 +69,14 @@ const Subject: React.FC<{
   word: string;
   accentColor: string;
   loopFrames: number;
-}> = ({word, accentColor, loopFrames}) => {
+  /**
+   * Threaded, not closed over. This component sits at module scope, so a bare
+   * `fontFamily` in its styles resolves to the file's own `loadFont` const and
+   * the theme's typeface silently never arrives — the one place in this file
+   * where any type is drawn.
+   */
+  fontFamily: string;
+}> = ({word, accentColor, loopFrames, fontFamily}) => {
   const frame = useCurrentFrame();
   const {width} = useVideoConfig();
 
@@ -129,7 +145,7 @@ export const FreezeTrail: React.FC<Props> = ({
           <AbsoluteFill key={age} style={{opacity}}>
             {/* Freeze rewinds the subtree's clock to a past frame. */}
             <Freeze frame={past}>
-              <Subject word={word} accentColor={accentColor} loopFrames={loopFrames} />
+              <Subject word={word} accentColor={accentColor} loopFrames={loopFrames} fontFamily={fontFamily} />
             </Freeze>
           </AbsoluteFill>
         );
@@ -143,7 +159,7 @@ export const FreezeTrail: React.FC<Props> = ({
           right: 0,
           bottom: 120,
           textAlign: 'center',
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          fontFamily: theme.mono,
           fontSize: 28,
           color: theme.muted,
           opacity: interpolate(frame, [10, 30], [0, 1], {

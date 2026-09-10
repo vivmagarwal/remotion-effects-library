@@ -26,7 +26,15 @@ type LaidOutLink = SankeyLink<NodeExtra, LinkExtra>;
  * vocabulary is shared by NAME rather than by an import, which is what keeps
  * this file runnable on its own.
  */
+/**
+ * A system monospace stack. It is the inline default for the theme's `mono`
+ * token, so a pasted file needs no extra font download, and a theme that names
+ * a loaded monospace family replaces it.
+ */
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 type Theme = {
+  readonly mono: string;
   readonly muted: string;
   readonly text: string;
   readonly bg: string;
@@ -35,6 +43,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  mono: MONO,
   muted: '#8d93a5',
   text: fontFamily,
   bg: '#0a0b10',
@@ -170,7 +179,7 @@ export const SankeyFlow: React.FC<Props> = ({
           position: 'absolute',
           left: PAD.left,
           top: 168,
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          fontFamily: theme.mono,
           fontSize: 24,
           color: theme.muted,
           opacity: interpolate(frame, [8, 28], [0, 1], {

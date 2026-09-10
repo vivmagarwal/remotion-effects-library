@@ -21,7 +21,15 @@ const {fontFamily} = loadFont('normal', {weights: ['800', '900'], subsets: ['lat
  * vocabulary is shared by NAME rather than by an import, which is what keeps
  * this file runnable on its own.
  */
+/**
+ * A system monospace stack. It is the inline default for the theme's `mono`
+ * token, so a pasted file needs no extra font download, and a theme that names
+ * a loaded monospace family replaces it.
+ */
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 type Theme = {
+  readonly mono: string;
   readonly muted: string;
   readonly display: string;
   readonly accent: string;
@@ -32,6 +40,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  mono: MONO,
   muted: '#8d93a5',
   display: fontFamily,
   accent: '#ff5c39',
@@ -194,7 +203,7 @@ export const VoronoiShatter: React.FC<Props> = ({
           right: 0,
           bottom: 104,
           textAlign: 'center',
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          fontFamily: theme.mono,
           fontSize: 26,
           color: theme.muted,
           opacity: interpolate(

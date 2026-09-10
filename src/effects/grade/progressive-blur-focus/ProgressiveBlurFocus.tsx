@@ -18,13 +18,22 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['lat
  * The shared theme, narrowed to the tokens this file uses. TypeScript is
  * structural, so the library's full theme object is assignable to it.
  */
+/**
+ * A system monospace stack. It is the inline default for the theme's `mono`
+ * token, so a pasted file needs no extra font download, and a theme that names
+ * a loaded monospace family replaces it.
+ */
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 type Theme = {
+  readonly mono: string;
   readonly ink: string;
   readonly text: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  mono: MONO,
   ink: '#ffffff',
   text: fontFamily,
 };
@@ -139,7 +148,7 @@ export const ProgressiveBlurFocus: React.FC<Props> = ({
         <Interactive.Div
           name="Caption"
           style={{
-            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+            fontFamily: theme.mono,
             fontSize: 26,
             color: 'rgba(255,255,255,0.72)',
             marginTop: 12,

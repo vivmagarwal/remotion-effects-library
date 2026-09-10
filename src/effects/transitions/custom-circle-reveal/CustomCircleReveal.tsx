@@ -85,18 +85,29 @@ export type Shot = {
  * The shared theme, narrowed to the tokens this file uses. TypeScript is
  * structural, so the library's full theme object is assignable to it.
  */
+/**
+ * A system monospace stack. It is the inline default for the theme's `mono`
+ * token, so a pasted file needs no extra font download, and a theme that names
+ * a loaded monospace family replaces it.
+ */
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 type Theme = {
+  readonly mono: string;
   readonly text: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  mono: MONO,
   text: fontFamily,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the code/metric type. Defaults to the theme's monospace. */
+  readonly monoFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   /** The scenes, in order. Two or more. */
@@ -134,7 +145,9 @@ const SHOTS: Shot[] = [
 
 const ShotView: React.FC<{shot: Shot;
   fontFamily: string;
-}> = ({shot, fontFamily}) => {
+  /** Threaded: at module scope a bare `theme` is not in lexical reach. */
+  monoFamily: string;
+}> = ({shot, fontFamily, monoFamily}) => {
   const frame = useCurrentFrame();
 
   return (
@@ -195,7 +208,7 @@ const ShotView: React.FC<{shot: Shot;
         name="Body"
         style={{
           position: 'relative',
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          fontFamily: monoFamily,
           fontSize: 30,
           color: shot.accentColor ?? '#c6ff3d',
           marginTop: 28,
@@ -212,6 +225,7 @@ const ShotView: React.FC<{shot: Shot;
 export const CustomCircleReveal: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  monoFamily = theme.mono,
   shots = SHOTS,
   origins = [
     [22, 30],
@@ -230,7 +244,7 @@ export const CustomCircleReveal: React.FC<Props> = ({
           durationInFrames={i === shots.length - 1 ? holdFrames + transitionFrames : holdFrames}
           name={shot.title ?? `Shot ${i + 1}`}
         >
-          <ShotView shot={shot} fontFamily={fontFamily} />
+          <ShotView shot={shot} fontFamily={fontFamily} monoFamily={monoFamily} />
         </TransitionSeries.Sequence>
         {i < shots.length - 1 ? (
           <TransitionSeries.Transition

@@ -29,7 +29,15 @@ type Beat = {
  * vocabulary is shared by NAME rather than by an import, which is what keeps
  * this file runnable on its own.
  */
+/**
+ * A system monospace stack. It is the inline default for the theme's `mono`
+ * token, so a pasted file needs no extra font download, and a theme that names
+ * a loaded monospace family replaces it.
+ */
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 type Theme = {
+  readonly mono: string;
   readonly paperMuted: string;
   readonly paperInk: string;
   readonly text: string;
@@ -39,6 +47,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  mono: MONO,
   paperMuted: '#4a4e5a',
   paperInk: '#1d1b17',
   text: fontFamily,
@@ -277,7 +286,7 @@ export const AspectMorphCard: React.FC<Props> = ({
           position: 'absolute',
           right: 60,
           top: 112,
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          fontFamily: theme.mono,
           fontSize: 26,
           color: theme.paperMuted,
           fontVariantNumeric: 'tabular-nums',

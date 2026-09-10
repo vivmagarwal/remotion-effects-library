@@ -22,7 +22,15 @@ const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['lat
  * vocabulary is shared by NAME rather than by an import, which is what keeps
  * this file runnable on its own.
  */
+/**
+ * A system monospace stack. It is the inline default for the theme's `mono`
+ * token, so a pasted file needs no extra font download, and a theme that names
+ * a loaded monospace family replaces it.
+ */
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 type Theme = {
+  readonly mono: string;
   readonly muted: string;
   readonly ink: string;
   readonly text: string;
@@ -31,6 +39,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  mono: MONO,
   muted: '#8d93a5',
   ink: '#ffffff',
   text: fontFamily,
@@ -180,7 +189,7 @@ export const GlassRefraction: React.FC<Props> = ({
         <Interactive.Div
           name="Subtitle"
           style={{
-            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+            fontFamily: theme.mono,
             fontSize: 24,
             color: theme.muted,
             textShadow: '0 2px 14px rgba(0,0,0,0.9)',

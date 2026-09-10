@@ -30,7 +30,15 @@ type Link = SimulationLinkDatum<Node> & {readonly value: number};
  * vocabulary is shared by NAME rather than by an import, which is what keeps
  * this file runnable on its own.
  */
+/**
+ * A system monospace stack. It is the inline default for the theme's `mono`
+ * token, so a pasted file needs no extra font download, and a theme that names
+ * a loaded monospace family replaces it.
+ */
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 type Theme = {
+  readonly mono: string;
   readonly paperMuted: string;
   readonly muted: string;
   readonly text: string;
@@ -40,6 +48,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  mono: MONO,
   paperMuted: '#4a4e5a',
   muted: '#8d93a5',
   text: fontFamily,
@@ -197,7 +206,7 @@ export const ForceNetwork: React.FC<Props> = ({
           right: 0,
           top: 140,
           textAlign: 'center',
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          fontFamily: theme.mono,
           fontSize: 24,
           color: theme.muted,
           opacity: interpolate(frame, [8, 28], [0, 1], {
@@ -277,7 +286,7 @@ export const ForceNetwork: React.FC<Props> = ({
           position: 'absolute',
           right: 78,
           bottom: 62,
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          fontFamily: theme.mono,
           fontSize: 24,
           color: theme.paperMuted,
           fontVariantNumeric: 'tabular-nums',
