@@ -1,6 +1,5 @@
 import type {EffectMeta} from '../../../types';
 
-/** poster: frame 130 — the mark is fully drawn and the caption has arrived. */
 export const meta: EffectMeta = {
   id: 'logo-path-draw', name: 'Logo Path Draw', category: 'diagrams',
   tagline: 'A mark that draws itself stroke by stroke, then fills.',
@@ -10,6 +9,7 @@ export const meta: EffectMeta = {
   concepts: ['evolvePath', 'stroke/fill lag', 'staggered entrance'],
   width: 1920, height: 1080, fps: 30, durationInFrames: 150,
   packages: ['remotion', '@remotion/paths', '@remotion/google-fonts'],
-  difficulty: 'intermediate', checkFrame: 46, posterFrame: 130,
+  difficulty: 'intermediate', checkFrame: 46, // the mark is fully drawn and the caption has arrived.
+ posterFrame: 130,
   ground: 'dark', audience: ['agency', 'saas'],
 };

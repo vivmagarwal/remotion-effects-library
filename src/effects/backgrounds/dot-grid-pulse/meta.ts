@@ -1,6 +1,5 @@
 import type {EffectMeta} from '../../../types';
 
-/** poster: frame 90 — the travelling wave reads as an arch here; at 40 it is a shapeless blob. */
 export const meta: EffectMeta = {
   id: 'dot-grid-pulse', name: 'Dot Grid Pulse', category: 'backgrounds',
   tagline: 'A wave travels outward through a field of a thousand dots.',
@@ -10,8 +9,11 @@ export const meta: EffectMeta = {
   concepts: ['procedural grid', 'travelling wave', 'closed-form motion'],
   width: 1920, height: 1080, fps: 30, durationInFrames: 240,
   packages: ['remotion'],
-  difficulty: 'intermediate', checkFrame: 96, // 150, not 90: the pulse is a travelling ring and at 90 it has barely left the
-  // origin, so the card was a field of near-black dots.
- posterFrame: 150,
+  difficulty: 'intermediate', checkFrame: 96,
+  // 200, not 90. The wave is a travelling RING, and at 90 it has barely left the
+  // origin — a field of near-black dots with a bright spot in it. By 200 the ring
+  // has expanded to both edges, which is the shape the effect is named for and
+  // the only frame that fills the card.
+  posterFrame: 200,
   ground: 'both', audience: ['saas', 'developer'],
 };

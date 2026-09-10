@@ -25,11 +25,16 @@ export const DotGridPulse: React.FC<Props> = ({
   columns = 42,
   rows = 24,
   dotSize = 7,
-  color = 'rgba(141,147,165,0.22)',
+  // The resting dot. 0.22 alpha multiplied by a 0.35 base opacity is an
+  // effective 0.077 against #0a0b10 — a grid that is not there. The grid has
+  // to be visible for the wave to be a wave THROUGH something.
+  color = 'rgba(141,147,165,0.5)',
   accentColor = '#4cc9f0',
   backgroundColor = '#0a0b10',
   frequency = 0.28,
-  falloff = 13,
+  // 22, not 13. The grid is 42 cells wide, so a 13-cell reach lights about a
+  // third of it and the rest of the frame is dead field.
+  falloff = 22,
 }) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
@@ -37,7 +42,9 @@ export const DotGridPulse: React.FC<Props> = ({
 
   // The wave origin drifts, so successive passes come from different angles.
   const originX = columns / 2 + Math.cos(t * 0.32) * columns * 0.34;
-  const originY = rows / 2 + Math.sin(t * 0.24) * rows * 0.34;
+  // 0.22 on Y, not 0.34: at 0.34 the origin leaves the frame vertically and the
+  // ring is cut off by the bottom edge for a third of the loop.
+  const originY = rows / 2 + Math.sin(t * 0.24) * rows * 0.22;
 
   const dots = [];
   for (let r = 0; r < rows; r++) {
@@ -62,7 +69,7 @@ export const DotGridPulse: React.FC<Props> = ({
             borderRadius: '50%',
             backgroundColor: energy > 0.04 ? accentColor : color,
             scale: 1 + energy * 2.4,
-            opacity: 0.35 + energy * 0.65,
+            opacity: 0.5 + energy * 0.5,
           }}
         />,
       );
@@ -75,7 +82,7 @@ export const DotGridPulse: React.FC<Props> = ({
       <AbsoluteFill
         style={{
           backgroundImage:
-            'radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(8,10,16,0.85) 100%)',
+            'radial-gradient(ellipse at 50% 50%, transparent 54%, rgba(8,10,16,0.7) 100%)',
         }}
       />
     </AbsoluteFill>
