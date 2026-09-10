@@ -1,44 +1,99 @@
-import {AbsoluteFill, Interactive, Solid, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import React from 'react';
+import {AbsoluteFill, Interactive, Solid, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {Video} from '@remotion/media';
 import {TransitionSeries} from '@remotion/transitions';
 import {lightLeak} from '@remotion/effects/light-leak';
 import {loadFont} from '@remotion/google-fonts/DMSerifDisplay';
 import {loadFont as loadSans} from '@remotion/google-fonts/Inter';
-
-// palette: data whole-file — the hues of a film light leak, plus two card faces either side of it
 
 const {fontFamily: serif} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
 const {fontFamily: sans} = loadSans('normal', {weights: ['500'], subsets: ['latin']});
 
 /**
  * Light Leak Transition
- * A film-style light leak washing over the cut point. This uses
- * <TransitionSeries.Overlay> rather than .Transition — an overlay sits ON TOP of
- * the cut without shortening the timeline, which is exactly what a leak is: an
- * artefact of the film, not a way of getting from one shot to the next.
+ *
+ * A film-style light leak washing over the cut point.
+ *
+ * The distinction this exists to teach is `<TransitionSeries.Overlay>` versus
+ * `<TransitionSeries.Transition>`. A **Transition** plays two scenes at once and
+ * SHORTENS the composition by its own length. An **Overlay** renders on top of
+ * the cut and leaves the timeline untouched — which is exactly what a leak is:
+ * an artefact of the film, not a way of getting from one shot to the next. Reach
+ * for a Transition and the cut lands in a different place than you wrote it.
+ *
+ * The leak itself is the `lightLeak()` effect on a `<Solid>`, driven 0→1 across
+ * the overlay's own duration — which is why `<Leak>` reads `durationInFrames`
+ * from `useVideoConfig()` rather than taking it as a prop: inside a Sequence
+ * that value is the SEQUENCE's length, so the same component works at any
+ * overlay length with no arithmetic.
  */
 
-const Card: React.FC<{title: string; caption: string; bg: string; fg: string}> = ({
-  title,
-  caption,
-  bg,
-  fg,
-}) => {
+/**
+ * One shot. Give it a `src` for footage; leave `src` out and it draws a
+ * typographic card on `backgroundColor` instead.
+ */
+export type Shot = {
+  readonly src?: string;
+  readonly title?: string;
+  readonly caption?: string;
+  readonly backgroundColor?: string;
+  readonly color?: string;
+};
+
+type Props = {
+  /** The shots, in order. Two or more. */
+  readonly shots?: readonly Shot[];
+  /**
+   * Length of each leak. 24–36 is the band: a leak is a slow bloom, and under
+   * ~20 frames it reads as a white flash frame rather than as light.
+   */
+  readonly leakFrames?: number;
+  /** Frames each shot holds. Unlike a Transition, an Overlay does not eat any. */
+  readonly holdFrames?: number;
+  /**
+   * How the leak composites. 'screen' is the film-accurate one — a leak adds
+   * light. 'normal' gives you the flat colour card, which is occasionally what a
+   * hard flash cut wants.
+   */
+  readonly blendMode?: React.CSSProperties['mixBlendMode'];
+  /** Ceiling on the leak. Below ~0.7 it stops reading as an exposure fault. */
+  readonly leakOpacity?: number;
+  readonly backgroundColor?: string;
+};
+
+const SHOTS: Shot[] = [
+  {src: staticFile('footage/broll-sunrise.mp4'), title: 'Golden hour', caption: 'shot one'},
+  {src: staticFile('footage/broll-earth.mp4'), title: 'Blue hour', caption: 'shot two'},
+  {src: staticFile('footage/broll-night.mp4'), title: 'Night', caption: 'shot three'},
+];
+
+const ShotView: React.FC<{shot: Shot}> = ({shot}) => {
   const frame = useCurrentFrame();
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: bg,
+        backgroundColor: shot.backgroundColor ?? '#1d1b17',
         justifyContent: 'center',
         alignItems: 'center',
-        color: fg,
+        color: shot.color ?? '#f6f5f2',
       }}
     >
+      {shot.src ? (
+        <AbsoluteFill>
+          {/* objectFit is a prop, not a style: <Video> draws to a canvas. */}
+          <Video src={shot.src} objectFit="cover" muted loop style={{width: '100%', height: '100%'}} />
+          <AbsoluteFill style={{backgroundColor: 'rgba(8,7,12,0.42)'}} />
+        </AbsoluteFill>
+      ) : null}
+
       <Interactive.Div
         name="Title"
         style={{
+          position: 'relative',
           fontFamily: serif,
           fontSize: 148,
           letterSpacing: '-0.02em',
+          textShadow: '0 8px 48px rgba(0,0,0,0.6)',
           scale: interpolate(frame, [0, 60], [1.05, 1], {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp',
@@ -46,69 +101,89 @@ const Card: React.FC<{title: string; caption: string; bg: string; fg: string}> =
           }),
         }}
       >
-        {title}
+        {shot.title}
       </Interactive.Div>
       <Interactive.Div
         name="Caption"
         style={{
+          position: 'relative',
           fontFamily: sans,
           fontSize: 28,
           fontWeight: 500,
           letterSpacing: '0.3em',
           marginRight: '-0.3em',
           textTransform: 'uppercase',
-          opacity: 0.6,
+          opacity: 0.72,
           marginTop: 18,
+          textShadow: '0 2px 18px rgba(0,0,0,0.8)',
         }}
       >
-        {caption}
+        {shot.caption}
       </Interactive.Div>
     </AbsoluteFill>
   );
 };
 
-/** The leak itself: a <Solid> with the lightLeak effect, driven across 0→1. */
-const Leak: React.FC = () => {
+/**
+ * The leak: a <Solid> with the lightLeak effect driven across 0→1. It reads its
+ * own length from useVideoConfig(), which inside the Overlay's Sequence is the
+ * OVERLAY's length — so it needs no props and adapts to `leakFrames`.
+ *
+ * The blend mode is not decoration. `lightLeak()` peaks at progress 0.5 and at
+ * that instant the Solid is fully opaque, so composited normally the leak's
+ * midpoint is a flat orange card covering the picture for several frames — which
+ * reads as a missing shot, not as light. Film leaks ADD light; they never
+ * replace the image. `screen` is that, in one property.
+ */
+const Leak: React.FC<{blendMode: React.CSSProperties['mixBlendMode']; opacity: number}> = ({
+  blendMode,
+  opacity,
+}) => {
   const frame = useCurrentFrame();
   const {durationInFrames, width, height} = useVideoConfig();
 
   return (
-    <Solid
-      width={width}
-      height={height}
-      effects={[
-        lightLeak({
-          progress: interpolate(frame, [0, durationInFrames - 1], [0, 1], {
-            extrapolateLeft: 'clamp',
-            extrapolateRight: 'clamp',
+    <AbsoluteFill style={{mixBlendMode: blendMode, opacity}}>
+      <Solid
+        width={width}
+        height={height}
+        effects={[
+          lightLeak({
+            progress: interpolate(frame, [0, durationInFrames - 1], [0, 1], {
+              extrapolateLeft: 'clamp',
+              extrapolateRight: 'clamp',
+            }),
           }),
-        }),
-      ]}
-    />
+        ]}
+      />
+    </AbsoluteFill>
   );
 };
 
-export const LightLeakTransition: React.FC = () => (
-  <TransitionSeries>
-    <TransitionSeries.Sequence durationInFrames={70} name="Shot A">
-      <Card title="Golden hour" caption="shot one" bg="#1d1410" fg="#f5e9d8" />
-    </TransitionSeries.Sequence>
-
-    {/* An Overlay sits on top of the cut. It does NOT shorten the timeline. */}
-    <TransitionSeries.Overlay durationInFrames={30}>
-      <Leak />
-    </TransitionSeries.Overlay>
-
-    <TransitionSeries.Sequence durationInFrames={70} name="Shot B">
-      <Card title="Blue hour" caption="shot two" bg="#0e1420" fg="#dbe6f5" />
-    </TransitionSeries.Sequence>
-
-    <TransitionSeries.Overlay durationInFrames={30} offset={0}>
-      <Leak />
-    </TransitionSeries.Overlay>
-
-    <TransitionSeries.Sequence durationInFrames={70} name="Shot C">
-      <Card title="Night" caption="shot three" bg="#08080e" fg="#c9cede" />
-    </TransitionSeries.Sequence>
-  </TransitionSeries>
+export const LightLeakTransition: React.FC<Props> = ({
+  shots = SHOTS,
+  leakFrames = 30,
+  holdFrames = 70,
+  blendMode = 'screen',
+  leakOpacity = 0.92,
+  backgroundColor = '#04050a',
+}) => (
+  <AbsoluteFill style={{backgroundColor}}>
+    <TransitionSeries>
+      {shots.map((shot, i) => (
+        <React.Fragment key={i}>
+          <TransitionSeries.Sequence durationInFrames={holdFrames} name={shot.title ?? `Shot ${i + 1}`}>
+            <ShotView shot={shot} />
+          </TransitionSeries.Sequence>
+          {/* Straddles the cut and costs the timeline nothing. Every shot keeps
+              its full `holdFrames`, which is the whole point of an Overlay. */}
+          {i < shots.length - 1 ? (
+            <TransitionSeries.Overlay durationInFrames={leakFrames}>
+              <Leak blendMode={blendMode} opacity={leakOpacity} />
+            </TransitionSeries.Overlay>
+          ) : null}
+        </React.Fragment>
+      ))}
+    </TransitionSeries>
+  </AbsoluteFill>
 );

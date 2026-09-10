@@ -14,10 +14,37 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['lat
 
 /**
  * Transition Sampler
- * Six presentations from @remotion/transitions, back to back, each labelled with
- * the exact call that produced it. A reference card as much as an effect —
+ *
+ * Six presentations from `@remotion/transitions`, back to back, each labelled
+ * with the exact call that produced it. A reference card as much as an effect —
  * change one `presentation={…}` line to audition a different cut.
+ *
+ * The cards are flat numbered colours ON PURPOSE, which is why this one does not
+ * take footage the way the other transition effects do. To judge a wipe you have
+ * to be able to tell instantly which half of the frame is the old scene and
+ * which is the new one, and two pieces of real footage make that harder, not
+ * easier. The colours are the instrument; the transition is the subject.
+ *
+ * The hold is the number that breaks this if you change it carelessly, so it is
+ * clamped rather than trusted — see `hold` below.
  */
+
+type Props = {
+  /**
+   * Frames each card is on screen. Clamped up to the minimum that keeps every
+   * card visible on its own — see the note where it is used.
+   */
+  readonly holdFrames?: number;
+  /** Show the `presentation={…}` call under each label. */
+  readonly showCode?: boolean;
+  /**
+   * Behind everything. flip() rotates both planes in 3D and exposes the root at
+   * its midpoint, so this colour IS a frame of the render, not a fallback.
+   */
+  readonly backdropColor?: string;
+  /** One {bg, fg} per card, cycled. Adjacent entries must contrast with each other. */
+  readonly palette?: readonly {readonly bg: string; readonly fg: string}[];
+};
 
 const PALETTE = [
   {bg: '#ff5c39', fg: '#160603'},
@@ -29,9 +56,15 @@ const PALETTE = [
   {bg: '#0ea5e9', fg: '#03151f'},
 ];
 
-const Card: React.FC<{index: number; label: string; code: string}> = ({index, label, code}) => {
+const Card: React.FC<{
+  index: number;
+  label: string;
+  code: string;
+  showCode: boolean;
+  palette: Props['palette'];
+}> = ({index, label, code, showCode, palette = PALETTE}) => {
   const frame = useCurrentFrame();
-  const {bg, fg} = PALETTE[index % PALETTE.length];
+  const {bg, fg} = palette[index % palette.length];
 
   return (
     <AbsoluteFill
@@ -64,35 +97,46 @@ const Card: React.FC<{index: number; label: string; code: string}> = ({index, la
       <Interactive.Div name="Label" style={{fontSize: 78, fontWeight: 700, letterSpacing: '-0.02em', marginTop: 18}}>
         {label}
       </Interactive.Div>
-      <Interactive.Div
-        name="Code"
-        style={{
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-          fontSize: 26,
-          opacity: 0.62,
-          marginTop: 22,
-        }}
-      >
-        {code}
-      </Interactive.Div>
+      {showCode ? (
+        <Interactive.Div
+          name="Code"
+          style={{
+            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+            fontSize: 26,
+            opacity: 0.62,
+            marginTop: 22,
+          }}
+        >
+          {code}
+        </Interactive.Div>
+      ) : null}
     </AbsoluteFill>
   );
 };
 
-export const TransitionSampler: React.FC = () => {
+export const TransitionSampler: React.FC<Props> = ({
+  holdFrames = 56,
+  showCode = true,
+  backdropColor = '#08070c',
+  palette = PALETTE,
+}) => {
   const {width, height} = useVideoConfig();
   // Each card must outlive the transitions on BOTH sides of it, or two cuts
   // overlap and three cards are on screen at once with two labels superimposed.
-  // Hold 56 against a worst case of 20 + 18, leaving every card ≥18 solo frames.
-  const hold = 56;
+  // The longest neighbouring pair here is the 20-frame clockWipe next to the
+  // 18-frame iris, and a card needs solo frames on top of that to be read at
+  // all — 18 is about a hold at 30fps. So the floor is 20 + 18 + 18 = 56, and
+  // holdFrames is clamped up to it rather than trusted: a caller who passes 30
+  // gets a working sampler, not three superimposed labels.
+  const hold = Math.max(56, Math.round(holdFrames));
 
   return (
     // flip() rotates both planes in 3D and exposes the root at its midpoint —
     // without this backdrop that reads as a white flash where a cut should be.
-    <AbsoluteFill style={{backgroundColor: '#08070c'}}>
+    <AbsoluteFill style={{backgroundColor: backdropColor}}>
     <TransitionSeries>
       <TransitionSeries.Sequence durationInFrames={hold} name="Intro">
-        <Card index={0} label="Transitions" code="@remotion/transitions" />
+        <Card index={0} label="Transitions" code="@remotion/transitions"  showCode={showCode} palette={palette} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -100,7 +144,7 @@ export const TransitionSampler: React.FC = () => {
         timing={linearTiming({durationInFrames: 14})}
       />
       <TransitionSeries.Sequence durationInFrames={hold} name="Fade">
-        <Card index={1} label="Fade" code="fade()" />
+        <Card index={1} label="Fade" code="fade()"  showCode={showCode} palette={palette} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -108,7 +152,7 @@ export const TransitionSampler: React.FC = () => {
         timing={springTiming({config: {damping: 200}, durationInFrames: 16})}
       />
       <TransitionSeries.Sequence durationInFrames={hold} name="Slide">
-        <Card index={2} label="Slide" code="slide({direction: 'from-right'})" />
+        <Card index={2} label="Slide" code="slide({direction: 'from-right'})"  showCode={showCode} palette={palette} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -116,7 +160,7 @@ export const TransitionSampler: React.FC = () => {
         timing={linearTiming({durationInFrames: 14})}
       />
       <TransitionSeries.Sequence durationInFrames={hold} name="Wipe">
-        <Card index={3} label="Wipe" code="wipe({direction: 'from-bottom-left'})" />
+        <Card index={3} label="Wipe" code="wipe({direction: 'from-bottom-left'})"  showCode={showCode} palette={palette} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -124,7 +168,7 @@ export const TransitionSampler: React.FC = () => {
         timing={linearTiming({durationInFrames: 20})}
       />
       <TransitionSeries.Sequence durationInFrames={hold} name="ClockWipe">
-        <Card index={4} label="Clock wipe" code="clockWipe({width, height})" />
+        <Card index={4} label="Clock wipe" code="clockWipe({width, height})"  showCode={showCode} palette={palette} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -132,7 +176,7 @@ export const TransitionSampler: React.FC = () => {
         timing={linearTiming({durationInFrames: 18})}
       />
       <TransitionSeries.Sequence durationInFrames={hold} name="Iris">
-        <Card index={5} label="Iris" code="iris({width, height})" />
+        <Card index={5} label="Iris" code="iris({width, height})"  showCode={showCode} palette={palette} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -140,7 +184,7 @@ export const TransitionSampler: React.FC = () => {
         timing={springTiming({config: {damping: 200}, durationInFrames: 18})}
       />
       <TransitionSeries.Sequence durationInFrames={hold + 8} name="Flip">
-        <Card index={6} label="Flip" code="flip({direction: 'from-left'})" />
+        <Card index={6} label="Flip" code="flip({direction: 'from-left'})"  showCode={showCode} palette={palette} />
       </TransitionSeries.Sequence>
     </TransitionSeries>
     </AbsoluteFill>
