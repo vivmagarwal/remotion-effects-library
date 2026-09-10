@@ -28,12 +28,14 @@ type Message = {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
   readonly text: string;
   readonly surface: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
   text: fontFamily,
   surface: '#101218',
 };
@@ -101,7 +103,7 @@ export const ImessageThread: React.FC<Props> = ({
             textAlign: 'center',
             fontSize: 34,
             fontWeight: 600,
-            color: '#8d93a5',
+            color: theme.muted,
             paddingBottom: 26,
             borderBottom: '1px solid #23262f',
             marginBottom: 34,

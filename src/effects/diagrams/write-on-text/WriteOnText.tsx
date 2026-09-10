@@ -20,6 +20,7 @@ const {fontFamily: sans} = loadSans('normal', {weights: ['500'], subsets: ['lati
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
   readonly hand: string;
   readonly text: string;
   readonly bg: string;
@@ -29,6 +30,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
   hand: hand,
   text: sans,
   bg: '#0a0b10',
@@ -179,7 +181,7 @@ export const WriteOnText: React.FC<Props> = ({
           fontWeight: 500,
           letterSpacing: '0.3em',
           marginRight: '-0.3em',
-          color: '#8d93a5',
+          color: theme.muted,
         }}
       >
         {caption}

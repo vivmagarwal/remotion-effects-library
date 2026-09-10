@@ -19,6 +19,7 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['lat
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paperMuted: string;
   readonly text: string;
   readonly paper: string;
   readonly paperInk: string;
@@ -26,6 +27,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paperMuted: '#4a4e5a',
   text: fontFamily,
   paper: '#f6f5f2',
   paperInk: '#1d1b17',
@@ -83,7 +85,7 @@ export const HandAnnotations: React.FC<Props> = ({
           fontSize: 26,
           fontWeight: 700,
           letterSpacing: '0.24em',
-          color: '#4a4e5a',
+          color: theme.paperMuted,
           marginBottom: 34,
           opacity: interpolate(frame, [0, 14], [0, 1], {
             extrapolateLeft: 'clamp',

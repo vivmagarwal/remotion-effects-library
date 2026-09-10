@@ -57,6 +57,8 @@ const HOST_BOTTOM = 96;
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paperMuted: string;
+  readonly paperInk: string;
   readonly text: string;
   readonly accentOnPaper: string;
   readonly paper: string;
@@ -64,6 +66,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paperMuted: '#4a4e5a',
+  paperInk: '#1d1b17',
   text: fontFamily,
   accentOnPaper: '#c2410c',
   paper: '#f6f5f2',
@@ -305,7 +309,7 @@ export const VizGallery: React.FC<Props> = ({
             borderRadius: 14,
             border: `2px solid ${accentColor}`,
             backgroundColor: 'rgba(194, 65, 12, 0.06)',
-            color: '#1d1b17',
+            color: theme.paperInk,
             fontSize: 34,
             fontWeight: 500,
             lineHeight: 1.45,
@@ -347,7 +351,7 @@ export const VizGallery: React.FC<Props> = ({
           top: 54,
           fontSize: 34,
           fontWeight: 500,
-          color: '#4a4e5a',
+          color: theme.paperMuted,
           opacity: chrome,
         }}
       >

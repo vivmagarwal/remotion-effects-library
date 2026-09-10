@@ -27,12 +27,18 @@ type Note = {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly ink: string;
+  readonly paperMuted: string;
+  readonly muted: string;
   readonly text: string;
   readonly bg: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  ink: '#ffffff',
+  paperMuted: '#4a4e5a',
+  muted: '#8d93a5',
   text: fontFamily,
   bg: '#0a0b10',
 };
@@ -149,19 +155,19 @@ export const NotificationStack: React.FC<Props> = ({
                       fontWeight: 600,
                       letterSpacing: '0.06em',
                       textTransform: 'uppercase',
-                      color: '#8d93a5',
+                      color: theme.muted,
                     }}
                   >
                     {n.app}
                   </span>
-                  <span style={{fontSize: 24, color: '#4a4e5a'}}>{n.time}</span>
+                  <span style={{fontSize: 24, color: theme.paperMuted}}>{n.time}</span>
                 </div>
-                <div style={{fontSize: 34, fontWeight: 700, color: '#ffffff'}}>{n.title}</div>
+                <div style={{fontSize: 34, fontWeight: 700, color: theme.ink}}>{n.title}</div>
                 <div
                   style={{
                     fontSize: 30,
                     fontWeight: 400,
-                    color: '#8d93a5',
+                    color: theme.muted,
                     marginTop: 2,
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',

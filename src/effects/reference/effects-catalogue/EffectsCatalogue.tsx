@@ -36,6 +36,7 @@ type Tile = {readonly name: string; readonly call: string; readonly effect: Effe
  * this file runnable on its own.
  */
 type Theme = {
+  readonly ink: string;
   readonly text: string;
   readonly bg: string;
   readonly series: readonly string[];
@@ -43,6 +44,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  ink: '#ffffff',
   text: fontFamily,
   bg: '#0a0b10',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
@@ -125,7 +127,7 @@ export const EffectsCatalogue: React.FC<Props> = ({
           fontSize: 46,
           fontWeight: 800,
           letterSpacing: '-0.02em',
-          color: '#ffffff',
+          color: theme.ink,
           opacity: interpolate(frame, [0, 18], [0, 1], {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp',

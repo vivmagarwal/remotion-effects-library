@@ -19,6 +19,7 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '600', '800'], subsets
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
   readonly display: string;
   readonly bg: string;
   readonly ink: string;
@@ -27,6 +28,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
   display: fontFamily,
   bg: '#0a0b10',
   ink: '#ffffff',
@@ -174,7 +176,7 @@ export const ChapterDivider: React.FC<Props> = ({
             width: '100%',
             fontSize: 30,
             fontWeight: 400,
-            color: '#8d93a5',
+            color: theme.muted,
             opacity: reveal(14),
             translate: `0px ${(1 - reveal(14)) * 22}px`,
           }}

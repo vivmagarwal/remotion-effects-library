@@ -18,6 +18,7 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '600', '800'], subsets
  * this file runnable on its own.
  */
 type Theme = {
+  readonly ink: string;
   readonly text: string;
   readonly bg: string;
   readonly pair: string;
@@ -25,6 +26,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  ink: '#ffffff',
   text: fontFamily,
   bg: '#0a0b10',
   pair: '#4cc9f0',
@@ -97,7 +99,7 @@ export const LineChartDraw: React.FC<Props> = ({
     <AbsoluteFill name="Scene" style={{backgroundColor, padding: '78px 96px', fontFamily}}>
       <Interactive.Div
         name="Title"
-        style={{fontSize: 50, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em'}}
+        style={{fontSize: 50, fontWeight: 800, color: theme.ink, letterSpacing: '-0.02em'}}
       >
         {title}
       </Interactive.Div>

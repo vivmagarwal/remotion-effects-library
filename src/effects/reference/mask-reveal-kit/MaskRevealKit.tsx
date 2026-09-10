@@ -74,6 +74,7 @@ export const maskFor = (pattern: MaskPattern, p: number): string => {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly ink: string;
   readonly text: string;
   readonly bg: string;
   readonly series: readonly string[];
@@ -81,6 +82,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  ink: '#ffffff',
   text: fontFamily,
   bg: '#0a0b10',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
@@ -194,7 +196,7 @@ export const MaskRevealKit: React.FC<Props> = ({
               fontSize: 84,
               fontWeight: 800,
               letterSpacing: '-0.03em',
-              color: '#ffffff',
+              color: theme.ink,
               textShadow: '0 6px 34px rgba(0,0,0,0.9)',
             }}
           >

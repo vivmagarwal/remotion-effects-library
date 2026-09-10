@@ -20,6 +20,7 @@ type Row = {readonly label: string; readonly value: string};
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
   readonly text: string;
   readonly bg: string;
   readonly series: readonly string[];
@@ -27,6 +28,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
   text: fontFamily,
   bg: '#0a0b10',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
@@ -112,7 +114,7 @@ export const AttentionIndicators: React.FC<Props> = ({
           fontSize: 40,
           fontWeight: 800,
           letterSpacing: '0.3em',
-          color: '#8d93a5',
+          color: theme.muted,
         }}
       >
         {title}
@@ -162,7 +164,7 @@ export const AttentionIndicators: React.FC<Props> = ({
             }}
           >
             <span>{row.label}</span>
-            <span style={{fontSize: 32, fontWeight: 500, color: '#8d93a5'}}>{row.value}</span>
+            <span style={{fontSize: 32, fontWeight: 500, color: theme.muted}}>{row.value}</span>
           </Interactive.Div>
         );
       })}

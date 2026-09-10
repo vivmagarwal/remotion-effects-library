@@ -19,11 +19,13 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['lat
  * structural, so the library's full theme object is assignable to it.
  */
 type Theme = {
+  readonly ink: string;
   readonly text: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  ink: '#ffffff',
   text: fontFamily,
 };
 
@@ -122,7 +124,7 @@ export const ProgressiveBlurFocus: React.FC<Props> = ({
           style={{
             fontSize: 88,
             fontWeight: 700,
-            color: '#ffffff',
+            color: theme.ink,
             letterSpacing: '-0.03em',
             textShadow: '0 10px 40px rgba(0,0,0,0.6)',
             // The type stays sharp — it lives above the lens, not in front of it.

@@ -17,6 +17,7 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '800'], subsets: ['lat
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
   readonly text: string;
   readonly accent: string;
   readonly bg: string;
@@ -25,6 +26,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
   text: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
@@ -120,7 +122,7 @@ export const CountUpStat: React.FC<Props> = ({
         style={{
           fontSize: 46,
           fontWeight: 500,
-          color: '#8d93a5',
+          color: theme.muted,
           marginTop: 6,
           translate: interpolate(frame, [12, 34], ['0px 18px', '0px 0px'], {
             extrapolateLeft: 'clamp',

@@ -33,6 +33,8 @@ type PunchLevel = {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
+  readonly ink: string;
   readonly text: string;
   readonly accent: string;
   readonly bg: string;
@@ -40,6 +42,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
+  ink: '#ffffff',
   text: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
@@ -137,13 +141,13 @@ export const PunchInCut: React.FC<Props> = ({
               border: '1px solid rgba(255, 255, 255, 0.14)',
             }}
           >
-            <span style={{fontSize: 54, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em'}}>
+            <span style={{fontSize: 54, fontWeight: 800, color: theme.ink, letterSpacing: '-0.02em'}}>
               {current.scale.toFixed(2)}×
             </span>
             <span style={{fontSize: 28, fontWeight: 700, letterSpacing: '0.16em', color: accentColor}}>
               CUT {index + 1}
             </span>
-            <span style={{fontSize: 28, fontWeight: 500, color: '#8d93a5'}}>+{sinceCut}f</span>
+            <span style={{fontSize: 28, fontWeight: 500, color: theme.muted}}>+{sinceCut}f</span>
           </Interactive.Div>
 
           {/* The cut list as a strip, so you can see the alternation. */}

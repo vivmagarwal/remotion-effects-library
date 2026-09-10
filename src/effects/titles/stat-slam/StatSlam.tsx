@@ -19,6 +19,8 @@ const {fontFamily: sans} = loadSans('normal', {weights: ['500', '700'], subsets:
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paperMuted: string;
+  readonly body: string;
   readonly display: string;
   readonly text: string;
   readonly accent: string;
@@ -28,6 +30,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paperMuted: '#4a4e5a',
+  body: '#eef1f7',
   display: display,
   text: sans,
   accent: '#ff5c39',
@@ -166,7 +170,7 @@ export const StatSlam: React.FC<Props> = ({
             fontFamily: textFamily,
             fontSize: 52,
             fontWeight: 700,
-            color: '#eef1f7',
+            color: theme.body,
             marginTop: 30,
             maxWidth: 1250,
             textAlign: 'center',
@@ -191,7 +195,7 @@ export const StatSlam: React.FC<Props> = ({
             fontSize: 26,
             fontWeight: 500,
             letterSpacing: '0.1em',
-            color: '#4a4e5a',
+            color: theme.paperMuted,
             marginTop: 34,
             opacity: interpolate(since, [22, 40], [0, 1], {
               extrapolateLeft: 'clamp',

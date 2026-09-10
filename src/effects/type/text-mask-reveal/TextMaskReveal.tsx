@@ -18,12 +18,14 @@ const {fontFamily} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paperMuted: string;
   readonly display: string;
   readonly paper: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paperMuted: '#4a4e5a',
   display: fontFamily,
   paper: '#f6f5f2',
 };
@@ -106,7 +108,7 @@ export const TextMaskReveal: React.FC<Props> = ({
           letterSpacing: '0.28em',
           marginRight: '-0.28em',
           textTransform: 'uppercase',
-          color: '#4a4e5a',
+          color: theme.paperMuted,
           marginTop: 26,
           opacity: interpolate(frame, [24, 46], [0, 1], {
             extrapolateLeft: 'clamp',

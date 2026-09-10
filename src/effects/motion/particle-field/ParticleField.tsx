@@ -18,12 +18,16 @@ const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['lat
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
+  readonly ink: string;
   readonly text: string;
   readonly bgDeep: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
+  ink: '#ffffff',
   text: fontFamily,
   bgDeep: '#04050a',
 };
@@ -152,7 +156,7 @@ export const ParticleField: React.FC<Props> = ({
             fontSize: 132,
             fontWeight: 700,
             letterSpacing: '0.16em',
-            color: '#ffffff',
+            color: theme.ink,
             textShadow: '0 0 70px rgba(76,201,240,0.5)',
             opacity: interpolate(frame, [10, 34], [0, 1], {
               extrapolateLeft: 'clamp',
@@ -170,7 +174,7 @@ export const ParticleField: React.FC<Props> = ({
             letterSpacing: '0.3em',
             marginRight: '-0.3em',
             textTransform: 'uppercase',
-            color: '#8d93a5',
+            color: theme.muted,
             marginTop: 20,
             opacity: interpolate(frame, [24, 46], [0, 1], {
               extrapolateLeft: 'clamp',

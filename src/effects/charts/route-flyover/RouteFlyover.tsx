@@ -21,6 +21,7 @@ type Stop = {readonly name: string; readonly at: number};
  * this file runnable on its own.
  */
 type Theme = {
+  readonly ink: string;
   readonly text: string;
   readonly accent: string;
   readonly bg: string;
@@ -29,6 +30,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  ink: '#ffffff',
   text: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
@@ -203,7 +205,7 @@ export const RouteFlyover: React.FC<Props> = ({
           fontSize: 34,
           fontWeight: 800,
           letterSpacing: '0.2em',
-          color: '#ffffff',
+          color: theme.ink,
           opacity: interpolate(frame, [4, 24], [0, 1], {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp',

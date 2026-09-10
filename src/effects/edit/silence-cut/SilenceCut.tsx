@@ -31,6 +31,9 @@ type Word = {readonly w: string; readonly s: number; readonly e: number};
  * this file runnable on its own.
  */
 type Theme = {
+  readonly body: string;
+  readonly muted: string;
+  readonly ink: string;
   readonly text: string;
   readonly accent: string;
   readonly bg: string;
@@ -38,6 +41,9 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  body: '#eef1f7',
+  muted: '#8d93a5',
+  ink: '#ffffff',
   text: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
@@ -247,13 +253,13 @@ export const SilenceCut: React.FC<Props> = ({
           border: '1px solid rgba(255, 255, 255, 0.14)',
         }}
       >
-        <span style={{fontSize: 54, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em'}}>
+        <span style={{fontSize: 54, fontWeight: 800, color: theme.ink, letterSpacing: '-0.02em'}}>
           −{removed.toFixed(1)}s
         </span>
         <span style={{fontSize: 28, fontWeight: 700, letterSpacing: '0.16em', color: accentColor}}>
           {shown.length} SEGMENTS
         </span>
-        <span style={{fontSize: 28, fontWeight: 500, color: '#8d93a5'}}>
+        <span style={{fontSize: 28, fontWeight: 500, color: theme.muted}}>
           {minSilence * 1000}ms gate · {margin * 1000}ms margin
         </span>
       </Interactive.Div>
@@ -304,11 +310,11 @@ export const SilenceCut: React.FC<Props> = ({
             marginTop: 12,
             fontSize: 34,
             fontWeight: 500,
-            color: '#8d93a5',
+            color: theme.muted,
           }}
         >
           <span>{from.toFixed(1)}s</span>
-          <span style={{color: '#eef1f7'}}>
+          <span style={{color: theme.body}}>
             source {playhead.toFixed(2)}s · out {(frame / fps).toFixed(2)}s
           </span>
           <span>{to.toFixed(1)}s</span>

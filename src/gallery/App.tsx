@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {Player, Thumbnail} from '@remotion/player';
-import {THEMES, type Theme} from '../theme';
+import {THEMES, themeFor, type Theme} from '../theme';
 import {effects} from '../registry.generated';
 import type {EffectEntry, EffectMeta} from '../types';
 import {briefOf, promptComposerReady, promptFor, sourceOf} from './sources';
@@ -408,7 +408,7 @@ const Card: React.FC<{
   const look = useLook();
   // The variant's props first, then the theme: a variant says WHICH picture,
   // the theme says what it looks like, and they are never the same key.
-  const inputProps = look ? {...variantProps, theme: look} : variantProps;
+  const inputProps = look ? {...variantProps, theme: themeFor(look, mx(meta).ground)} : variantProps;
   const [playing, setPlaying] = useState(false);
   const [stageRef, near] = useNearViewport<HTMLDivElement>(isGpu(meta) ? '150px' : '600px');
 
@@ -566,7 +566,7 @@ const Detail: React.FC<{
 }> = ({entry, onClose, onCopy, copied, onPrev, onNext}) => {
   const {meta, Component, file, variantProps} = entry;
   const look = useLook();
-  const inputProps = look ? {...variantProps, theme: look} : variantProps;
+  const inputProps = look ? {...variantProps, theme: themeFor(look, mx(meta).ground)} : variantProps;
   const m = mx(meta);
   const [tab, setTab] = useState<Tab>(() => {
     try {

@@ -52,6 +52,7 @@ const toLogBands = (linear: readonly number[], count: number, nyquist: number): 
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
   readonly text: string;
   readonly bg: string;
   readonly series: readonly string[];
@@ -59,6 +60,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
   text: fontFamily,
   bg: '#0a0b10',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
@@ -197,7 +199,7 @@ export const Audiogram: React.FC<Props> = ({
         style={{
           fontSize: 46,
           fontWeight: 500,
-          color: '#8d93a5',
+          color: theme.muted,
           marginTop: 14,
           opacity: interpolate(frame, [16, 34], [0, 1], {
             extrapolateLeft: 'clamp',

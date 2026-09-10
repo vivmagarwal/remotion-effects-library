@@ -20,6 +20,8 @@ type Item = {readonly text: string; readonly note?: string};
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paperInk: string;
+  readonly muted: string;
   readonly text: string;
   readonly accent: string;
   readonly bg: string;
@@ -28,6 +30,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paperInk: '#1d1b17',
+  muted: '#8d93a5',
   text: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
@@ -106,7 +110,7 @@ export const BulletPopList: React.FC<Props> = ({
           fontSize: 26,
           fontWeight: 800,
           letterSpacing: '0.22em',
-          color: backgroundColor,
+          color: theme.paperInk,
           backgroundColor: accentColor,
           padding: '10px 18px',
           borderRadius: 7,
@@ -203,7 +207,7 @@ export const BulletPopList: React.FC<Props> = ({
                     height: 58,
                     borderRadius: marker === 'dot' ? 29 : 14,
                     backgroundColor: accentColor,
-                    color: backgroundColor,
+                    color: theme.paperInk,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -235,7 +239,7 @@ export const BulletPopList: React.FC<Props> = ({
                     style={{
                       fontSize: 30,
                       fontWeight: 500,
-                      color: '#8d93a5',
+                      color: theme.muted,
                       marginTop: 6,
                       // The note trails its own row very slightly.
                       opacity: interpolate(frame, [from + 5, from + 20], [0, 1], {

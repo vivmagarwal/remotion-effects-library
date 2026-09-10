@@ -62,6 +62,9 @@ type GapKind = 'micro' | 'breath' | 'beat' | 'sentence' | 'scene';
  * this file runnable on its own.
  */
 type Theme = {
+  readonly ink: string;
+  readonly muted: string;
+  readonly body: string;
   readonly text: string;
   readonly accent: string;
   readonly bgDeep: string;
@@ -69,6 +72,9 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  ink: '#ffffff',
+  muted: '#8d93a5',
+  body: '#eef1f7',
   text: fontFamily,
   accent: '#ff5c39',
   bgDeep: '#04050a',
@@ -234,6 +240,7 @@ export const DesignedPause: React.FC<Props> = ({
                 kicker={chapterKicker}
                 title={chapterTitle}
                 accentColor={accentColor}
+                ink={theme.ink}
               />
             )}
           </Series.Sequence>
@@ -271,19 +278,19 @@ export const DesignedPause: React.FC<Props> = ({
             <div style={{fontSize: 34, fontWeight: 800, letterSpacing: '0.16em', color: accentColor}}>
               {scene ? `SCENE GAP · ${(scene.ms / 1000).toFixed(2)}s` : 'NO SCENE GAP'}
             </div>
-            <div style={{fontSize: 34, fontWeight: 500, color: '#eef1f7', marginTop: 8}}>
+            <div style={{fontSize: 34, fontWeight: 500, color: theme.body, marginTop: 8}}>
               {scene
                 ? `held for ${(holdMs / 1000).toFixed(2)}s — ${Math.round(holdRatio * 100)}% of it, clamped to ${minHoldMs / 1000}–${maxHoldMs / 1000}s`
                 : 'nothing to design; the window plays straight'}
             </div>
-            <div style={{fontSize: 34, fontWeight: 500, color: '#8d93a5', marginTop: 8}}>
+            <div style={{fontSize: 34, fontWeight: 500, color: theme.muted, marginTop: 8}}>
               {gaps.length} gaps classified · cut inside the gap, {marginMs}ms clear of every word
             </div>
           </Interactive.Div>
 
           {/* ── the source, as the classifier sees it ── */}
           <div style={{position: 'absolute', left: 84, right: 84, bottom: 210}}>
-            <Label>SOURCE · every gap classified</Label>
+            <Label color={theme.muted}>SOURCE · every gap classified</Label>
             <div
               style={{
                 position: 'relative',
@@ -334,7 +341,7 @@ export const DesignedPause: React.FC<Props> = ({
 
           {/* ── the output, with the designed hold in it ── */}
           <div style={{position: 'absolute', left: 84, right: 84, bottom: 92}}>
-            <Label>OUTPUT · A · designed hold · B</Label>
+            <Label color={theme.muted}>OUTPUT · A · designed hold · B</Label>
             <div style={{display: 'flex', gap: 4, height: 46, borderRadius: 6, overflow: 'hidden'}}>
               {sections.map((sec) => (
                 <div
@@ -377,13 +384,13 @@ export const DesignedPause: React.FC<Props> = ({
   );
 };
 
-const Label: React.FC<{children: string}> = ({children}) => (
+const Label: React.FC<{children: string; color: string}> = ({children, color}) => (
   <div
     style={{
       fontSize: 26,
       fontWeight: 800,
       letterSpacing: '0.18em',
-      color: '#8d93a5',
+      color,
       marginBottom: 10,
     }}
   >
@@ -409,12 +416,13 @@ const Marker: React.FC<{x: number; color: string}> = ({x, color}) => (
  * branding, so the beat carries a chapter card over a slow push — the push is
  * what tells the audience the video has not frozen.
  */
-const BeatCard: React.FC<{src: string; kicker: string; title: string; accentColor: string}> = ({
-  src,
-  kicker,
-  title,
-  accentColor,
-}) => {
+const BeatCard: React.FC<{
+  src: string;
+  kicker: string;
+  title: string;
+  accentColor: string;
+  ink: string;
+}> = ({src, kicker, title, accentColor, ink}) => {
   const frame = useCurrentFrame();
   const {fps, durationInFrames} = useVideoConfig();
   const inSpring = spring({frame, fps, config: {damping: 18, stiffness: 140, mass: 0.7}});
@@ -458,7 +466,7 @@ const BeatCard: React.FC<{src: string; kicker: string; title: string; accentColo
             fontSize: 116,
             fontWeight: 800,
             letterSpacing: '-0.03em',
-            color: '#f6f5f2',
+            color: ink,
             marginTop: 20,
             textShadow: '0 10px 50px rgba(0,0,0,0.6)',
             translate: `0px ${(1 - inSpring) * 26}px`,

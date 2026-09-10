@@ -57,12 +57,16 @@ const toLogBands = (linear: readonly number[], count: number, nyquist: number): 
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
+  readonly ink: string;
   readonly text: string;
   readonly bgDeep: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
+  ink: '#ffffff',
   text: fontFamily,
   bgDeep: '#04050a',
 };
@@ -129,7 +133,7 @@ export const FftBars: React.FC<Props> = ({
 
       <Interactive.Div
         name="Title"
-        style={{fontSize: 74, fontWeight: 700, color: '#ffffff', letterSpacing: '-0.02em'}}
+        style={{fontSize: 74, fontWeight: 700, color: theme.ink, letterSpacing: '-0.02em'}}
       >
         {title}
       </Interactive.Div>
@@ -141,7 +145,7 @@ export const FftBars: React.FC<Props> = ({
           letterSpacing: '0.28em',
           marginRight: '-0.28em',
           textTransform: 'uppercase',
-          color: '#8d93a5',
+          color: theme.muted,
           marginTop: 10,
           marginBottom: 56,
         }}

@@ -57,6 +57,9 @@ type Word = {readonly w: string; readonly s: number; readonly e: number};
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paperMuted: string;
+  readonly muted: string;
+  readonly body: string;
   readonly text: string;
   readonly accent: string;
   readonly bgDeep: string;
@@ -64,6 +67,9 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paperMuted: '#4a4e5a',
+  muted: '#8d93a5',
+  body: '#eef1f7',
   text: fontFamily,
   accent: '#ff5c39',
   bgDeep: '#04050a',
@@ -263,14 +269,14 @@ export const MusicDuck: React.FC<Props> = ({
               style={{
                 fontSize: 34,
                 fontWeight: 500,
-                color: '#eef1f7',
+                color: theme.body,
                 marginTop: 8,
                 fontVariantNumeric: 'tabular-nums',
               }}
             >
               {(bedDb + duck).toFixed(1)} dB · duck {duckDb} dB · {regions.length} voice regions
             </div>
-            <div style={{fontSize: 34, fontWeight: 500, color: '#8d93a5', marginTop: 8}}>
+            <div style={{fontSize: 34, fontWeight: 500, color: theme.muted, marginTop: 8}}>
               {lookAheadMs}ms look-ahead · {releaseMs}ms release · {holdMs}ms hold
             </div>
           </Interactive.Div>
@@ -284,11 +290,11 @@ export const MusicDuck: React.FC<Props> = ({
               textAlign: 'right',
               fontSize: 34,
               fontWeight: 500,
-              color: '#8d93a5',
+              color: theme.muted,
               lineHeight: 1.4,
             }}
           >
-            <span style={{color: '#eef1f7', fontWeight: 700}}>
+            <span style={{color: theme.body, fontWeight: 700}}>
               A compressor reacts to what it has already heard.
             </span>
             <br />
@@ -304,6 +310,8 @@ export const MusicDuck: React.FC<Props> = ({
               color="#4cc9f0"
               playhead={playhead}
               loading={music === null}
+              labelColor={theme.muted}
+  loadingColor={theme.paperMuted}
             />
             <div style={{height: 40}} />
             <Lane
@@ -313,6 +321,8 @@ export const MusicDuck: React.FC<Props> = ({
               color="#f6f5f2"
               playhead={playhead}
               loading={voice === null}
+              labelColor={theme.muted}
+              loadingColor={theme.paperMuted}
             />
           </div>
 
@@ -324,7 +334,7 @@ export const MusicDuck: React.FC<Props> = ({
                 fontSize: 26,
                 fontWeight: 800,
                 letterSpacing: '0.18em',
-                color: '#8d93a5',
+                color: theme.muted,
                 marginBottom: 12,
               }}
             >
@@ -391,14 +401,16 @@ const Lane: React.FC<{
   color: string;
   playhead: number;
   loading: boolean;
-}> = ({label, env, gain, color, playhead, loading}) => (
+  labelColor: string;
+  loadingColor: string;
+}> = ({label, env, gain, color, playhead, loading, labelColor, loadingColor}) => (
   <div>
     <div
       style={{
         fontSize: 26,
         fontWeight: 800,
         letterSpacing: '0.18em',
-        color: '#8d93a5',
+        color: labelColor,
         marginBottom: 12,
       }}
     >
@@ -409,7 +421,7 @@ const Lane: React.FC<{
           Rendering nothing is correct; crashing on `.channelWaveforms` is the
           usual alternative. */}
       {loading ? (
-        <div style={{fontSize: 30, fontWeight: 500, color: '#4a4e5a'}}>reading waveform…</div>
+        <div style={{fontSize: 30, fontWeight: 500, color: loadingColor}}>reading waveform…</div>
       ) : (
         <svg width="100%" height="210" viewBox={`0 0 ${BUCKETS} 210`} preserveAspectRatio="none">
           {env.map((v, i) => {

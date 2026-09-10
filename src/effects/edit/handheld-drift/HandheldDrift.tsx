@@ -48,6 +48,8 @@ type Preset = {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
+  readonly body: string;
   readonly text: string;
   readonly accent: string;
   readonly bg: string;
@@ -55,6 +57,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
+  body: '#eef1f7',
   text: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
@@ -145,8 +149,8 @@ export const HandheldDrift: React.FC<Props> = ({
             <div style={{fontSize: 34, fontWeight: 800, letterSpacing: '0.16em', color: accentColor}}>
               {p.name}
             </div>
-            <div style={{fontSize: 34, fontWeight: 500, color: '#eef1f7', marginTop: 8}}>{p.note}</div>
-            <div style={{fontSize: 34, fontWeight: 500, color: '#8d93a5', marginTop: 8}}>
+            <div style={{fontSize: 34, fontWeight: 500, color: theme.body, marginTop: 8}}>{p.note}</div>
+            <div style={{fontSize: 34, fontWeight: 500, color: theme.muted, marginTop: 8}}>
               ±{p.amp}px · ±{p.rot}° · lag {rotationLag}f · overscan {overscan.toFixed(3)}×
             </div>
           </Interactive.Div>
@@ -184,7 +188,7 @@ export const HandheldDrift: React.FC<Props> = ({
               ))}
               <line x1="1000" y1="0" x2="1000" y2="120" stroke="#ffffff" strokeWidth={2} />
             </svg>
-            <div style={{fontSize: 34, fontWeight: 500, color: '#8d93a5', marginTop: -4}}>
+            <div style={{fontSize: 34, fontWeight: 500, color: theme.muted, marginTop: -4}}>
               <span style={{color: accentColor}}>translate</span> ·{' '}
               <span style={{color: '#4cc9f0'}}>rotate, {rotationLag} frames behind</span>
             </div>
@@ -197,7 +201,7 @@ export const HandheldDrift: React.FC<Props> = ({
               top: 84,
               fontSize: 34,
               fontWeight: 500,
-              color: '#8d93a5',
+              color: theme.muted,
               opacity: interpolate(frame, [0, 16], [0, 1], {
                 extrapolateLeft: 'clamp',
                 extrapolateRight: 'clamp',

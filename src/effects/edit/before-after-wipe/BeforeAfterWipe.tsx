@@ -22,12 +22,14 @@ const {fontFamily} = loadFont('normal', {weights: ['600', '800'], subsets: ['lat
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paperInk: string;
   readonly text: string;
   readonly ink: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paperInk: '#1d1b17',
   text: fontFamily,
   ink: '#ffffff',
 };
@@ -127,7 +129,7 @@ export const BeforeAfterWipe: React.FC<Props> = ({
           alignItems: 'center',
           justifyContent: 'center',
           gap: 10,
-          color: '#1d1b17',
+          color: theme.paperInk,
           fontSize: 34,
           fontWeight: 800,
           boxShadow: '0 10px 34px rgba(0,0,0,0.45)',

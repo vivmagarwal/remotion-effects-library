@@ -19,6 +19,7 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets
  * this file runnable on its own.
  */
 type Theme = {
+  readonly ink: string;
   readonly text: string;
   readonly accent: string;
   readonly bg: string;
@@ -27,6 +28,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  ink: '#ffffff',
   text: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
@@ -136,7 +138,7 @@ export const MetaballGoo: React.FC<Props> = ({
             fontSize: 62,
             fontWeight: 800,
             letterSpacing: '-0.025em',
-            color: '#ffffff',
+            color: theme.ink,
             textShadow: '0 4px 30px rgba(0,0,0,0.8)',
             opacity: interpolate(frame, [0, 22], [0, 1], {
               extrapolateLeft: 'clamp',

@@ -17,6 +17,7 @@ const {fontFamily} = loadFont('normal', {weights: ['700', '900'], subsets: ['lat
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
   readonly display: string;
   readonly bg: string;
   readonly ink: string;
@@ -25,6 +26,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
   display: fontFamily,
   bg: '#0a0b10',
   ink: '#ffffff',
@@ -77,7 +79,7 @@ export const CharDropSpring: React.FC<Props> = ({
           letterSpacing: '0.22em',
           marginRight: '-0.22em',
           textTransform: 'uppercase',
-          color: '#8d93a5',
+          color: theme.muted,
           marginBottom: 36,
           opacity: interpolate(frame, [chars.length * stagger + 10, chars.length * stagger + 30], [0, 1], {
             extrapolateLeft: 'clamp',

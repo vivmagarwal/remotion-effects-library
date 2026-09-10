@@ -28,6 +28,8 @@ type Stroke = {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paperMuted: string;
+  readonly muted: string;
   readonly text: string;
   readonly accent: string;
   readonly bg: string;
@@ -36,6 +38,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paperMuted: '#4a4e5a',
+  muted: '#8d93a5',
   text: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
@@ -165,7 +169,7 @@ export const LogoPathDraw: React.FC<Props> = ({
             fontWeight: 700,
             letterSpacing: '0.34em',
             marginRight: '-0.34em',
-            color: '#ffffff',
+            color: theme.ink,
             opacity: interpolate(frame, [lastDone, lastDone + 22], [0, 1], {
               extrapolateLeft: 'clamp',
               extrapolateRight: 'clamp',
@@ -180,7 +184,7 @@ export const LogoPathDraw: React.FC<Props> = ({
             marginTop: 16,
             fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
             fontSize: 25,
-            color: '#8d93a5',
+            color: theme.muted,
             opacity: interpolate(frame, [lastDone + 12, lastDone + 34], [0, 1], {
               extrapolateLeft: 'clamp',
               extrapolateRight: 'clamp',
@@ -198,7 +202,7 @@ export const LogoPathDraw: React.FC<Props> = ({
             bottom: 76,
             fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
             fontSize: 22,
-            color: '#4a4e5a',
+            color: theme.paperMuted,
             fontVariantNumeric: 'tabular-nums',
             opacity: interpolate(frame, [startAt, startAt + 16], [0, 1], {
               extrapolateLeft: 'clamp',

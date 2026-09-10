@@ -23,12 +23,16 @@ const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['lat
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
+  readonly ink: string;
   readonly text: string;
   readonly bgDeep: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
+  ink: '#ffffff',
   text: fontFamily,
   bgDeep: '#04050a',
 };
@@ -163,7 +167,7 @@ export const GlassRefraction: React.FC<Props> = ({
             fontWeight: 700,
             letterSpacing: '0.3em',
             marginRight: '-0.3em',
-            color: '#ffffff',
+            color: theme.ink,
             textShadow: '0 0 60px rgba(140,180,255,0.5)',
             opacity: interpolate(frame, [24, 50], [0, 1], {
               extrapolateLeft: 'clamp',
@@ -178,7 +182,7 @@ export const GlassRefraction: React.FC<Props> = ({
           style={{
             fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
             fontSize: 24,
-            color: '#8d93a5',
+            color: theme.muted,
             textShadow: '0 2px 14px rgba(0,0,0,0.9)',
             marginTop: 16,
             opacity: interpolate(frame, [38, 62], [0, 1], {

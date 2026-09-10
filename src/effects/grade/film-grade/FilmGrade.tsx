@@ -64,6 +64,8 @@ type Stage = {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly body: string;
+  readonly muted: string;
   readonly text: string;
   readonly accent: string;
   readonly bgDeep: string;
@@ -71,6 +73,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  body: '#eef1f7',
+  muted: '#8d93a5',
   text: fontFamily,
   accent: '#ff5c39',
   bgDeep: '#04050a',
@@ -180,7 +184,7 @@ export const FilmGrade: React.FC<Props> = ({
                 fontSize: 28,
                 fontWeight: 800,
                 letterSpacing: '0.2em',
-                color: '#8d93a5',
+                color: theme.muted,
                 marginBottom: 8,
               }}
             >
@@ -204,7 +208,7 @@ export const FilmGrade: React.FC<Props> = ({
                   >
                     {i === 0 ? s.name : `  ${s.name}(…)`}
                   </div>
-                  <div style={{fontSize: 28, fontWeight: 500, color: '#8d93a5', marginTop: 3}}>
+                  <div style={{fontSize: 28, fontWeight: 500, color: theme.muted, marginTop: 3}}>
                     {s.note}
                   </div>
                 </div>
@@ -215,7 +219,7 @@ export const FilmGrade: React.FC<Props> = ({
                 fontSize: 28,
                 fontWeight: 800,
                 letterSpacing: '0.2em',
-                color: '#8d93a5',
+                color: theme.muted,
                 marginTop: 8,
               }}
             >
@@ -253,7 +257,7 @@ export const FilmGrade: React.FC<Props> = ({
                 fontSize: 26,
                 fontWeight: 800,
                 letterSpacing: '0.18em',
-                color: '#8d93a5',
+                color: theme.muted,
               }}
             >
               UNGRADED
@@ -267,7 +271,7 @@ export const FilmGrade: React.FC<Props> = ({
               top: 96,
               fontSize: 34,
               fontWeight: 500,
-              color: '#eef1f7',
+              color: theme.body,
               textShadow: '0 2px 14px rgba(4,5,10,0.95), 0 0 34px rgba(4,5,10,0.8)',
               maxWidth: 780,
             }}

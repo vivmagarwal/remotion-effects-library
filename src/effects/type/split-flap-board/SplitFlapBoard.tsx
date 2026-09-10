@@ -20,6 +20,8 @@ const ALPHABET = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:-/';
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paperMuted: string;
+  readonly muted: string;
   readonly mono: string;
   readonly bg: string;
   readonly series: readonly string[];
@@ -27,6 +29,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paperMuted: '#4a4e5a',
+  muted: '#8d93a5',
   mono: fontFamily,
   bg: '#0a0b10',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
@@ -120,7 +124,7 @@ export const SplitFlapBoard: React.FC<Props> = ({
         style={{
           fontSize: 42,
           letterSpacing: '0.5em',
-          color: '#8d93a5',
+          color: theme.muted,
           marginBottom: 46,
           opacity: interpolate(frame, [0, 14], [0, 1], {
             extrapolateLeft: 'clamp',
@@ -136,7 +140,7 @@ export const SplitFlapBoard: React.FC<Props> = ({
           <span
             style={{
               fontSize: 62,
-              color: '#8d93a5',
+              color: theme.muted,
               width: 220,
               letterSpacing: '0.04em',
             }}
@@ -163,7 +167,7 @@ export const SplitFlapBoard: React.FC<Props> = ({
         style={{
           fontSize: 32,
           letterSpacing: '0.24em',
-          color: '#4a4e5a',
+          color: theme.paperMuted,
           marginTop: 40,
           opacity: interpolate(frame, [3 * fps, 3.6 * fps], [0, 1], {
             extrapolateLeft: 'clamp',

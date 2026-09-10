@@ -19,12 +19,16 @@ type Ring = {readonly label: string; readonly value: number; readonly color: str
  * this file runnable on its own.
  */
 type Theme = {
+  readonly body: string;
+  readonly ink: string;
   readonly text: string;
   readonly bg: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  body: '#eef1f7',
+  ink: '#ffffff',
   text: fontFamily,
   bg: '#0a0b10',
 };
@@ -128,7 +132,7 @@ export const DonutProgress: React.FC<Props> = ({
             style={{
               fontSize: 96,
               fontWeight: 800,
-              color: '#ffffff',
+              color: theme.ink,
               letterSpacing: '-0.03em',
               scale: interpolate(frame, [10, 32], [0.7, 1], {
                 extrapolateLeft: 'clamp',
@@ -150,7 +154,7 @@ export const DonutProgress: React.FC<Props> = ({
       <div>
         <Interactive.Div
           name="Title"
-          style={{fontSize: 54, fontWeight: 800, color: '#ffffff', marginBottom: 40, letterSpacing: '-0.02em'}}
+          style={{fontSize: 54, fontWeight: 800, color: theme.ink, marginBottom: 40, letterSpacing: '-0.02em'}}
         >
           {title}
         </Interactive.Div>
@@ -181,7 +185,7 @@ export const DonutProgress: React.FC<Props> = ({
               }}
             >
               <span style={{width: 22, height: 22, borderRadius: 6, backgroundColor: ring.color}} />
-              <span style={{fontSize: 38, fontWeight: 600, color: '#eef1f7', width: 220}}>
+              <span style={{fontSize: 38, fontWeight: 600, color: theme.body, width: 220}}>
                 {ring.label}
               </span>
               <span

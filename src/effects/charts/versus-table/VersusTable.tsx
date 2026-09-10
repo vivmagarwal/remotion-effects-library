@@ -24,6 +24,8 @@ type Side = {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
+  readonly body: string;
   readonly text: string;
   readonly bg: string;
   readonly paper: string;
@@ -31,6 +33,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
+  body: '#eef1f7',
   text: fontFamily,
   bg: '#0a0b10',
   paper: '#f6f5f2',
@@ -164,7 +168,7 @@ export const VersusTable: React.FC<Props> = ({
                 border: `1px solid ${side.color}33`,
                 fontSize: 40,
                 fontWeight: 500,
-                color: '#eef1f7',
+                color: theme.body,
                 // Columns arrive from their own edge.
                 translate: `${(p - 1) * (isLeft ? -70 : 70)}px 0px`,
                 opacity: Math.min(1, pop * 1.8),
@@ -210,7 +214,7 @@ export const VersusTable: React.FC<Props> = ({
           fontWeight: 800,
           letterSpacing: '0.26em',
           marginRight: '-0.26em',
-          color: '#8d93a5',
+          color: theme.muted,
           marginBottom: 16,
           opacity: head,
         }}

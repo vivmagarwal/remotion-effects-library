@@ -18,12 +18,16 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '600', '700'], subsets
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paperMuted: string;
+  readonly paperInk: string;
   readonly text: string;
   readonly pair: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paperMuted: '#4a4e5a',
+  paperInk: '#1d1b17',
   text: fontFamily,
   pair: '#4cc9f0',
 };
@@ -123,8 +127,8 @@ export const SubscribeButton: React.FC<Props> = ({
         </div>
 
         <div style={{marginRight: 18}}>
-          <div style={{fontSize: 38, fontWeight: 700, color: '#1d1b17'}}>{channel}</div>
-          <div style={{fontSize: 26, fontWeight: 500, color: '#4a4e5a', marginTop: 4}}>
+          <div style={{fontSize: 38, fontWeight: 700, color: theme.paperInk}}>{channel}</div>
+          <div style={{fontSize: 26, fontWeight: 500, color: theme.paperMuted, marginTop: 4}}>
             {subscribers}
           </div>
         </div>

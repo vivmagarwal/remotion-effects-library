@@ -71,6 +71,8 @@ type Leg = {readonly frames: number; readonly from: number; readonly to: number;
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
+  readonly body: string;
   readonly text: string;
   readonly accent: string;
   readonly bgDeep: string;
@@ -78,6 +80,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
+  body: '#eef1f7',
   text: fontFamily,
   accent: '#ff5c39',
   bgDeep: '#04050a',
@@ -232,14 +236,14 @@ export const SpeedRamp: React.FC<Props> = ({
               style={{
                 fontSize: 34,
                 fontWeight: 500,
-                color: '#eef1f7',
+                color: theme.body,
                 marginTop: 8,
                 fontVariantNumeric: 'tabular-nums',
               }}
             >
               {speed.toFixed(2)}× · source frame {sourceFrame} of {sourceDurationInFrames}
             </div>
-            <div style={{fontSize: 34, fontWeight: 500, color: '#8d93a5', marginTop: 8}}>
+            <div style={{fontSize: 34, fontWeight: 500, color: theme.muted, marginTop: 8}}>
               {Math.round(spent * 100)}% of the clip spent at output frame {frame}
             </div>
           </Interactive.Div>
@@ -252,7 +256,7 @@ export const SpeedRamp: React.FC<Props> = ({
                 fontSize: 26,
                 fontWeight: 800,
                 letterSpacing: '0.18em',
-                color: '#8d93a5',
+                color: theme.muted,
                 marginBottom: 12,
                 textShadow: '0 2px 12px rgba(4,5,10,0.9)',
               }}
@@ -314,7 +318,7 @@ export const SpeedRamp: React.FC<Props> = ({
               top: 84,
               fontSize: 34,
               fontWeight: 500,
-              color: '#eef1f7',
+              color: theme.body,
               // Grey type over a bright limb is invisible, and the brightness of
               // that limb is the footage's business rather than this label's, so
               // it carries its own contrast.

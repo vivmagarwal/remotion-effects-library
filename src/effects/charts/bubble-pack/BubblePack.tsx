@@ -33,6 +33,8 @@ type PackNode = {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly body: string;
+  readonly muted: string;
   readonly text: string;
   readonly bg: string;
   readonly paper: string;
@@ -40,6 +42,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  body: '#eef1f7',
+  muted: '#8d93a5',
   text: fontFamily,
   bg: '#0a0b10',
   paper: '#f6f5f2',
@@ -154,7 +158,7 @@ export const BubblePack: React.FC<Props> = ({
           textAlign: 'center',
           fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
           fontSize: 26,
-          color: '#8d93a5',
+          color: theme.muted,
           opacity: interpolate(frame, [8, 28], [0, 1], {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp',
@@ -261,7 +265,7 @@ export const BubblePack: React.FC<Props> = ({
               gap: 12,
               fontSize: 28,
               fontWeight: 500,
-              color: '#eef1f7',
+              color: theme.body,
               opacity: interpolate(frame, [40 + i * 5, 58 + i * 5], [0, 1], {
                 extrapolateLeft: 'clamp',
                 extrapolateRight: 'clamp',

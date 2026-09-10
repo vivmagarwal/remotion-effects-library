@@ -18,6 +18,7 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '600', '700'], subsets
  * this file runnable on its own.
  */
 type Theme = {
+  readonly ink: string;
   readonly text: string;
   readonly accent: string;
   readonly bg: string;
@@ -26,6 +27,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  ink: '#ffffff',
   text: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
@@ -140,7 +142,7 @@ export const DeviceRise: React.FC<Props> = ({
           fontSize: 76,
           fontWeight: 700,
           letterSpacing: '-0.035em',
-          color: '#ffffff',
+          color: theme.ink,
           opacity: interpolate(frame, [0, 20], [0, 1], {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp',

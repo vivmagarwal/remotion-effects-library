@@ -43,6 +43,8 @@ class HelixCurve extends THREE.Curve<THREE.Vector3> {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
+  readonly ink: string;
   readonly text: string;
   readonly bgDeep: string;
   readonly pair: string;
@@ -50,6 +52,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
+  ink: '#ffffff',
   text: fontFamily,
   bgDeep: '#04050a',
   pair: '#4cc9f0',
@@ -229,7 +233,7 @@ export const DnaHelix: React.FC<Props> = ({
             fontSize: 92,
             fontWeight: 700,
             letterSpacing: '-0.02em',
-            color: '#ffffff',
+            color: theme.ink,
             textShadow: `0 0 60px ${strandColor}66`,
             opacity: interpolate(frame, [40, 66], [0, 1], {
               extrapolateLeft: 'clamp',
@@ -244,7 +248,7 @@ export const DnaHelix: React.FC<Props> = ({
           style={{
             fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
             fontSize: 24,
-            color: '#8d93a5',
+            color: theme.muted,
             marginTop: 14,
             maxWidth: 520,
             opacity: interpolate(frame, [54, 78], [0, 1], {

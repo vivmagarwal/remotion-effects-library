@@ -21,6 +21,7 @@ const {fontFamily: sans} = loadSans('normal', {weights: ['500', '700'], subsets:
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
   readonly display: string;
   readonly text: string;
   readonly accent: string;
@@ -30,6 +31,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
   display: serif,
   text: sans,
   accent: '#ff5c39',
@@ -205,7 +207,7 @@ export const QuoteSlam: React.FC<Props> = ({
             <div style={{width: ruleWidth, height: 3, flexShrink: 0, backgroundColor: accentColor}} />
             <div>
               <div style={{fontSize: 34, fontWeight: 700, color: textColor}}>{author}</div>
-              <div style={{fontSize: 26, fontWeight: 500, color: '#8d93a5', marginTop: 4}}>{role}</div>
+              <div style={{fontSize: 26, fontWeight: 500, color: theme.muted, marginTop: 4}}>{role}</div>
             </div>
           </Interactive.Div>
         </AbsoluteFill>

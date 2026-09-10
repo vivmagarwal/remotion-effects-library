@@ -22,6 +22,8 @@ type Span = {readonly text: string; readonly highlight?: boolean};
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paperInk: string;
+  readonly paperMuted: string;
   readonly display: string;
   readonly text: string;
   readonly series: readonly string[];
@@ -29,6 +31,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paperInk: '#1d1b17',
+  paperMuted: '#4a4e5a',
   display: serif,
   text: sans,
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
@@ -83,7 +87,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
         style={{
           fontFamily: textFamily,
           fontSize: 30,
-          color: '#4a4e5a',
+          color: theme.paperMuted,
           textDecoration: 'underline',
           textUnderlineOffset: 6,
           opacity: interpolate(frame, [0, 12], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}),
@@ -99,7 +103,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
           fontSize: 92,
           fontWeight: 700,
           lineHeight: 1.24,
-          color: '#1d1b17',
+          color: theme.paperInk,
           marginTop: 26,
           maxWidth: 1450,
           // This element is the stacking context the marker sits behind. Without
@@ -170,7 +174,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
         style={{
           fontFamily: textFamily,
           fontSize: 25,
-          color: '#4a4e5a',
+          color: theme.paperMuted,
           marginTop: 14,
           opacity: interpolate(frame, [18, 32], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}),
         }}
@@ -184,7 +188,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
           fontFamily: textFamily,
           fontSize: 24,
           fontWeight: 600,
-          color: '#4a4e5a',
+          color: theme.paperMuted,
           border: '1px solid rgba(29,27,23,0.16)',
           borderRadius: 8,
           padding: '10px 18px',

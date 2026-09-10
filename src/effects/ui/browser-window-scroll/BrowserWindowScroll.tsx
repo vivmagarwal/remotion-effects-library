@@ -21,12 +21,14 @@ type Section = {readonly kind: 'hero' | 'cards' | 'stat' | 'cta'; readonly title
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
   readonly text: string;
   readonly accent: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
   text: fontFamily,
   accent: '#ff5c39',
 };
@@ -146,7 +148,7 @@ export const BrowserWindowScroll: React.FC<Props> = ({
           <div style={{fontSize: 132, fontWeight: 800, color: accentColor, letterSpacing: '-0.04em'}}>
             {s.title}
           </div>
-          <div style={{fontSize: 30, color: '#8d93a5', marginTop: 12}}>{s.body}</div>
+          <div style={{fontSize: 30, color: theme.muted, marginTop: 12}}>{s.body}</div>
         </div>
       );
     }

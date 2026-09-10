@@ -22,6 +22,8 @@ const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['lat
  * this file runnable on its own.
  */
 type Theme = {
+  readonly body: string;
+  readonly ink: string;
   readonly text: string;
   readonly bgDeep: string;
   readonly pair: string;
@@ -30,6 +32,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  body: '#eef1f7',
+  ink: '#ffffff',
   text: fontFamily,
   bgDeep: '#04050a',
   pair: '#4cc9f0',
@@ -203,7 +207,7 @@ export const GalaxyParticles: React.FC<Props> = ({
             fontWeight: 700,
             letterSpacing: '0.3em',
             marginRight: '-0.3em',
-            color: '#ffffff',
+            color: theme.ink,
             textShadow: `0 0 70px ${outsideColor}aa`,
             opacity: interpolate(frame, [26, 52], [0, 1], {
               extrapolateLeft: 'clamp',
@@ -220,7 +224,7 @@ export const GalaxyParticles: React.FC<Props> = ({
             fontSize: 26,
             letterSpacing: '0.18em',
             marginRight: '-0.18em',
-            color: '#eef1f7',
+            color: theme.body,
             marginTop: 22,
             opacity: interpolate(frame, [40, 66], [0, 1], {
               extrapolateLeft: 'clamp',

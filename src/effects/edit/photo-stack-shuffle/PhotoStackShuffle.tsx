@@ -20,12 +20,14 @@ type Card = {readonly src: string; readonly caption: string};
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paperMuted: string;
   readonly text: string;
   readonly bg: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paperMuted: '#4a4e5a',
   text: fontFamily,
   bg: '#0a0b10',
 };
@@ -140,7 +142,7 @@ export const PhotoStackShuffle: React.FC<Props> = ({
                 style={{
                   fontSize: 34,
                   fontWeight: 500,
-                  color: '#4a4e5a',
+                  color: theme.paperMuted,
                   marginTop: 20,
                   textAlign: 'center',
                   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',

@@ -30,6 +30,8 @@ type Beat = {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paperMuted: string;
+  readonly paperInk: string;
   readonly text: string;
   readonly accent: string;
   readonly paper: string;
@@ -37,6 +39,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paperMuted: '#4a4e5a',
+  paperInk: '#1d1b17',
   text: fontFamily,
   accent: '#ff5c39',
   paper: '#f6f5f2',
@@ -139,7 +143,7 @@ export const AspectMorphCard: React.FC<Props> = ({
           fontSize: 42,
           fontWeight: 800,
           letterSpacing: '0.2em',
-          color: '#1d1b17',
+          color: theme.paperInk,
           opacity: interpolate(frame, [0, 18], [0, 1], {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp',
@@ -197,7 +201,7 @@ export const AspectMorphCard: React.FC<Props> = ({
               fontWeight: 800,
               lineHeight: 1.16,
               letterSpacing: '-0.03em',
-              color: '#1d1b17',
+              color: theme.paperInk,
               // A small per-line stagger, driven by shift rather than by frame,
               // so the lines re-stagger identically on the way out.
               opacity: interpolate(shift, [0.5 + i * 0.12, 0.8 + i * 0.12], [0, 1], {
@@ -258,7 +262,7 @@ export const AspectMorphCard: React.FC<Props> = ({
             padding: '9px 18px',
             fontSize: 24,
             fontWeight: 700,
-            color: '#1d1b17',
+            color: theme.paperInk,
           }}
         >
           <span style={{width: 12, height: 12, borderRadius: 6, backgroundColor: accentColor}} />
@@ -275,7 +279,7 @@ export const AspectMorphCard: React.FC<Props> = ({
           top: 112,
           fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
           fontSize: 26,
-          color: '#4a4e5a',
+          color: theme.paperMuted,
           fontVariantNumeric: 'tabular-nums',
         }}
       >

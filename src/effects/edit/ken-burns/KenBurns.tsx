@@ -30,12 +30,16 @@ type Shot = {
  * structural, so the library's full theme object is assignable to it.
  */
 type Theme = {
+  readonly muted: string;
+  readonly ink: string;
   readonly display: string;
   readonly text: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
+  ink: '#ffffff',
   display: serif,
   text: sans,
 };
@@ -56,7 +60,9 @@ const Frame: React.FC<{
   frames: number;
   captionFamily: string;
   creditFamily: string;
-}> = ({shot, frames, captionFamily, creditFamily}) => {
+  ink: string;
+  muted: string;
+}> = ({shot, frames, captionFamily, creditFamily, ink, muted}) => {
   const frame = useCurrentFrame();
 
   const p = interpolate(frame, [0, frames], [0, 1], {
@@ -97,7 +103,7 @@ const Frame: React.FC<{
           style={{
             fontFamily: captionFamily,
             fontSize: 78,
-            color: '#ffffff',
+            color: ink,
             lineHeight: 1.15,
             maxWidth: 1300,
             translate: interpolate(frame, [6, 34], ['0px 26px', '0px 0px'], {
@@ -122,7 +128,7 @@ const Frame: React.FC<{
               fontWeight: 500,
               letterSpacing: '0.2em',
               textTransform: 'uppercase',
-              color: '#8d93a5',
+              color: muted,
               marginTop: 20,
               opacity: interpolate(frame, [16, 38], [0, 1], {
                 extrapolateLeft: 'clamp',
@@ -156,6 +162,8 @@ export const KenBurns: React.FC<Props> = ({
           frames={shotFrames}
           captionFamily={captionFamily}
           creditFamily={creditFamily}
+          ink={theme.ink}
+          muted={theme.muted}
         />
       </Series.Sequence>
     ))}

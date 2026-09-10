@@ -85,6 +85,7 @@ const plus = (arm: number, lo: number, hi: number) => {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
   readonly text: string;
   readonly bg: string;
   readonly body: string;
@@ -93,6 +94,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
   text: fontFamily,
   bg: '#0a0b10',
   body: '#eef1f7',
@@ -225,7 +227,7 @@ export const ShapeMorph: React.FC<Props> = ({
             bottom: 84,
             fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
             fontSize: 25,
-            color: '#8d93a5',
+            color: theme.muted,
           }}
         >
           {caption}

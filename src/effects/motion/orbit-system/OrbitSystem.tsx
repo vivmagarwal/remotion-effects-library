@@ -29,6 +29,8 @@ type Body = {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly body: string;
+  readonly muted: string;
   readonly text: string;
   readonly bgDeep: string;
   readonly series: readonly string[];
@@ -36,6 +38,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  body: '#eef1f7',
+  muted: '#8d93a5',
   text: fontFamily,
   bgDeep: '#04050a',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
@@ -69,11 +73,11 @@ export const OrbitSystem: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
   bodies = [
-    {name: 'Mercury', color: '#8d93a5', radius: 206, size: 30, speed: 2.6, phase: 0.4},
+    {name: 'Mercury', color: theme.muted, radius: 206, size: 30, speed: 2.6, phase: 0.4},
     {name: 'Venus', color: '#ffd166', radius: 324, size: 44, speed: 1.75, phase: 2.35},
     {name: 'Earth', color: '#4cc9f0', radius: 442, size: 50, speed: 1.2, phase: 4.2},
     {name: 'Mars', color: '#ff5c39', radius: 564, size: 38, speed: 0.85, phase: 5.55},
-    {name: 'Saturn', color: '#eef1f7', radius: 716, size: 64, speed: 0.58, phase: 1.15, hasRing: true},
+    {name: 'Saturn', color: theme.body, radius: 716, size: 64, speed: 0.58, phase: 1.15, hasRing: true},
   ],
   starName = 'SOL',
   starColor = theme.series[3],
@@ -182,7 +186,7 @@ export const OrbitSystem: React.FC<Props> = ({
             fontSize: 26,
             fontWeight: 700,
             letterSpacing: '0.18em',
-            color: '#eef1f7',
+            color: theme.body,
             textShadow: '0 2px 12px rgba(4,5,10,0.95)',
             whiteSpace: 'nowrap',
           }}
@@ -273,7 +277,7 @@ export const OrbitSystem: React.FC<Props> = ({
           fontSize: 52,
           fontWeight: 700,
           letterSpacing: '0.32em',
-          color: '#eef1f7',
+          color: theme.body,
           opacity: interpolate(frame, [10, 34], [0, 1], {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp',

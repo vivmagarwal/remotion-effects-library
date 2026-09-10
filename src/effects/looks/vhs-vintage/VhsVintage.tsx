@@ -22,11 +22,13 @@ const {fontFamily} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
  * structural, so the library's full theme object is assignable to it.
  */
 type Theme = {
+  readonly body: string;
   readonly mono: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  body: '#eef1f7',
   mono: fontFamily,
 };
 
@@ -116,7 +118,7 @@ export const VhsVintage: React.FC<Props> = ({
           top: 74,
           fontFamily,
           fontSize: 76,
-          color: '#eef1f7',
+          color: theme.body,
           textShadow: '0 0 14px rgba(160,255,200,0.7)',
           letterSpacing: '0.06em',
           opacity: Math.floor(frame / 12) % 4 === 3 ? 0.35 : 1,
@@ -133,7 +135,7 @@ export const VhsVintage: React.FC<Props> = ({
           bottom: 74,
           fontFamily,
           fontSize: 68,
-          color: '#eef1f7',
+          color: theme.body,
           textShadow: '0 0 14px rgba(160,255,200,0.7)',
           letterSpacing: '0.06em',
         }}

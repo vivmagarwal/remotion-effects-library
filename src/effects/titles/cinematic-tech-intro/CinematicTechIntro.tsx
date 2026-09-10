@@ -17,6 +17,8 @@ const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['lat
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
+  readonly ink: string;
   readonly text: string;
   readonly bgDeep: string;
   readonly pair: string;
@@ -24,6 +26,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
+  ink: '#ffffff',
   text: fontFamily,
   bgDeep: '#04050a',
   pair: '#4cc9f0',
@@ -113,7 +117,7 @@ export const CinematicTechIntro: React.FC<Props> = ({
           style={{
             fontSize: 168,
             fontWeight: 700,
-            color: '#ffffff',
+            color: theme.ink,
             lineHeight: 1,
             // Tracking opens out as it settles — the "expensive" detail.
             letterSpacing: interpolate(frame, [impact, impact + 2 * fps], ['0.02em', '0.22em'], {
@@ -160,7 +164,7 @@ export const CinematicTechIntro: React.FC<Props> = ({
             letterSpacing: '0.34em',
             marginRight: '-0.34em',
             textTransform: 'uppercase',
-            color: '#8d93a5',
+            color: theme.muted,
             marginTop: 28,
             opacity: interpolate(frame, [impact + 12, impact + 1.2 * fps], [0, 1], {
               extrapolateLeft: 'clamp',

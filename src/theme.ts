@@ -252,4 +252,35 @@ export const THEMES: Readonly<Record<string, Theme>> = {
   },
 };
 
+/**
+ * The theme as it applies to an effect designed for a particular ground.
+ *
+ * A light theme cannot sensibly reground an effect whose SUBJECT is light on
+ * dark. `galaxy-particles` is 28,000 white points; `infinite-tunnel` is a glow.
+ * Put either on paper and you have not restyled it, you have erased it — and no
+ * amount of token plumbing fixes white particles on a white ground, because the
+ * particles are the content.
+ *
+ * `meta.ground` already records what each effect was built for, so the policy
+ * is: a light theme gives a dark-only effect its accent, typefaces and shape,
+ * and leaves the ground and the ink alone.
+ *
+ * This is a decision for whoever ASSEMBLES a video, not for the component — the
+ * theme is data, and which theme suits which shot is editorial. It lives here so
+ * the gallery and the Remotion root make the same call.
+ */
+export const themeFor = (theme: Theme, ground?: string): Theme => {
+  if (theme.scheme !== 'light' || ground !== 'dark') return theme;
+  return {
+    ...theme,
+    scheme: 'dark',
+    bg: HOUSE.bg,
+    bgDeep: HOUSE.bgDeep,
+    surface: HOUSE.surface,
+    ink: HOUSE.ink,
+    body: HOUSE.body,
+    muted: HOUSE.muted,
+  };
+};
+
 export const THEME_NAMES = Object.keys(THEMES) as readonly string[];

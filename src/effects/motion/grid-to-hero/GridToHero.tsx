@@ -21,6 +21,7 @@ type Item = {readonly src: string; readonly title: string; readonly meta: string
  * this file runnable on its own.
  */
 type Theme = {
+  readonly ink: string;
   readonly text: string;
   readonly accent: string;
   readonly bg: string;
@@ -28,6 +29,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  ink: '#ffffff',
   text: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
@@ -128,7 +130,7 @@ export const GridToHero: React.FC<Props> = ({
           fontSize: 44,
           fontWeight: 800,
           letterSpacing: '0.24em',
-          color: '#ffffff',
+          color: theme.ink,
           opacity: enter,
         }}
       >

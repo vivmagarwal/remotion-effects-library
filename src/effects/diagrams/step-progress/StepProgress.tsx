@@ -20,6 +20,7 @@ type Step = {readonly label: string; readonly detail: string};
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
   readonly text: string;
   readonly bg: string;
   readonly body: string;
@@ -28,6 +29,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
   text: fontFamily,
   bg: '#0a0b10',
   body: '#eef1f7',
@@ -205,7 +207,7 @@ export const StepProgress: React.FC<Props> = ({
               }}
             >
               <div style={{fontSize: 38, fontWeight: 700, color: textColor}}>{step.label}</div>
-              <div style={{fontSize: 25, fontWeight: 500, color: '#8d93a5', marginTop: 8}}>
+              <div style={{fontSize: 25, fontWeight: 500, color: theme.muted, marginTop: 8}}>
                 {step.detail}
               </div>
             </div>

@@ -18,6 +18,7 @@ const {fontFamily} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
   readonly display: string;
   readonly accent: string;
   readonly accentOnPaper: string;
@@ -27,6 +28,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
   display: fontFamily,
   accent: '#ff5c39',
   accentOnPaper: '#c2410c',
@@ -139,7 +141,7 @@ export const ExtrudedText: React.FC<Props> = ({
           fontSize: 28,
           letterSpacing: '0.24em',
           marginRight: '-0.24em',
-          color: '#8d93a5',
+          color: theme.muted,
           marginTop: 70,
           opacity: interpolate(frame, [24, 48], [0, 1], {
             extrapolateLeft: 'clamp',

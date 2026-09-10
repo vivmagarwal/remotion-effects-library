@@ -20,12 +20,14 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['lat
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
   readonly mono: string;
   readonly series: readonly string[];
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
   mono: fontFamily,
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
 };
@@ -147,7 +149,7 @@ export const PixelDissolveReveal: React.FC<Props> = ({
             name="Readout"
             style={{
               fontSize: 24,
-              color: '#8d93a5',
+              color: theme.muted,
               marginBottom: 16,
               textShadow: '0 2px 14px rgba(0,0,0,0.8)',
             }}

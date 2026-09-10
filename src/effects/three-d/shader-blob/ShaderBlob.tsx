@@ -70,6 +70,8 @@ const FRAGMENT = /* glsl */ `
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
+  readonly ink: string;
   readonly text: string;
   readonly bg: string;
   readonly bgDeep: string;
@@ -79,6 +81,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
+  ink: '#ffffff',
   text: fontFamily,
   bg: '#0a0b10',
   bgDeep: '#04050a',
@@ -187,7 +191,7 @@ export const ShaderBlob: React.FC<Props> = ({
             fontWeight: 700,
             letterSpacing: '0.28em',
             marginRight: '-0.28em',
-            color: '#ffffff',
+            color: theme.ink,
             textShadow: `0 0 70px ${rimColor}77`,
             opacity: interpolate(frame, [22, 48], [0, 1], {
               extrapolateLeft: 'clamp',
@@ -202,7 +206,7 @@ export const ShaderBlob: React.FC<Props> = ({
           style={{
             fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
             fontSize: 25,
-            color: '#8d93a5',
+            color: theme.muted,
             marginTop: 16,
             opacity: interpolate(frame, [36, 60], [0, 1], {
               extrapolateLeft: 'clamp',

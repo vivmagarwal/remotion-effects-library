@@ -19,6 +19,7 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '600', '800'], subsets
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
   readonly text: string;
   readonly accent: string;
   readonly bg: string;
@@ -27,6 +28,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
   text: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
@@ -208,7 +210,7 @@ export const LowerThird: React.FC<Props> = ({
                 {name}
               </span>
             </div>
-            <div style={{fontSize: 26, fontWeight: 500, color: '#8d93a5', letterSpacing: '0.01em'}}>
+            <div style={{fontSize: 26, fontWeight: 500, color: theme.muted, letterSpacing: '0.01em'}}>
               {title}
             </div>
           </div>

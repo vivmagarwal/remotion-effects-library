@@ -1,7 +1,7 @@
 import React from 'react';
 import {Composition, Folder} from 'remotion';
 import {effects} from './registry.generated';
-import {THEMES} from './theme';
+import {THEMES, themeFor} from './theme';
 
 /** Folder names may only contain letters, numbers and hyphens. */
 const folderName = (category: string) =>
@@ -50,7 +50,10 @@ export const RemotionRoot: React.FC = () => {
                 // That is the right trade for eighty-three cards from one file —
                 // the values live in the effect's own `meta.ts`, which IS source.
                 defaultProps={
-                  {...variantProps, ...(theme ? {theme} : {})} as Record<string, unknown> | undefined
+                  {
+                    ...variantProps,
+                    ...(theme ? {theme: themeFor(theme, meta.ground)} : {}),
+                  } as Record<string, unknown> | undefined
                 }
               />
             ))}

@@ -23,6 +23,7 @@ const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['lat
  * this file runnable on its own.
  */
 type Theme = {
+  readonly ink: string;
   readonly text: string;
   readonly bg: string;
   readonly bgDeep: string;
@@ -31,6 +32,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  ink: '#ffffff',
   text: fontFamily,
   bg: '#0a0b10',
   bgDeep: '#04050a',
@@ -206,7 +208,7 @@ export const InstancedCubeWave: React.FC<Props> = ({
             fontSize: 86,
             fontWeight: 700,
             letterSpacing: '-0.02em',
-            color: '#ffffff',
+            color: theme.ink,
             textShadow: `0 0 60px ${highColor}66`,
             opacity: interpolate(frame, [10, 34], [0, 1], {
               extrapolateLeft: 'clamp',

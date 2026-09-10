@@ -58,6 +58,8 @@ type Word = {readonly w: string; readonly s: number; readonly e: number};
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
+  readonly body: string;
   readonly text: string;
   readonly bgDeep: string;
   readonly paper: string;
@@ -66,6 +68,8 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
+  body: '#eef1f7',
   text: fontFamily,
   bgDeep: '#04050a',
   paper: '#f6f5f2',
@@ -327,10 +331,10 @@ export const PauseAwareCaptions: React.FC<Props> = ({
                   : 'PAGE BROKEN ON LENGTH'
                 : 'NO PAGE — THE HOLD HAS CLEARED'}
             </div>
-            <div style={{fontSize: 32, fontWeight: 500, color: '#eef1f7', marginTop: 8}}>
+            <div style={{fontSize: 32, fontWeight: 500, color: theme.body, marginTop: 8}}>
               {pages.length} pages · break at {breakOnSilenceMs}ms · {maxCharsPerLine} chars/line
             </div>
-            <div style={{fontSize: 32, fontWeight: 500, color: '#8d93a5', marginTop: 8}}>
+            <div style={{fontSize: 32, fontWeight: 500, color: theme.muted, marginTop: 8}}>
               createTikTokStyleCaptions + ensureMaxCharactersPerLine
             </div>
           </Interactive.Div>

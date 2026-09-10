@@ -26,6 +26,7 @@ type Row = Record<string, number>;
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
   readonly text: string;
   readonly bg: string;
   readonly body: string;
@@ -33,6 +34,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
   text: fontFamily,
   bg: '#0a0b10',
   body: '#eef1f7',
@@ -175,7 +177,7 @@ export const Streamgraph: React.FC<Props> = ({
           top: 148,
           fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
           fontSize: 24,
-          color: '#8d93a5',
+          color: theme.muted,
           opacity: interpolate(frame, [8, 28], [0, 1], {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp',
@@ -240,7 +242,7 @@ export const Streamgraph: React.FC<Props> = ({
               gap: 11,
               fontSize: 25,
               fontWeight: 600,
-              color: '#eef1f7',
+              color: theme.body,
               opacity: interpolate(frame, [startAt + 20 + i * 5, startAt + 40 + i * 5], [0, 1], {
                 extrapolateLeft: 'clamp',
                 extrapolateRight: 'clamp',

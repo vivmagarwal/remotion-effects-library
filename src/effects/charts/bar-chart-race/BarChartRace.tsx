@@ -20,12 +20,16 @@ type Series = {readonly label: string; readonly color: string; readonly values: 
  * this file runnable on its own.
  */
 type Theme = {
+  readonly muted: string;
+  readonly ink: string;
   readonly text: string;
   readonly bg: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  muted: '#8d93a5',
+  ink: '#ffffff',
   text: fontFamily,
   bg: '#0a0b10',
 };
@@ -85,7 +89,7 @@ export const BarChartRace: React.FC<Props> = ({
     <AbsoluteFill name="Scene" style={{backgroundColor, padding: '80px 96px', fontFamily}}>
       <Interactive.Div
         name="Title"
-        style={{fontSize: 52, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em'}}
+        style={{fontSize: 52, fontWeight: 800, color: theme.ink, letterSpacing: '-0.02em'}}
       >
         {title}
       </Interactive.Div>
@@ -115,7 +119,7 @@ export const BarChartRace: React.FC<Props> = ({
                   textAlign: 'right',
                   fontSize: 36,
                   fontWeight: 700,
-                  color: '#8d93a5',
+                  color: theme.muted,
                 }}
               >
                 {s.label}

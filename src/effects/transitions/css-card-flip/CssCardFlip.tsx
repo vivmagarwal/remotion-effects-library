@@ -28,11 +28,13 @@ type Face = {
  * structural, so the library's full theme object is assignable to it.
  */
 type Theme = {
+  readonly body: string;
   readonly text: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  body: '#eef1f7',
   text: fontFamily,
 };
 
@@ -97,7 +99,7 @@ export const CssCardFlip: React.FC<Props> = ({
     title: 'A flat rectangle',
     body: 'transform: rotateY() on its own just squashes the card horizontally.',
     background: 'linear-gradient(150deg, #1c2030, #10131d)',
-    color: '#eef1f7',
+    color: theme.body,
     accent: '#7f8aa3',
   },
   back = {

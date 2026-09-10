@@ -18,12 +18,14 @@ const {fontFamily} = loadFont('normal', {weights: ['800'], subsets: ['latin']});
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paperMuted: string;
   readonly text: string;
   readonly bgDeep: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paperMuted: '#4a4e5a',
   text: fontFamily,
   bgDeep: '#04050a',
 };
@@ -102,7 +104,7 @@ export const GradientTextSweep: React.FC<Props> = ({
           letterSpacing: '0.3em',
           marginRight: '-0.3em',
           textTransform: 'uppercase',
-          color: '#4a4e5a',
+          color: theme.paperMuted,
           marginTop: 18,
           translate: interpolate(frame, [14, 40], ['0px 22px', '0px 0px'], {
             extrapolateLeft: 'clamp',
