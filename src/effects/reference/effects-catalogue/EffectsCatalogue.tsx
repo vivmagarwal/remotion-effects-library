@@ -78,7 +78,7 @@ export const EffectsCatalogue: React.FC<Props> = ({
   backgroundColor = theme.bg,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, width, height} = useVideoConfig();
+  const {width, height} = useVideoConfig();
   const source = src ?? staticFile('plate-1.svg');
 
   // Fifteen visually distinct effects. Every one takes a params object — none

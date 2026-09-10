@@ -1,4 +1,4 @@
-import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame} from 'remotion';
 import {Box, Circle, CrossedOff, Highlight, StrikeThrough, Underline} from '@remotion/rough-notation';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
@@ -37,7 +37,6 @@ type Props = {
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly kicker?: string;
-  readonly headline?: string;
   /** Frames between one annotation starting and the next. */
   readonly stagger?: number;
   /** Frames a single mark takes to draw. */
@@ -51,7 +50,6 @@ export const HandAnnotations: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
   kicker = 'MARKING UP THE BRIEF',
-  headline = 'annotations',
   stagger = 22,
   drawFrames = 26,
   startAt = 18,
@@ -59,7 +57,6 @@ export const HandAnnotations: React.FC<Props> = ({
   inkColor = theme.paperInk,
 }) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
 
   /** Mark `n` draws over its own window — inline, so Studio can retime it. */
   const at = (n: number) =>

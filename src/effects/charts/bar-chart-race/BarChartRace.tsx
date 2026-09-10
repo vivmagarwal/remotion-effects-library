@@ -1,4 +1,4 @@
-import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
 const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets: ['latin']});
@@ -59,7 +59,6 @@ export const BarChartRace: React.FC<Props> = ({
   backgroundColor = theme.bg,
 }) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
 
   const steps = series[0].values.length;
   // Continuous position in the series, so values glide between steps.

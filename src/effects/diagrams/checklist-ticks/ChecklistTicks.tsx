@@ -72,7 +72,7 @@ export const ChecklistTicks: React.FC<Props> = ({
   textColor = theme.body,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, width} = useVideoConfig();
+  const {fps} = useVideoConfig();
 
   const ROW_H = 108;
   const BOX = 62;

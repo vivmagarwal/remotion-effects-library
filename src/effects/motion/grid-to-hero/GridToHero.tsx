@@ -76,7 +76,7 @@ export const GridToHero: React.FC<Props> = ({
   backgroundColor = theme.bg,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, width, height} = useVideoConfig();
+  const {width, height} = useVideoConfig();
 
   const headerH = 168;
   const rows = Math.ceil(items.length / columns);
@@ -116,7 +116,6 @@ export const GridToHero: React.FC<Props> = ({
     easing: Easing.bezier(0.16, 1, 0.3, 1),
   });
 
-  const openItem = openIndex >= 0 ? items[openIndex] : null;
 
   return (
     <AbsoluteFill name="Scene" style={{backgroundColor, fontFamily, overflow: 'hidden'}}>

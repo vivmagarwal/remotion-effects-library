@@ -1,4 +1,4 @@
-import {AbsoluteFill, CanvasImage, Easing, Interactive, interpolate, random, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, CanvasImage, Easing, Interactive, interpolate, random, staticFile, useCurrentFrame} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
 const {fontFamily} = loadFont('normal', {weights: ['500', '700'], subsets: ['latin']});
@@ -64,7 +64,6 @@ export const PhotoStackShuffle: React.FC<Props> = ({
   showCaptions = true,
 }) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
 
   const cycle = holdFrames + flickFrames;
   const topIndex = Math.floor(frame / cycle);

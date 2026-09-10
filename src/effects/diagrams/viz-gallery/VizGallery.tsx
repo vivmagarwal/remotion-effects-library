@@ -11,7 +11,6 @@ import {
 } from 'remotion';
 import {cameraForBBox, compileEdd, sceneBBox, SvgRenderer, whenFontsReady} from 'edododraw';
 import {loadFont} from '@remotion/google-fonts/Inter';
-import {VIZ_VARIANTS} from './variants.generated';
 
 const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets: ['latin']});
 
@@ -92,10 +91,30 @@ type Props = {
   readonly accentColor?: string;
 };
 
-const FIRST = VIZ_VARIANTS[0].props as {
-  vizType: string;
-  vizCategory: string;
-  source: string;
+/**
+ * The default diagram, inlined.
+ *
+ * It used to read `VIZ_VARIANTS[0].props` from `./variants.generated`, which is
+ * a RELATIVE import — and this file's whole contract is that it is one
+ * self-contained file that runs in a project that has never heard of this
+ * repository. In a fresh Remotion project that import is
+ * "Cannot find module './variants.generated'", which is the first thing anyone
+ * following the brief would see.
+ *
+ * The generated list is still the source of truth for the 82 gallery variants;
+ * it is just referenced from `meta.ts`, which never leaves this repo, rather
+ * than from the component, which does.
+ */
+const FIRST = {
+  vizType: 'clouds',
+  vizCategory: 'Brainstorming',
+  source: `viz clouds "What We Heard" {
+  item "Onboarding is confusing" { icon: warning }
+  item "Docs are loved" { icon: heart }
+  item "Pricing feels fair" { icon: dollar }
+  item "Mobile is missed" { icon: phone }
+  item "Support is fast" { icon: rocket }
+}`,
 };
 
 export const VizGallery: React.FC<Props> = ({

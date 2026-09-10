@@ -1,4 +1,4 @@
-import {AbsoluteFill, CanvasImage, Easing, Interactive, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, CanvasImage, Interactive, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
 const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets: ['latin']});

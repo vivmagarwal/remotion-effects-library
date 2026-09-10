@@ -69,7 +69,7 @@ export const ExtrudedText: React.FC<Props> = ({
   swing = 26,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, durationInFrames} = useVideoConfig();
+  const {fps} = useVideoConfig();
   const t = frame / fps;
 
   const enter = interpolate(frame, [0, 30], [0, 1], {

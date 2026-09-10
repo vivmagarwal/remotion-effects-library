@@ -55,7 +55,7 @@ export const ParticleField: React.FC<Props> = ({
   connect = true,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, width, height} = useVideoConfig();
+  const {fps} = useVideoConfig();
   const t = frame / fps;
 
   const particles = new Array(count).fill(0).map((_, i) => {

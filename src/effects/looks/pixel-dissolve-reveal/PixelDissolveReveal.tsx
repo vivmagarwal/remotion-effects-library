@@ -1,4 +1,4 @@
-import {AbsoluteFill, CanvasImage, Easing, Interactive, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, CanvasImage, Easing, Interactive, interpolate, staticFile, useCurrentFrame} from 'remotion';
 import {pixelDissolve} from '@remotion/effects/pixel-dissolve';
 import {pixelate} from '@remotion/effects/pixelate';
 import {loadFont} from '@remotion/google-fonts/JetBrainsMono';
@@ -62,7 +62,6 @@ export const PixelDissolveReveal: React.FC<Props> = ({
   accentColor = theme.series[2],
 }) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
 
   // One progress. Everything below reads from it, in opposite directions.
   const progress = interpolate(frame, [startAt, startAt + revealFrames], [0, 1], {

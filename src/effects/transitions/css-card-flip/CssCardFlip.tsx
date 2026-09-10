@@ -1,4 +1,4 @@
-import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
 // palette: data whole-file — a card's front and back have to read as two different cards; the gradients are the subject
@@ -117,7 +117,6 @@ export const CssCardFlip: React.FC<Props> = ({
   backgroundColor = '#08090f',
 }) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
 
   const rotation = interpolate(
     frame,

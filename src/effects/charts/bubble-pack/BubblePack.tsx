@@ -1,4 +1,4 @@
-import {AbsoluteFill, Easing, Interactive, interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Interactive, interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
 import {hierarchy, pack} from 'd3-hierarchy';
 import {loadFont} from '@remotion/google-fonts/Inter';
 

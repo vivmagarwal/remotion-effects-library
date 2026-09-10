@@ -1,4 +1,4 @@
-import {AbsoluteFill, Interactive, interpolate, random, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Interactive, interpolate, random, useCurrentFrame} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Anton';
 
 const {fontFamily} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
@@ -57,7 +57,6 @@ export const GlitchText: React.FC<Props> = ({
   color = theme.ink,
 }) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
 
   const cycle = Math.floor(frame / cycleFrames);
   const withinCycle = frame % cycleFrames;

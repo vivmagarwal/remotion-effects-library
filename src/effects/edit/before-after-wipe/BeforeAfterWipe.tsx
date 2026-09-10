@@ -1,4 +1,4 @@
-import {AbsoluteFill, Easing, Interactive, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Easing, Interactive, interpolate, staticFile, useCurrentFrame} from 'remotion';
 import {Video} from '@remotion/media';
 import {brightness} from '@remotion/effects/brightness';
 import {saturation} from '@remotion/effects/saturation';
@@ -61,7 +61,6 @@ export const BeforeAfterWipe: React.FC<Props> = ({
   ],
 }) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
   const source = src ?? staticFile('footage/broll-earth.mp4');
 
   const x = interpolate(

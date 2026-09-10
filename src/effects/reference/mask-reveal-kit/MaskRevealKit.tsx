@@ -1,4 +1,4 @@
-import {AbsoluteFill, CanvasImage, Easing, Interactive, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, CanvasImage, Easing, Interactive, interpolate, staticFile, useCurrentFrame} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
 const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets: ['latin']});
@@ -114,7 +114,6 @@ export const MaskRevealKit: React.FC<Props> = ({
   backgroundColor = theme.bg,
 }) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
 
   const cycle = revealFrames + holdFrames;
   const elapsed = Math.max(0, frame - startAt);

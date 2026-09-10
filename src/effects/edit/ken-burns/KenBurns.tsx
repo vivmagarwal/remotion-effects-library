@@ -1,4 +1,4 @@
-import {AbsoluteFill, CanvasImage, Easing, Interactive, interpolate, Series, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, CanvasImage, Easing, Interactive, interpolate, Series, staticFile, useCurrentFrame} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/DMSerifDisplay';
 import {loadFont as loadSans} from '@remotion/google-fonts/Inter';
 

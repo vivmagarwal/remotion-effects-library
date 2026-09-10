@@ -46,9 +46,13 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets
  * grade you only notice when you turn it off is a grade.
  */
 
-/** One stage of the stack. `at` is the output frame it switches on. */
+/**
+ * One stage of the stack. When it switches on is `index * step`, not a number
+ * stored here — the stages were written with their frames hard-coded at
+ * multiples of 26 and a `step` prop that changed nothing, which is worse than
+ * having no prop at all: the brief documented it and the props table listed it.
+ */
 type Stage = {
-  readonly at: number;
   readonly name: string;
   readonly note: string;
 };
@@ -87,16 +91,16 @@ type Props = {
 };
 
 const STAGES: Stage[] = [
-  {at: 0, name: 'source', note: 'straight off the card'},
-  {at: 26, name: 'exposure', note: '+0.22 stops · before anything reads a pixel'},
-  {at: 52, name: 'whiteBalance', note: 'temp −0.14 · tint +0.06'},
-  {at: 78, name: 'levels', note: 'black 0.045 · white 0.97 · gamma 0.94'},
-  {at: 104, name: 'shadowsHighlights', note: 'lift +0.18 · recover −0.16'},
-  {at: 130, name: 'vibrance', note: '+0.28 — BEFORE saturation, so skin survives'},
-  {at: 156, name: 'saturation', note: '×0.94 — pull the whole thing back'},
-  {at: 182, name: 'tint', note: '#4cc9f0 at 0.08 — the look, and nothing more'},
-  {at: 208, name: 'vignette', note: '0.26 · optical, so it comes after the colour'},
-  {at: 234, name: 'noise', note: 'grain 0.06, seed = frame — last of all'},
+  {name: 'source', note: 'straight off the card'},
+  {name: 'exposure', note: '+0.22 stops · before anything reads a pixel'},
+  {name: 'whiteBalance', note: 'temp −0.14 · tint +0.06'},
+  {name: 'levels', note: 'black 0.045 · white 0.97 · gamma 0.94'},
+  {name: 'shadowsHighlights', note: 'lift +0.18 · recover −0.16'},
+  {name: 'vibrance', note: '+0.28 — BEFORE saturation, so skin survives'},
+  {name: 'saturation', note: '×0.94 — pull the whole thing back'},
+  {name: 'tint', note: '#4cc9f0 at 0.08 — the look, and nothing more'},
+  {name: 'vignette', note: '0.26 · optical, so it comes after the colour'},
+  {name: 'noise', note: 'grain 0.06, seed = frame — last of all'},
 ];
 
 export const FilmGrade: React.FC<Props> = ({
@@ -113,7 +117,8 @@ export const FilmGrade: React.FC<Props> = ({
   // `disabled` is a first-class flag on every descriptor, which is what makes
   // building the stack up in order possible without rebuilding the array —
   // the pipeline stays the same length and the same order at every frame.
-  const on = (i: number) => frame < STAGES[i]?.at;
+  const at = (i: number) => i * step;
+  const on = (i: number) => frame < at(i);
 
   const stack = [
     exposure({stops: 0.22, disabled: on(1)}),
@@ -128,8 +133,8 @@ export const FilmGrade: React.FC<Props> = ({
     noise({amount: 0.06, seed: frame, disabled: on(9)}),
   ];
 
-  const activeIndex = STAGES.reduce((best, s, i) => (frame >= s.at ? i : best), 0);
-  const justArrived = frame - STAGES[activeIndex].at;
+  const activeIndex = STAGES.reduce((best, _s, i) => (frame >= at(i) ? i : best), 0);
+  const justArrived = frame - at(activeIndex);
 
   return (
     <AbsoluteFill name="Scene" style={{backgroundColor, fontFamily, overflow: 'hidden'}}>
@@ -182,7 +187,7 @@ export const FilmGrade: React.FC<Props> = ({
               effects={'{['}
             </div>
             {STAGES.map((s, i) => {
-              const live = frame >= s.at;
+              const live = frame >= at(i);
               const isActive = i === activeIndex;
               return (
                 <div key={s.name} style={{opacity: live ? 1 : 0.3}}>

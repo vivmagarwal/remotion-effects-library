@@ -1,4 +1,4 @@
-import {AbsoluteFill, CanvasImage, Easing, Interactive, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, CanvasImage, Easing, Interactive, interpolate, staticFile, useCurrentFrame} from 'remotion';
 import {radialProgressiveBlur} from '@remotion/effects/radial-progressive-blur';
 import {linearProgressiveBlur} from '@remotion/effects/linear-progressive-blur';
 import {vignette} from '@remotion/effects/vignette';
@@ -57,7 +57,6 @@ export const ProgressiveBlurFocus: React.FC<Props> = ({
   focusY = 0.72,
 }) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
 
   const focus = interpolate(
     frame,

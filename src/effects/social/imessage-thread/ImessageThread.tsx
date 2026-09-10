@@ -1,4 +1,4 @@
-import {AbsoluteFill, Interactive, interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Interactive, spring, useCurrentFrame, useVideoConfig} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
 // palette: brand-mimicry whole-file — iMessage's thread UI; the blue, the grey and the chrome are Apple's

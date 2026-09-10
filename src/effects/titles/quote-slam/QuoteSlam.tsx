@@ -71,7 +71,7 @@ export const QuoteSlam: React.FC<Props> = ({
   fontSize = 104,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, width} = useVideoConfig();
+  const {fps} = useVideoConfig();
 
   // Splitting on \n keeps the line breaks a typographic decision rather than
   // something that shifts with the viewport.

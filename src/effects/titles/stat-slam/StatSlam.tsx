@@ -1,4 +1,4 @@
-import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Anton';
 import {loadFont as loadSans} from '@remotion/google-fonts/Inter';
 
@@ -64,7 +64,6 @@ export const StatSlam: React.FC<Props> = ({
   impactFrame = 14,
 }) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
   const since = frame - impactFrame;
 
   // The slam: from far too big down to 1, arriving exactly on impactFrame.

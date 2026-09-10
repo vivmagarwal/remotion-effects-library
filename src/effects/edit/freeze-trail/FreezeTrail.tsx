@@ -1,4 +1,4 @@
-import {AbsoluteFill, Easing, Freeze, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Freeze, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Archivo';
 
 const {fontFamily} = loadFont('normal', {weights: ['800', '900'], subsets: ['latin']});
@@ -102,7 +102,6 @@ export const FreezeTrail: React.FC<Props> = ({
   loopFrames = 90,
 }) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
 
   return (
     <AbsoluteFill name="Scene" style={{backgroundColor, overflow: 'hidden', fontFamily}}>

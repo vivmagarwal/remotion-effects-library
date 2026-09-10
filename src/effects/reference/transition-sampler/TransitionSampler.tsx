@@ -79,7 +79,8 @@ const Card: React.FC<{
   code: string;
   showCode: boolean;
   palette: Props['palette'];
-}> = ({index, label, code, showCode, palette = PALETTE}) => {
+  fontFamily: string;
+}> = ({index, label, code, showCode, palette = PALETTE, fontFamily}) => {
   const frame = useCurrentFrame();
   const {bg, fg} = palette[index % palette.length];
 
@@ -155,7 +156,7 @@ export const TransitionSampler: React.FC<Props> = ({
     <AbsoluteFill style={{backgroundColor: backdropColor}}>
     <TransitionSeries>
       <TransitionSeries.Sequence durationInFrames={hold} name="Intro">
-        <Card index={0} label="Transitions" code="@remotion/transitions"  showCode={showCode} palette={palette} />
+        <Card index={0} label="Transitions" code="@remotion/transitions"  showCode={showCode} palette={palette} fontFamily={fontFamily} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -163,7 +164,7 @@ export const TransitionSampler: React.FC<Props> = ({
         timing={linearTiming({durationInFrames: 14})}
       />
       <TransitionSeries.Sequence durationInFrames={hold} name="Fade">
-        <Card index={1} label="Fade" code="fade()"  showCode={showCode} palette={palette} />
+        <Card index={1} label="Fade" code="fade()"  showCode={showCode} palette={palette} fontFamily={fontFamily} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -171,7 +172,7 @@ export const TransitionSampler: React.FC<Props> = ({
         timing={springTiming({config: {damping: 200}, durationInFrames: 16})}
       />
       <TransitionSeries.Sequence durationInFrames={hold} name="Slide">
-        <Card index={2} label="Slide" code="slide({direction: 'from-right'})"  showCode={showCode} palette={palette} />
+        <Card index={2} label="Slide" code="slide({direction: 'from-right'})"  showCode={showCode} palette={palette} fontFamily={fontFamily} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -179,7 +180,7 @@ export const TransitionSampler: React.FC<Props> = ({
         timing={linearTiming({durationInFrames: 14})}
       />
       <TransitionSeries.Sequence durationInFrames={hold} name="Wipe">
-        <Card index={3} label="Wipe" code="wipe({direction: 'from-bottom-left'})"  showCode={showCode} palette={palette} />
+        <Card index={3} label="Wipe" code="wipe({direction: 'from-bottom-left'})"  showCode={showCode} palette={palette} fontFamily={fontFamily} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -187,7 +188,7 @@ export const TransitionSampler: React.FC<Props> = ({
         timing={linearTiming({durationInFrames: 20})}
       />
       <TransitionSeries.Sequence durationInFrames={hold} name="ClockWipe">
-        <Card index={4} label="Clock wipe" code="clockWipe({width, height})"  showCode={showCode} palette={palette} />
+        <Card index={4} label="Clock wipe" code="clockWipe({width, height})"  showCode={showCode} palette={palette} fontFamily={fontFamily} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -195,7 +196,7 @@ export const TransitionSampler: React.FC<Props> = ({
         timing={linearTiming({durationInFrames: 18})}
       />
       <TransitionSeries.Sequence durationInFrames={hold} name="Iris">
-        <Card index={5} label="Iris" code="iris({width, height})"  showCode={showCode} palette={palette} />
+        <Card index={5} label="Iris" code="iris({width, height})"  showCode={showCode} palette={palette} fontFamily={fontFamily} />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition
@@ -203,7 +204,7 @@ export const TransitionSampler: React.FC<Props> = ({
         timing={springTiming({config: {damping: 200}, durationInFrames: 18})}
       />
       <TransitionSeries.Sequence durationInFrames={hold + 8} name="Flip">
-        <Card index={6} label="Flip" code="flip({direction: 'from-left'})"  showCode={showCode} palette={palette} />
+        <Card index={6} label="Flip" code="flip({direction: 'from-left'})"  showCode={showCode} palette={palette} fontFamily={fontFamily} />
       </TransitionSeries.Sequence>
     </TransitionSeries>
     </AbsoluteFill>

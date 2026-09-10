@@ -64,7 +64,7 @@ export const VideoInText: React.FC<Props> = ({
   fontSize = 330,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, width, height} = useVideoConfig();
+  const {width, height} = useVideoConfig();
 
   const cx = width / 2;
   const cy = height / 2;

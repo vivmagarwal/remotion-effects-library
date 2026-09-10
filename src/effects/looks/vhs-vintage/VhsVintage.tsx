@@ -1,4 +1,4 @@
-import {AbsoluteFill, Interactive, interpolate, random, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Interactive, random, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import {Video} from '@remotion/media';
 import {scanlines} from '@remotion/effects/scanlines';
 import {chromaticAberration} from '@remotion/effects/chromatic-aberration';
@@ -52,7 +52,7 @@ export const VhsVintage: React.FC<Props> = ({
   intensity = 1,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, width, height} = useVideoConfig();
+  const {fps} = useVideoConfig();
 
   // Tracking wobble: mostly still, with occasional bad frames — the tell of tape.
   const badFrame = random(`bad-${Math.floor(frame / 7)}`) > 0.86;

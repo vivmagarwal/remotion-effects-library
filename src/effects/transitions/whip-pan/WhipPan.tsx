@@ -136,7 +136,9 @@ const SHOTS: Shot[] = [
   {src: staticFile('footage/broll-sunrise.mp4'), kicker: 'FOUR', line: 'so it reads as a camera'},
 ];
 
-const ShotView: React.FC<{shot: Shot}> = ({shot}) => {
+const ShotView: React.FC<{shot: Shot;
+  fontFamily: string;
+}> = ({shot, fontFamily}) => {
   const frame = useCurrentFrame();
   const color = shot.color ?? '#f6f5f2';
 
@@ -241,7 +243,7 @@ export const WhipPan: React.FC<Props> = ({
               durationInFrames={i === shots.length - 1 ? holdFrames + transitionFrames : holdFrames}
               name={shot.kicker ?? `Shot ${i + 1}`}
             >
-              <ShotView shot={shot} />
+              <ShotView shot={shot} fontFamily={fontFamily} />
             </TransitionSeries.Sequence>
             {i < shots.length - 1 ? (
               <TransitionSeries.Transition

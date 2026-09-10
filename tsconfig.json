@@ -12,6 +12,14 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    // As strict as the project a brief tells you to create.
+    // `npx create-video@latest --blank` ships `noUnusedLocals: true`, this repo
+    // did not, and 36 of 96 components carried an unused import or an unused
+    // destructured field. They rendered fine — Remotion bundles with esbuild,
+    // which does not care — but `npx tsc` in the reader's own project failed
+    // with 44 errors, which is the first thing anyone following a brief runs.
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "types": ["vite/client"]
   },
   "include": ["src", "scripts", "remotion.config.ts", "vite.config.ts"]

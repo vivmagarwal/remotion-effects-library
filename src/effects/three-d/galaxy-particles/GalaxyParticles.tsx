@@ -141,7 +141,7 @@ export const GalaxyParticles: React.FC<Props> = ({
   backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
-  const {width, height, fps} = useVideoConfig();
+  const {width, height} = useVideoConfig();
 
   // The camera stays put; the galaxy tips and turns beneath it.
   const tilt = interpolate(frame, [0, 130], [1.32, 0.42], {

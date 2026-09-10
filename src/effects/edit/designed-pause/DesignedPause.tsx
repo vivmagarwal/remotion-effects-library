@@ -167,7 +167,7 @@ export const DesignedPause: React.FC<Props> = ({
   backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, width} = useVideoConfig();
+  const {fps} = useVideoConfig();
   const f = (seconds: number) => Math.round(seconds * fps);
 
   // ── 1. classify every gap ────────────────────────────────────────────────

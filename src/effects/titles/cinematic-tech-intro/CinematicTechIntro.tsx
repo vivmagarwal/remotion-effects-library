@@ -49,7 +49,7 @@ export const CinematicTechIntro: React.FC<Props> = ({
   backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, width, height} = useVideoConfig();
+  const {fps, height} = useVideoConfig();
 
   const impact = 1.1 * fps; // the frame the streaks meet
 

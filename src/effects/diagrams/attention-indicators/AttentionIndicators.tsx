@@ -1,4 +1,4 @@
-import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
 const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets: ['latin']});
@@ -75,7 +75,7 @@ export const AttentionIndicators: React.FC<Props> = ({
   backgroundColor = theme.bg,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, width, height} = useVideoConfig();
+  const {width, height} = useVideoConfig();
 
   const ROW_H = 132;
   const PANEL = {x: 300, y: 300, w: width - 600, h: rows.length * ROW_H + 56};

@@ -66,7 +66,7 @@ export const TextBehindSubject: React.FC<Props> = ({
   fontSize = 300,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, durationInFrames} = useVideoConfig();
+  const {durationInFrames} = useVideoConfig();
 
   const rise = interpolate(frame, [startAt, startAt + riseFrames], [0, 1], {
     extrapolateLeft: 'clamp',

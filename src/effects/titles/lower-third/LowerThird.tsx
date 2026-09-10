@@ -1,4 +1,4 @@
-import {AbsoluteFill, Easing, Interactive, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Easing, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import {Video} from '@remotion/media';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
@@ -79,9 +79,13 @@ export const LowerThird: React.FC<Props> = ({
   transparent = false,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, durationInFrames} = useVideoConfig();
+  const {durationInFrames} = useVideoConfig();
 
-  const exitStart = durationInFrames - enterFrames;
+  // The plate opens, holds for `holdFrames`, then retracts — clamped so a long
+  // hold cannot push the retraction past the end of the composition, which is
+  // what it silently did before: the exit was `durationInFrames - enterFrames`
+  // and `holdFrames` was accepted and ignored.
+  const exitStart = Math.min(enterFrames + holdFrames, durationInFrames - enterFrames);
 
   // One 0→1 "open" value, run forwards on the way in and backwards on the way
   // out. Every layer below reads from it, so the retract is the entrance in

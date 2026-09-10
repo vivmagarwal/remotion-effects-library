@@ -96,7 +96,6 @@ export const SubtitleBand: React.FC<Props> = ({
   );
   const line = lines[lineIndex];
   const lineStart = line[0].start;
-  const lineEnd = line[line.length - 1].end;
 
   // Progress through the line, 0–1, snapped to word boundaries so the wipe
   // pauses on each word instead of sliding at a constant rate.

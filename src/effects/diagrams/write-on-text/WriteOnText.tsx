@@ -1,4 +1,4 @@
-import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Kalam';
 import {loadFont as loadSans} from '@remotion/google-fonts/Inter';
 
@@ -80,7 +80,7 @@ export const WriteOnText: React.FC<Props> = ({
   fontSize = 168,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, width, height} = useVideoConfig();
+  const {width, height} = useVideoConfig();
 
   // A generous dash length: it only has to exceed each glyph's outline, and any
   // excess simply sits off the end of the path.

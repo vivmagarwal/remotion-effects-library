@@ -79,7 +79,7 @@ export const RouteFlyover: React.FC<Props> = ({
   routeColor = theme.accent,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, width, height} = useVideoConfig();
+  const {width, height} = useVideoConfig();
 
   const total = getLength(route);
 

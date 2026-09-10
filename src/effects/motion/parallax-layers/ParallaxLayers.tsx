@@ -65,7 +65,7 @@ export const ParallaxLayers: React.FC<Props> = ({
   cameraTravel = 22,
 }) => {
   const frame = useCurrentFrame();
-  const {fps, durationInFrames} = useVideoConfig();
+  const {durationInFrames} = useVideoConfig();
 
   // A single camera value. Every layer reads from this and nothing else.
   const camera = interpolate(frame, [0, durationInFrames], [0, cameraTravel], {
