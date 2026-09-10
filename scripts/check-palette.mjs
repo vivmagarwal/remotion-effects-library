@@ -122,6 +122,34 @@ const g = gate('check:palette');
 let scanned = 0;
 let exemptFiles = 0;
 let wholeFileFiles = 0;
+/**
+ * Line numbers (1-based) that are entirely comment — a `//` line, or any line
+ * inside a `/* *\/` block. A trailing comment after code is NOT included: the
+ * code on that line still paints, and a `#hex` in its trailing note is rare
+ * enough to be worth reading.
+ */
+const commentLines = (lines) => {
+  const out = new Set();
+  let block = false;
+  lines.forEach((line, i) => {
+    const t = line.trim();
+    if (block) {
+      out.add(i + 1);
+      if (t.includes('*/')) block = false;
+      return;
+    }
+    if (t.startsWith('//') || t.startsWith('*')) {
+      out.add(i + 1);
+      return;
+    }
+    if (t.startsWith('/*')) {
+      out.add(i + 1);
+      if (!t.includes('*/')) block = true;
+    }
+  });
+  return out;
+};
+
 const offenders = new Map(); // colour → count, for the summary
 
 for (const e of walkEffects()) {
@@ -136,9 +164,21 @@ for (const e of walkEffects()) {
   const exempt = exemptLines(lines);
 
   const bad = [];
+  /**
+   * Comments are prose, not paint.
+   *
+   * These files explain themselves at length, and explaining a colour means
+   * naming it: "render() paints the host #fbfaf7, so hand the ground back". That
+   * is the file documenting a value it does NOT use, and flagging it pushes an
+   * author to either stop writing the explanation or paste a `// palette:`
+   * marker onto a comment — where the marker then means nothing at all.
+   */
+  const inComment = commentLines(lines);
+
   lines.forEach((line, i) => {
     // a line of someone else's brand, or a colour that belongs to the subject
     if (exempt.has(i + 1)) return;
+    if (inComment.has(i + 1)) return;
     for (const m of line.matchAll(/#[0-9a-fA-F]{3,8}\b/g)) {
       const raw = m[0];
       if (![4, 5, 7, 9].includes(raw.length)) continue; // not a colour literal

@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
-import {Player, Thumbnail} from '@remotion/player';
+import {Player, Thumbnail, type PlayerRef} from '@remotion/player';
 import {THEMES, themeFor, type Theme} from '../theme';
 import {effects} from '../registry.generated';
 import type {EffectEntry, EffectMeta} from '../types';
@@ -433,7 +433,7 @@ const Card: React.FC<{
   const ground = mx(meta).ground ?? 'dark';
 
   return (
-    <article className="card">
+    <article className="card" data-effect-id={meta.id}>
       <div
         ref={stageRef}
         className="stage"
@@ -901,6 +901,85 @@ export const FrameHarness: React.FC<{entry: EffectEntry}> = ({entry}) => {
   );
 };
 
+/**
+ * `#/play/<id>` — the PLAYING smoke route.
+ *
+ * `FrameHarness` above renders a <Thumbnail>, which seeks to one frame and
+ * decodes it. That is not the code path a viewer exercises: pressing play mounts
+ * @remotion/media's MediaPlayer, which drives a WebCodecs VideoDecoder in real
+ * time. Those two paths fail independently, and one of them shipped broken —
+ * footage that renders perfectly as a still went black the moment it played,
+ * with the overlays still animating on top of it.
+ *
+ * So this harness renders the SAME composition twice, one at a time: first the
+ * <Player>, played for a moment and paused; then a <Thumbnail> of whatever frame
+ * the player stopped on. One is the viewer's experience, the other is the known-
+ * good reference, and they are the same frame of the same build in the same
+ * browser — so anything that only breaks under playback shows up as a diff and
+ * has nowhere to hide.
+ *
+ * Only ever one of the two is mounted, so the two decoders never contend.
+ */
+export const PlayHarness: React.FC<{entry: EffectEntry}> = ({entry}) => {
+  const {meta, Component, variantProps} = entry;
+  const ref = useRef<PlayerRef>(null);
+  const [thumbAt, setThumbAt] = useState<number | null>(null);
+
+  useEffect(() => {
+    const api = {
+      play: () => void ref.current?.play(),
+      pause: () => ref.current?.pause(),
+      // Reading the frame from the player itself, not from elapsed wall-clock:
+      // the reference has to be the frame that was actually on screen.
+      frame: () => ref.current?.getCurrentFrame() ?? 0,
+      showThumb: (f: number) => setThumbAt(f),
+    };
+    (window as unknown as {__play?: typeof api}).__play = api;
+  }, []);
+
+  const common = {
+    component: Component,
+    inputProps: variantProps,
+    durationInFrames: meta.durationInFrames,
+    compositionWidth: meta.width,
+    compositionHeight: meta.height,
+    fps: meta.fps,
+    style: {width: meta.width, height: meta.height},
+  } as const;
+
+  return (
+    <div
+      data-smoke-stage
+      data-play-mode={thumbAt === null ? 'player' : 'thumb'}
+      style={{width: meta.width, height: meta.height, overflow: 'hidden', background: '#000'}}
+    >
+      {thumbAt === null ? (
+        <Player
+          {...common}
+          ref={ref}
+          controls={false}
+          showVolumeControls={false}
+          clickToPlay={false}
+          doubleClickToFullscreen={false}
+          spaceKeyToPlayOrPause={false}
+          errorFallback={() => <div data-smoke-error>player failed</div>}
+        />
+      ) : (
+        <Thumbnail
+          {...common}
+          frameToDisplay={thumbAt}
+          errorFallback={() => <div data-smoke-error>preview failed</div>}
+        />
+      )}
+    </div>
+  );
+};
+
+export const playIdFromHash = (hash: string): string | null => {
+  const m = hash.match(/^#\/play\/([^?/]+)/);
+  return m ? decodeURIComponent(m[1]) : null;
+};
+
 export const frameIdFromHash = (hash: string): string | null => {
   const m = hash.match(/^#\/frame\/([^?/]+)/);
   return m ? decodeURIComponent(m[1]) : null;
@@ -1007,6 +1086,9 @@ export const App: React.FC = () => {
 
   /* ── derived data ─────────────────────────────────────────────────────── */
 
+  /** Families, not registry rows — 96, the number of files you could copy. */
+  const families = useMemo(() => effects.filter((e) => !e.parentId).length, []);
+
   const byCat = useMemo(() => {
     const counts = new Map<string, number>();
     // Families count once here too, so the rail reads "Diagrams 9" rather than
@@ -1041,13 +1123,22 @@ export const App: React.FC = () => {
     return n;
   }, []);
 
+  /**
+   * Whether this entry is a CARD right now, independent of the filters.
+   *
+   * A variant is folded into its family until you search or press "show all N
+   * variants", so the registry has 181 entries and the grid shows 96. Every
+   * number on the page has to be counted through this, or it promises cards
+   * that are not there: the rail read "Diagrams & Sketches 91" and a click
+   * produced nine.
+   */
+  const isCard = useCallback(
+    (e: EffectEntry) => !e.parentId || terms.length > 0 || expanded.has(e.parentId),
+    [terms, expanded],
+  );
+
   const visible = useMemo(() => {
-    const searching = terms.length > 0;
-    const list = effects.filter((e) => {
-      if (!(passes(e, filters) && matchesTerms(e, terms))) return false;
-      if (!e.parentId) return true;
-      return searching || expanded.has(e.parentId);
-    });
+    const list = effects.filter((e) => passes(e, filters) && matchesTerms(e, terms) && isCard(e));
     // The registry is ordered `category ASC, id ASC` — alphabetical, which puts
     // Backgrounds first and Video Editing near the end. The curated order lives
     // in CATEGORY_ORDER, so the default view uses that.
@@ -1067,7 +1158,7 @@ export const App: React.FC = () => {
           a.meta.name.localeCompare(b.meta.name),
       );
     return list;
-  }, [filters, terms, expanded]);
+  }, [filters, terms, isCard]);
 
   /**
    * Every facet count, computed once per filter change instead of inside the
@@ -1079,7 +1170,7 @@ export const App: React.FC = () => {
     const tally = (facet: Facet, value: (e: EffectEntry) => readonly string[]) => {
       const map = new Map<string, number>();
       for (const e of effects) {
-        if (!passes(e, filters, facet) || !matchesTerms(e, terms)) continue;
+        if (!passes(e, filters, facet) || !matchesTerms(e, terms) || !isCard(e)) continue;
         for (const v of value(e)) map.set(v, (map.get(v) ?? 0) + 1);
       }
       return map;
@@ -1088,7 +1179,7 @@ export const App: React.FC = () => {
       cat: (() => {
         const map = new Map<string, number>();
         for (const e of effects) {
-          if (!passes(e, {...filters, cat: 'all'}) || !matchesTerms(e, terms)) continue;
+          if (!passes(e, {...filters, cat: 'all'}) || !matchesTerms(e, terms) || !isCard(e)) continue;
           map.set(e.meta.category, (map.get(e.meta.category) ?? 0) + 1);
         }
         return map;
@@ -1212,7 +1303,7 @@ export const App: React.FC = () => {
                 effect with 83 prop sets. Count families once and say how many
                 compositions that actually amounts to. */}
             <span>
-              <b>{effects.filter((e) => !e.parentId).length}</b> effects
+              <b>{families}</b> effects
             </span>
             <span>
               <b>{effects.length}</b> compositions
@@ -1379,7 +1470,7 @@ export const App: React.FC = () => {
               onClick={() => set('cat', 'all')}
             >
               <span>All effects</span>
-              <span className="n">{effects.length}</span>
+              <span className="n">{[...counts.cat.values()].reduce((a, b) => a + b, 0)}</span>
             </button>
             <div className="rail-sep" />
             {categories.map((c) => (
@@ -1459,8 +1550,9 @@ export const App: React.FC = () => {
           <div>
             <h2>About</h2>
             <p>
-              {effects.length} Remotion effects, each one file, each with a live preview and a
-              standalone prompt. MIT licensed — take what you need.
+              {families} Remotion effects, each one file, each with a live preview and a
+              standalone prompt — {effects.length} compositions once the variants are counted. MIT
+              licensed — take what you need.
             </p>
           </div>
           <div>
@@ -1513,8 +1605,8 @@ export const App: React.FC = () => {
           </div>
           <div className="colophon">
             <span>
-              Built with Remotion {REMOTION_VERSION} · Inter &amp; JetBrains Mono · {effects.length}{' '}
-              effects
+              Built with Remotion {REMOTION_VERSION} · Inter &amp; JetBrains Mono · {families}{' '}
+              effects · {effects.length} compositions
             </span>
             <ThemeControl mode={mode} onChange={setMode} id="theme-foot" />
           </div>

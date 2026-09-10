@@ -14,6 +14,13 @@ curated runnable demo for each, exported as `VIZ_DEMOS` from `edododraw/demos`.
 
 **The frame-driven contract — get this wrong and nothing else matters**
 
+This composition measures every stroked path once at mount and writes
+`strokeDasharray`/`strokeDashoffset` itself. Where the general edododraw guidance below describes
+`setRevealProgress`, `setRevealProgressAll` and `AnnotationLayer`, this file deliberately uses none of
+them: the reveal has to be per GROUP rather than per id (see below), the paths are measured once
+instead of re-measured every frame, and there are no annotations in a `viz` template — `SvgRenderer`
+paints `scene.annotations` itself. **Where the two disagree, this section wins.**
+
 Remotion renders frames **out of order and in parallel**. So:
 
 ```tsx
@@ -30,11 +37,26 @@ useLayoutEffect(() => {
   const renderer = new SvgRenderer(host, {static: true, nonScalingStroke: true});
   renderer.mount();
   renderer.render(scene);
-  renderer.measure?.();
+
+  // render() ends by painting the host with the DIAGRAM's paper
+  // (`scene.meta.background || scene.theme.background` — #fbfaf7 for hand-clean).
+  // Hand the ground back to the composition, or the band is a different shade
+  // from the frame around it.
+  host.style.backgroundColor = 'transparent';
+
+  // Fit the diagram to the frame. Do NOT call renderer.measure(): it sizes the
+  // camera viewport from the host's clientWidth/clientHeight, and Remotion mounts
+  // a composition inside a 0x0 off-screen wrapper during the layout pass, so a
+  // useLayoutEffect reads 0x0, the viewport clamps to 1x1 and the camera
+  // degenerates. Pass the size you already know instead.
+  const viewport = {w: width, h: height - TOP - BOTTOM};
+  renderer.setViewport(viewport);
+  renderer.applyCamera(cameraForBBox(sceneBBox(scene), viewport, {padding}));
+
   // …measure every stroked path here, not per frame…
   whenFontsReady().then(() => continueRender(handle)).catch(cancelRender);
   return () => renderer.destroy();
-}, [scene, handle]);
+}, [scene, handle, width, height, padding]);
 
 // PER FRAME. A handful of style writes on elements measured at mount, nothing else.
 useLayoutEffect(() => {
@@ -68,13 +90,32 @@ Four rules, each of which is a bug someone has already shipped:
    both are `requestAnimationFrame` plus `performance.now()`.
 4. **`whenFontsReady()` wired to `delayRender`.** The hand-drawn face is injected as a base64
    `@font-face` fire-and-forget; screenshot before it decodes and every text metric shifts.
+5. **Frame the diagram with `setViewport` + `applyCamera`, never with the SVG's own `viewBox`.** Every
+   template lays out at whatever size its content needs, so an unfitted four-item flowchart sits small
+   in a corner while a 25-element diagram runs off the edge. `cameraForBBox(sceneBBox(scene), viewport,
+   {padding})` is the fit. The tempting shortcut — set a `viewBox` from `world.getBBox()` — is wrong in
+   a way that hides: a `viewBox` lives in the space the world group's transform maps INTO and
+   `getBBox()` reports the space it maps FROM, so the two agree only while the camera is identity. It
+   *is* identity in `renderStill`, because the host measures 0x0 there. Stills come out perfect and
+   every real browser puts the diagram outside its own viewBox.
 
 **Measure per GROUP, not per path — this is the detail that makes it read as drawing.**
 
-Collect `[data-node]`, `[data-edge]` and `[data-viz-item]` elements in document order (the dagre layout
-already puts them in reading order). For each, gather its stroked children and their
-`getTotalLength()`, sum them into the group's length, and give the group a slice of one shared 0→1
-cursor. One cursor is what makes the diagram look drawn by one hand rather than by forty at once.
+One `querySelectorAll` over all three attributes, so each element is returned once and in document
+order:
+
+```tsx
+const els = [...host.querySelectorAll<SVGElement>('[data-node], [data-edge], [data-viz-item]')];
+```
+
+For each, gather its stroked children and their `getTotalLength()`, sum them into the group's length,
+and give the group a slice of one shared 0→1 cursor. One cursor is what makes the diagram look drawn
+by one hand rather than by forty at once.
+
+Document order is **z-order**, not reading order, and for `viz` templates that means shapes and
+connectors first, then every label, then every icon, with a block title arriving last as a standalone
+text node. So the title is still drawing at the check frame. That is the honest output of this
+algorithm; do not special-case it.
 
 Why per group: **a filled shape's fill polygon carries no stroke.** Dash only the outlines and every
 box is on screen from frame 0 with just the labels revealing — which reads as text typing in, not as a
@@ -82,8 +123,8 @@ diagram being drawn. So each group also gets an opacity, ramped over the first 3
 and its `<text>` children wait until 70%. A label that arrives with the first pixel of its box reads
 as a screenshot.
 
-A group with no stroked path at all still needs a slot in the cursor (give it a nominal length), or it
-pops in fully formed while everything around it draws.
+A group with no stroked path at all still needs a slot in the cursor — use a nominal length of `120`,
+about the perimeter of a small box — or it pops in fully formed while everything around it draws.
 
 **Stroke quality — the reason `hand-clean` and `nonScalingStroke` are here**
 
@@ -92,7 +133,10 @@ group, so screen jitter is `zoom × world jitter` and the stroke width scales to
 320×140 box: 1.71px of corner error at 1× becomes **4.84px at 4×**. Use the `hand-clean` preset
 (`roughness 0.35`, `preserveVertices`, `disableMultiStroke`), turn on `nonScalingStroke`, and if the
 camera pushes in, call `setRoughnessScale(1/zoom)` quantised to octaves so it regenerates a handful of
-times rather than every frame.
+times rather than every frame. This composition's camera is fitted once and never moves, so it needs
+no roughness scaling at all. If you ever add it, pass it to the **constructor**: calling
+`setRoughnessScale()` after `render()` repaints the whole scene, which replaces every element you
+measured and leaves the per-frame loop writing to detached nodes.
 
 Declare the preset in the source rather than as a renderer option, so there is one input:
 
@@ -112,10 +156,12 @@ not work: the source compiles with it and the figure still draws. `icon` nodes a
 - The diagram fills `left: 0, top: 88, right: 0, bottom: 96`.
 - Eyebrow top-left at `84, 60`: the catalogue category, 28px/700, `letter-spacing: 0.24em`, uppercase,
   in `#c2410c`.
-- Top-right at `84, 54`: `viz flowchart` at 34px/500 in `#4a4e5a`.
+- Top-right at `84, 54`: `viz ${vizType}` — e.g. "viz flowchart" — at 34px/500 in `#4a4e5a`.
 - A 5px draw-on progress bar at `left/right: 84, bottom: 56`, track `rgba(29,27,23,0.12)`, fill
   `#c2410c`. Both chrome layers fade in over frames 0–14.
-- Draw-on runs frames 10→86, leaving a ~44-frame hold so a poster frame catches the finished diagram.
+- Draw-on runs frames 10→86 on `Easing.inOut(Easing.cubic)`, leaving a ~44-frame hold so a poster frame
+  catches the finished diagram. Not linear (a hand does not start at full speed) and not a plain
+  ease-out (that draws 91% of the diagram in the first third and then crawls).
 
 **Requirements**
 - One self-contained `.tsx` file exporting `VizGallery`.
@@ -124,6 +170,11 @@ not work: the source compiles with it and the figure still draws. `icon` nodes a
   `'hand-clean'`, `backgroundColor` `'#f6f5f2'`, `accentColor` `'#c2410c'`.
 - `meta.variants` carries one entry per template, generated by a committed script from
   `edododraw/demos` rather than hand-written — the catalogue lives upstream, and a template added in a
-  later release should appear here without anyone noticing.
-- Load Inter at weights 500, 700, 800.
+  later release should appear here without anyone noticing. Each entry is
+  `{name, props: {vizType, vizCategory, source}}`, and the component's own prop defaults are the first
+  entry's props inlined, so the file still renders something on its own with no variant selected. Each
+  entry is `{id, name, tagline, props: {vizType, vizCategory, source}}` — `id` is the template name,
+  and `tagline` is the one-line description the package ships for it.
+- Load Inter at weights 500, 700 and 800: 500 for the top-right readout, 700 for the eyebrow, 800 for
+  the heading of the compile-error panel.
 - `checkFrame` 52 is mid-draw; `posterFrame` 108 is the finished diagram.

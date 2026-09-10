@@ -290,6 +290,17 @@ await renderStill({composition, serveUrl, output, frame, inputProps: {theme: THE
 Remotion resolves a composition's props when it selects it, and passing them
 only to the renderer silently renders the defaults.
 
+The four are `house` (the default look), `broadsheet` (paper ground, serif
+display, ruler-straight), `console` (mono, terminal green) and `studio`. To put
+the whole library in one of them at once, without touching a call site:
+
+```bash
+REMOTION_THEME=console npx remotion studio      # or `remotion render`
+```
+
+A name that is not a theme fails loudly at startup rather than falling back, so
+a typo in a render script cannot quietly ship the house look.
+
 **It is a prop with an inline default, not an import.** A component's brief is
 handed to an agent with an empty directory, so a shared tokens module is out,
 and a React context is out for the same reason — the provider is an import. Each
@@ -468,11 +479,17 @@ Every one exits non-zero on failure.
 | `check:theme` | a component declares a theme token that is not in `src/theme.ts`, types one differently, or inlines a default that is not the house value | fast |
 | `check:gallery-variants` | a gallery `<Player>`/`<Thumbnail>` renders a registry entry without `inputProps`, so every variant would show the component defaults | fast |
 | `check:palette` | a hex literal in a component is outside the house palette, is not derived from a prop, and is not marked `// palette: brand-mimicry` | fast |
+| `check:imports` | a component imports a package the brief's install line does not cover, or the install line lists a package the component never imports — so a pasted file either fails to resolve or asks for more than it needs | fast |
 | `check:edd` | an `edododraw` `sideEffects` glob matches no shipped JS, or a viz template compiles to an empty scene | fast |
 | `verify` | any effect fails to render a still | slow |
 | `check:frames` | an effect's `checkFrame` shows no motion | slow |
 | `check:poster` | a poster frame's mean luminance variance is below the floor — a blank or black card | slow |
 | `check:browser` | a composition renders blank in a **browser**, or lands a long way from where `renderStill` puts it — the gap two shipped bugs lived in. Not a general pixel-regression test; see the header of `scripts/check-browser-frames.mjs` for the measured sensitivity limit | slow |
+
+| `check:gallery-counts` | a number printed beside a filter does not equal the number of cards clicking it opens, or a "Copy code"/"Copy prompt" button would put a placeholder on the clipboard. Runs inside `check:browser`, on the same server | slow |
+| `check:player` | a composition renders differently while it is **playing** than it does seeked to the same frame — the WebCodecs path `<Thumbnail>` never takes, and the only one a viewer who presses play ever sees | slow |
+
+| `check:themes` | a theme fails to render an effect, renders it blank, or changes nothing about it — the tokens declared but the component painting with literals. `house` is inverted: it IS the authored look, so a *difference* there is the bug. Not in a gate chain; 480 renders | manual |
 
 ---
 

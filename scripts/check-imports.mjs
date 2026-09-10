@@ -78,6 +78,8 @@ for (const e of walkEffects()) {
    * emitted line keeps this gate and the prompt from ever disagreeing.
    */
   const installed = [...installLine(meta.packages ?? []).matchAll(/(?:^|\s)((?:@[\w.-]+\/)?[\w.-]+)/gm)]
+    // `npm i edododraw --omit=optional` — a flag is not a package.
+    .filter((m) => !m[1].startsWith('-'))
     .map((m) => m[1])
     .filter((t) => !['npx', 'remotion', 'add', 'npm', 'i', '-D'].includes(t));
   const reachable = new Set([...declared, ...installed]);

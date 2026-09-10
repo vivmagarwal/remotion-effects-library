@@ -26,14 +26,18 @@
     "check:assets": "node scripts/check-assets.mjs",
     "check:poster": "node scripts/check-poster.mjs",
     "check:palette": "node scripts/check-palette.mjs",
-    "gate:fast": "npm run registry && npm run typecheck && npm run prompts && npm run check:compose && npm run check:theme && npm run check:vocab && npm run check:taxonomy && npm run check:meta && npm run check:palette && npm run check:standalone && npm run check:gallery-variants && npm run check:media-props && npm run check:assets && npm run check:fonts && npm run check:edd && npm run check:prompts",
-    "gate:slow": "npm run verify && npm run check:frames && npm run check:poster && npm run check:browser",
+    "gate:fast": "npm run registry && npm run typecheck && npm run prompts && npm run check:compose && npm run check:theme && npm run check:vocab && npm run check:taxonomy && npm run check:meta && npm run check:palette && npm run check:standalone && npm run check:gallery-variants && npm run check:media-props && npm run check:imports && npm run check:assets && npm run check:fonts && npm run check:edd && npm run check:prompts",
+    "gate:slow": "npm run verify && npm run check:frames && npm run check:poster && npm run check:browser && npm run check:player",
     "viz:variants": "node scripts/build-viz-variants.mjs",
     "check:edd": "node scripts/check-edd.mjs",
     "check:media-props": "node scripts/check-media-props.mjs",
     "check:gallery-variants": "node scripts/check-gallery-variants.mjs",
     "check:theme": "node scripts/check-theme.mjs",
-    "check:browser": "npm run build:gallery && node scripts/serve-and-check-browser.mjs"
+    "check:browser": "npm run build:gallery && node scripts/serve-and-check-browser.mjs",
+    "check:player": "npm run build:gallery && node scripts/serve-and-check-player.mjs",
+    "check:imports": "node scripts/check-imports.mjs",
+    "check:themes": "node scripts/check-themes.mjs",
+    "check:gallery-counts": "node scripts/check-gallery-counts.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^9.7.0",

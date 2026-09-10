@@ -8,7 +8,7 @@
  * too — `npm run check:compose` proves the two are byte-identical, so the file
  * a blind agent is handed during validation really is the file a user copies.
  */
-import {readFileSync, writeFileSync, mkdirSync} from 'node:fs';
+import {readFileSync, writeFileSync, mkdirSync, readdirSync, rmSync} from 'node:fs';
 import {join} from 'node:path';
 import {composePrompt, readPropsFromSource, declaresProps, selectModules} from '../src/prompt-kit/compose.mjs';
 import {walkEffects, OUT_DIR} from './lib/fs.mjs';
@@ -26,6 +26,7 @@ for (const m of missingKitFiles()) {
 const emptyTables = [];
 const missingModules = new Map();
 let n = 0;
+const written = new Set();
 
 for (const e of walkEffects()) {
   const meta = readMeta(e.metaPath);
@@ -33,6 +34,7 @@ for (const e of walkEffects()) {
   const componentSource = readFileSync(e.tsxPath, 'utf8');
 
   writeFileSync(join(OUT, `${meta.id}.md`), composePrompt({meta, brief, componentSource, kit}));
+  written.add(`${meta.id}.md`);
   n++;
 
   if (readPropsFromSource(componentSource).length === 0) {
@@ -44,7 +46,21 @@ for (const e of walkEffects()) {
   }
 }
 
-console.log(`wrote ${n} composed prompts to out/prompts/`);
+/**
+ * Delete prompts for effects that no longer exist.
+ *
+ * The emitter only ever wrote, so `out/prompts/` accumulated a file for every
+ * id the library has ever had — eight of them survived the taxonomy rename and
+ * sat there for weeks, each a complete, plausible, WRONG brief for an effect
+ * that is gone. Anyone browsing the directory would have found them.
+ */
+const orphans = readdirSync(OUT).filter((f) => f.endsWith('.md') && !written.has(f));
+for (const f of orphans) rmSync(join(OUT, f));
+
+console.log(
+  `wrote ${n} composed prompts to out/prompts/` +
+    (orphans.length ? ` (removed ${orphans.length} for effects that no longer exist)` : ''),
+);
 
 if (emptyTables.length) {
   const lying = emptyTables.filter((t) => t.declares);

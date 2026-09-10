@@ -29,15 +29,31 @@
 const NEEDS_TYPES = new Set(['three', 'topojson-client']);
 const needsTypes = (p) => NEEDS_TYPES.has(p) || p.startsWith('d3-');
 
+/**
+ * Packages whose install needs a flag, and which therefore get their own line.
+ *
+ * `edododraw` declares `@excalidraw/mermaid-to-excalidraw` as an
+ * optionalDependency, which npm installs by default, and it drags in mermaid →
+ * d3 → cytoscape → katex: 122 packages / 66 MB against 8 packages / 4.2 MB. The
+ * shared diagram section has said `--omit=optional` since it was written, while
+ * the generated Setup block above it said plain `npm i edododraw` — two install
+ * commands for the same package in one document, which is the kind of detail a
+ * reader resolves by picking one and being wrong.
+ */
+const INSTALL_FLAGS = {edododraw: '--omit=optional'};
+
 /** The exact shell block that installs everything `meta.packages` names. */
 export const installLine = (packages) => {
   const list = packages ?? [];
   const rp = list.filter((p) => p.startsWith('@remotion/'));
   const op = list.filter((p) => !p.startsWith('@remotion/') && p !== 'remotion');
+  const plain = op.filter((p) => !INSTALL_FLAGS[p]);
+  const flagged = op.filter((p) => INSTALL_FLAGS[p]);
   const dev = op.filter(needsTypes).map((p) => `@types/${p}`);
   const lines = [];
   if (rp.length) lines.push(`npx remotion add ${rp.join(' ')}`);
-  if (op.length) lines.push(`npm i ${op.join(' ')}`);
+  if (plain.length) lines.push(`npm i ${plain.join(' ')}`);
+  for (const p of flagged) lines.push(`npm i ${p} ${INSTALL_FLAGS[p]}`);
   if (dev.length) lines.push(`npm i -D ${dev.join(' ')}`);
   return lines.length ? lines.join('\n') : '# no extra packages needed';
 };

@@ -67,4 +67,25 @@ if (!/const \{[^}]*\bvariantProps\b[^}]*\} = entry;/.test(src)) {
   ]);
 }
 
-g.done(`${found} <Player>/<Thumbnail> call site(s) — every one passes the variant's props.`);
+/**
+ * The version the page prints has to be the version it is built against.
+ *
+ * The gallery states "Remotion 4.0.522" in the header and again in the footer,
+ * from a constant typed by hand. A dependency bump does not touch it, so the
+ * first thing a visitor reads about the catalogue would quietly become false —
+ * and it is the one number on the page nobody thinks to re-check.
+ */
+const declared = src.match(/const REMOTION_VERSION = '([^']+)'/)?.[1];
+const installed = JSON.parse(readFileSync(join(ROOT, 'node_modules/remotion/package.json'), 'utf8')).version;
+if (!declared) {
+  g.fail(rel, 'REMOTION_VERSION is gone — the page can no longer state which Remotion it is built on');
+} else if (declared !== installed) {
+  g.fail(rel, `the page says Remotion ${declared}; the installed one is ${installed}`, [
+    `Set REMOTION_VERSION = '${installed}'.`,
+  ]);
+}
+
+g.done(
+  `${found} <Player>/<Thumbnail> call site(s) pass the variant's props; ` +
+    `the page states Remotion ${declared}, which is what is installed.`,
+);

@@ -190,7 +190,17 @@ export const VizGallery: React.FC<Props> = ({
     const renderer = new SvgRenderer(host, {static: true, nonScalingStroke: true});
     renderer.mount();
     renderer.render(scene);
-    renderer.measure?.();
+
+    // Hand the ground back to the composition.
+    //
+    // `render()` ends with `container.style.backgroundColor = scene.meta.background
+    // || scene.theme.background`, so the host adopts the DIAGRAM's paper — #fbfaf7
+    // for `hand-clean`. The frame around it is this component's `backgroundColor`,
+    // which is #f6f5f2, and the two differ by about 2% luminance: a horizontal seam
+    // across the band on all 82 cards, faint enough to read as a rendering artefact
+    // rather than a bug. Under a theme it stops being faint, because the frame moves
+    // to the theme's `paper` and the band does not move at all.
+    host.style.backgroundColor = 'transparent';
 
     // Fit the diagram to the frame ONCE. Every template lays out at whatever
     // size its content needs, so without this a four-item flowchart sits small

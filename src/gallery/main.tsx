@@ -1,6 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
-import {App, FrameHarness, frameIdFromHash} from './App';
+import {App, FrameHarness, PlayHarness, frameIdFromHash, playIdFromHash} from './App';
+import {promptComposerReady, promptFor, sourceOf} from './sources';
 import {effects} from '../registry.generated';
 import type {StaticFile} from 'remotion';
 import {publicAssets} from '../registry.generated';
@@ -56,15 +57,26 @@ if (base && base !== '/') {
   width: e.meta.width,
   height: e.meta.height,
   frame: e.meta.posterFrame ?? e.meta.checkFrame,
+  // What "Copy code" and "Copy prompt" would actually put on the clipboard.
+  // Both resolve through a Vite glob keyed by the registry's path, and a key
+  // that does not match returns a placeholder rather than throwing — so the
+  // only way to know the buttons are wired is to measure what they hold.
+  srcBytes: sourceOf(e.file).length,
+  promptBytes: promptComposerReady ? promptFor(e.meta, e.file).length : 0,
 }));
 
-const smokeId = frameIdFromHash(location.hash);
+const smokeId = frameIdFromHash(location.hash) ?? playIdFromHash(location.hash);
+const playing = playIdFromHash(location.hash) !== null;
 const smokeEntry = smokeId ? effects.find((e) => e.meta.id === smokeId) : undefined;
 
 createRoot(document.getElementById('root')!).render(
   smokeId ? (
     smokeEntry ? (
-      <FrameHarness entry={smokeEntry} />
+      playing ? (
+        <PlayHarness entry={smokeEntry} />
+      ) : (
+        <FrameHarness entry={smokeEntry} />
+      )
     ) : (
       <div data-smoke-error>no such id: {smokeId}</div>
     )

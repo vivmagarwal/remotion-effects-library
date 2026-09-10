@@ -97,4 +97,28 @@ for (const [cat, ids] of strays) {
   g.fail(`src/effects/${cat}/`, `folder category '${cat}' is not in the taxonomy`, `${ids.length} effect(s): ${ids.join(', ')}`);
 }
 
-g.done(`${mirrorOrder.length} categories agree across types.ts, categories.ts and scripts/lib/taxonomy.mjs.`);
+/**
+ * The README's gate table and package.json's scripts are one more pair of lists
+ * that must agree.
+ *
+ * The table is how anyone finds out what is checked and how to run it, so a gate
+ * added without a row is a gate nobody knows exists, and a row without a script
+ * is an instruction that fails when someone follows it. Both happened while this
+ * library was being built: two gates ran in the chain with no row, and a row
+ * named a script that had never been added to package.json.
+ */
+const readme = readFileSync(join(ROOT, 'README.md'), 'utf8');
+const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
+const documented = new Set([...readme.matchAll(/\| `(check:[a-z:-]+)`/g)].map((m) => m[1]));
+const scripts = Object.keys(pkg.scripts).filter((k) => k.startsWith('check:'));
+for (const k of scripts) {
+  if (!documented.has(k)) g.fail('README.md', `\`${k}\` is a gate with no row in the README's gate table`);
+}
+for (const k of documented) {
+  if (!pkg.scripts[k]) g.fail('README.md', `the gate table lists \`${k}\`, which is not a script in package.json`);
+}
+
+g.done(
+  `${mirrorOrder.length} categories agree across types.ts, categories.ts and scripts/lib/taxonomy.mjs; ` +
+    `all ${scripts.length} check:* gates have a README row.`,
+);

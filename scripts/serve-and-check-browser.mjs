@@ -36,11 +36,17 @@ if (!up) {
   throw new Error('check:browser: vite preview never came up');
 }
 
-const checker = spawn(
-  process.execPath,
-  ['scripts/check-browser-frames.mjs', '--base', `http://localhost:${port}`, ...process.argv.slice(2)],
-  {stdio: 'inherit'},
-);
-const code = await new Promise((res) => checker.on('exit', res));
+/** Both browser gates share the one server; the counts one is seconds. */
+const run = async (script) => {
+  const child = spawn(
+    process.execPath,
+    [script, '--base', `http://localhost:${port}`, ...process.argv.slice(2)],
+    {stdio: 'inherit'},
+  );
+  return (await new Promise((res) => child.on('exit', res))) ?? 1;
+};
+
+const counts = await run('scripts/check-gallery-counts.mjs');
+const frames = await run('scripts/check-browser-frames.mjs');
 preview.kill();
-process.exit(code ?? 1);
+process.exit(counts || frames);
