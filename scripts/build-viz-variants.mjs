@@ -21,8 +21,20 @@ import {ROOT} from './lib/fs.mjs';
 
 const {VIZ_DEMOS} = await import('edododraw/demos');
 
-/** Templates that draw character figures — see the note above. */
-const EXCLUDED = new Set(['personas', 'vision', 'hole', 'tug-of-war']);
+/**
+ * Templates that draw edododraw's character figures. The figures are broken and
+ * this library does not use them anywhere, so these are left out.
+ *
+ * `quote` is here reluctantly: it is a hand-lettered quote card with a
+ * "presenting character" beside it, and the template documents `pose: none` to
+ * hide the figure. That option does not work — the source compiles with it and
+ * the figure still draws — and the layout reserves the space either way, so
+ * suppressing it was never going to be clean. Dropped rather than shipped with a
+ * broken figure on it.
+ */
+const EXCLUDED = new Set(['personas', 'vision', 'hole', 'tug-of-war', 'quote']);
+
+const tagline = (d) => String(d.description).replace(/`/g, '').slice(0, 120);
 
 const usable = VIZ_DEMOS.filter((d) => !EXCLUDED.has(d.type)).sort((a, b) =>
   a.category === b.category ? a.type.localeCompare(b.type) : a.category.localeCompare(b.category),
@@ -37,7 +49,7 @@ const rows = usable
     (d) => `  {
     id: '${esc(d.type)}',
     name: '${esc(d.title)}',
-    tagline: '${esc(d.description.replace(/`/g, '').slice(0, 120))}',
+    tagline: '${esc(tagline(d))}',
     props: {vizType: '${esc(d.type)}', vizCategory: '${esc(d.category)}', source: ${src(d.code)}},
   },`,
   )

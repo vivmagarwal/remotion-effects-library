@@ -100,9 +100,11 @@ Declare the preset in the source rather than as a renderer option, so there is o
 const edd = /\bmeta\s*\{/.test(source) ? source : `meta { style: ${preset} }\n${source}`;
 ```
 
-**Do not use edododraw's `character` nodes.** The figures are broken. Four templates draw them —
-`personas`, `vision`, `hole`, `tug-of-war` — and they are excluded from this gallery, which is why it
-covers 83 templates and not 87. `icon` nodes are fine.
+**Do not use edododraw's `character` nodes.** The figures are broken. Five templates draw them and are
+excluded from this gallery, which is why it covers 82 templates and not 87: `personas`, `vision`,
+`hole`, `tug-of-war`, and `quote`. `quote` is the awkward one — it is a quote card with a "presenting
+character" beside it and the template documents `pose: none` to hide the figure, but that option does
+not work: the source compiles with it and the figure still draws. `icon` nodes are fine and unaffected.
 
 **The look**
 - 1920×1080, 30fps, 130 frames. Ground `#f6f5f2` — light by nature, because a hand-drawn diagram
