@@ -9,6 +9,10 @@ export const meta: EffectMeta = {
   concepts: ['SVG clipPath', 'background-clip: text', 'progress-gated reveal'],
   width: 1920, height: 1080, fps: 30, durationInFrames: 180,
   packages: ['remotion', '@remotion/media', '@remotion/google-fonts'],
-  difficulty: 'intermediate', checkFrame: 20, posterFrame: 50,
+  difficulty: 'intermediate', checkFrame: 20,
+  // 80, not 50: at 50 the mask is still small and the plate is on its dark limb, so the
+  // card reads as grey type. 80 is the last frame before the mask starts swallowing the
+  // frame — letterforms full of bright cloud, which is the thing the effect is for.
+  posterFrame: 80,
   requires: ['video'], ground: 'dark', audience: ['youtuber', 'agency'],
 };
