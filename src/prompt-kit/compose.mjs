@@ -86,6 +86,20 @@ export const splitTopLevel = (block) => {
       cur += ch;
       continue;
     }
+    // Comments are skipped, not copied. Outside a string, `//` in these blocks
+    // is always a comment — and a comment containing a comma used to split the
+    // entry it belonged to, which is how a `posterFrame` with a "why" note above
+    // it disappeared from the registry entirely.
+    if (ch === '/' && block[i + 1] === '/') {
+      const nl = block.indexOf('\n', i);
+      i = nl === -1 ? block.length : nl - 1;
+      continue;
+    }
+    if (ch === '/' && block[i + 1] === '*') {
+      const end = block.indexOf('*/', i + 2);
+      i = end === -1 ? block.length : end + 1;
+      continue;
+    }
     if ('([{'.includes(ch)) depth++;
     else if (')]}'.includes(ch)) depth--;
     if (ch === ',' && depth === 0) {

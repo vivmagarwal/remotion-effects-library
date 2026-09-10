@@ -54,9 +54,29 @@ const parseValue = (raw) => {
 
 const KEY_RE = /^\s*(?:readonly\s+)?(['"]?)([A-Za-z_$][\w$-]*)\1\s*:\s*([\s\S]*)$/;
 
-function* entriesOf(body) {
+/**
+ * Strip leading comments from a `key: value` fragment.
+ *
+ * This is not cosmetic. `splitTopLevel` splits on commas, so a key with a
+ * comment above it arrives here as `\n // why 80 …\n posterFrame: 80`, and
+ * KEY_RE's `^\s*` does not skip a `//`. The key silently failed to parse and
+ * vanished from the registry — which is how `video-in-text` shipped with the
+ * poster frame its meta.ts plainly stated it did not have. Explaining a
+ * non-obvious number is exactly what these files should do, so the parser has
+ * to allow it. `check:meta` now also fails if any key goes missing this way.
+ */
+const stripLeadingComments = (part) => {
+  let s = part;
+  for (;;) {
+    const next = s.replace(/^\s*\/\/[^\n]*\n/, '').replace(/^\s*\/\*[\s\S]*?\*\//, '');
+    if (next === s) return s;
+    s = next;
+  }
+};
+
+export function* entriesOf(body) {
   for (const part of splitTopLevel(body)) {
-    const m = part.match(KEY_RE);
+    const m = stripLeadingComments(part).match(KEY_RE);
     if (m) yield [m[2], m[3]];
   }
 }
