@@ -31,8 +31,11 @@ type Theme = {
   readonly mono: string;
   readonly ink: string;
   readonly text: string;
+  readonly display: string;
   readonly accent: string;
   readonly bg: string;
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -40,13 +43,18 @@ const THEME: Theme = {
   mono: MONO,
   ink: '#ffffff',
   text: fontFamily,
+  display: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the heading and the hero caption's title. Defaults to this file's Inter, or the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly items?: readonly Item[];
@@ -75,6 +83,7 @@ const DEFAULT_ITEMS: Item[] = [
 export const GridToHero: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   items = DEFAULT_ITEMS,
   heading = 'PLATES',
   columns = 3,
@@ -136,6 +145,7 @@ export const GridToHero: React.FC<Props> = ({
           position: 'absolute',
           left: padding,
           top: 74,
+          fontFamily: displayFamily,
           fontSize: 44,
           fontWeight: 800,
           letterSpacing: '0.24em',
@@ -190,10 +200,12 @@ export const GridToHero: React.FC<Props> = ({
               top: rect.y,
               width: rect.w,
               height: rect.h,
-              borderRadius: 18,
+              borderRadius: theme.radius,
               overflow: 'hidden',
+              // The house bgDeep, behind a cover-fitted image that always fills
+              // the tile — it is never actually seen, so it stays a literal.
               backgroundColor: '#04050a',
-              border: `2px solid ${isOpen ? accentColor : 'rgba(255,255,255,0.12)'}`,
+              border: `${(2 * theme.stroke) / THEME.stroke}px solid ${isOpen ? accentColor : 'rgba(255,255,255,0.12)'}`,
               boxShadow: isOpen
                 ? `0 40px 90px rgba(0,0,0,${0.55 * open})`
                 : '0 10px 30px rgba(0,0,0,0.35)',
@@ -237,7 +249,15 @@ export const GridToHero: React.FC<Props> = ({
               >
                 {item.meta}
               </div>
-              <div style={{fontSize: 76, fontWeight: 800, color: '#fff', letterSpacing: '-0.03em'}}>
+              <div
+                style={{
+                  fontFamily: displayFamily,
+                  fontSize: 76,
+                  fontWeight: 800,
+                  color: theme.ink,
+                  letterSpacing: '-0.03em',
+                }}
+              >
                 {item.title}
               </div>
             </div>

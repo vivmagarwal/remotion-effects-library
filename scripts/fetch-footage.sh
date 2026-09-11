@@ -201,7 +201,8 @@ transcribe() {
   local params="model=nova-3&language=en&smart_format=true&punctuate=true&utterances=true&paragraphs=true&filler_words=true"
   # filler_words=true is what makes filler-cutting possible at all — without it Deepgram
   # drops "um"/"uh" from the transcript and there is nothing to cut on.
-  # Add diarize=true if the clip has more than one speaker.
+  # Add diarize_model=latest if the clip has more than one speaker. diarize=true is
+  # deprecated and routes to the v1 diarizer, which merges voices; never send both (HTTP 400).
 
   mkdir -p "$ROOT/public/transcripts"
   local name

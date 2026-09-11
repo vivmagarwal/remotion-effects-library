@@ -20,6 +20,7 @@ const {fontFamily} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
  */
 type Theme = {
   readonly display: string;
+  readonly text: string;
   readonly accent: string;
   readonly paper: string;
   readonly paperInk: string;
@@ -28,6 +29,7 @@ type Theme = {
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
   display: fontFamily,
+  text: fontFamily,
   accent: '#ff5c39',
   paper: '#f6f5f2',
   paperInk: '#1d1b17',
@@ -36,6 +38,8 @@ const THEME: Theme = {
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the kicker. Defaults to this file's Archivo Black, or the theme's text face. */
+  readonly textFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly src?: string;
@@ -50,6 +54,7 @@ type Props = {
 export const HalftonePrint: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.display,
+  textFamily = theme.text,
   src,
   headline = 'PRINTED',
   kicker = 'halftone + duotone',
@@ -115,6 +120,7 @@ export const HalftonePrint: React.FC<Props> = ({
         <Interactive.Div
           name="Kicker"
           style={{
+            fontFamily: textFamily,
             fontSize: 30,
             letterSpacing: '0.42em',
             color: inkDark,
@@ -131,6 +137,8 @@ export const HalftonePrint: React.FC<Props> = ({
           name="Headline"
           style={{
             fontSize: 196,
+            fontWeight: 800, // font-weight-check: ignore — for a theme's display family; Archivo Black ships 400 only
+            fontSynthesis: 'none', // keeps Archivo Black from being faux-bolded
             lineHeight: 0.9,
             letterSpacing: '-0.035em',
             color: inkDark,

@@ -55,7 +55,10 @@ type Theme = {
   readonly muted: string;
   readonly text: string;
   readonly bg: string;
+  readonly bgDeep: string;
+  readonly ink: string;
   readonly series: readonly string[];
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -63,7 +66,10 @@ const THEME: Theme = {
   muted: '#8d93a5',
   text: fontFamily,
   bg: '#0a0b10',
+  bgDeep: '#04050a',
+  ink: '#ffffff',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  radius: 18,
 };
 
 type Props = {
@@ -161,8 +167,8 @@ export const Audiogram: React.FC<Props> = ({
           // middle and it read as an unfinished layout.
           width: 520,
           height: 520,
-          borderRadius: 42,
-          backgroundImage: `linear-gradient(145deg, ${accentColor}, #c6ff3d 55%, #4cc9f0)`,
+          borderRadius: theme.radius * (42 / 18),
+          backgroundImage: `linear-gradient(145deg, ${accentColor}, ${theme.series[2]} 55%, ${theme.series[1]})`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -172,7 +178,7 @@ export const Audiogram: React.FC<Props> = ({
           flexShrink: 0,
         }}
       >
-        <span style={{fontSize: 186, fontWeight: 800, color: '#04050a', letterSpacing: '-0.05em'}}>
+        <span style={{fontSize: 186, fontWeight: 800, color: theme.bgDeep, letterSpacing: '-0.05em'}}>
           ▮▮
         </span>
       </Interactive.Div>
@@ -233,7 +239,7 @@ export const Audiogram: React.FC<Props> = ({
                 fontSize: 88,
                 fontWeight: 800,
                 lineHeight: 1.2,
-                color: isActive ? accentColor : '#ffffff',
+                color: isActive ? accentColor : theme.ink,
                 opacity: time >= w.start ? 1 : 0.34,
               }}
             >
@@ -253,7 +259,7 @@ export const Audiogram: React.FC<Props> = ({
               style={{
                 width: 19,
                 height: Math.max(19, shaped * 560),
-                borderRadius: 10,
+                borderRadius: theme.radius * (10 / 18),
                 backgroundColor: accentColor,
                 opacity: 0.4 + shaped * 0.6,
               }}
@@ -262,11 +268,11 @@ export const Audiogram: React.FC<Props> = ({
         })}
       </div>
 
-      <div style={{width: '100%', maxWidth: 940, height: 7, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.12)', marginTop: 40, flexShrink: 0}}>
+      <div style={{width: '100%', maxWidth: 940, height: 7, borderRadius: theme.radius * (4 / 18), backgroundColor: 'rgba(255,255,255,0.12)', marginTop: 40, flexShrink: 0}}>
         <div
           style={{
             height: '100%',
-            borderRadius: 4,
+            borderRadius: theme.radius * (4 / 18),
             backgroundColor: accentColor,
             width: `${interpolate(frame, [0, durationInFrames], [0, 100], {
               extrapolateLeft: 'clamp',

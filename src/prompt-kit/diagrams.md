@@ -5,12 +5,12 @@ path built for exactly this: `SvgRenderer{static: true}` disables **all** wall-c
 transitions, reveal animations, and the animated-arrow keyframe overlay is not even emitted — so any
 captured frame is final rather than mid-transition.
 
-Everything below was verified against the published **`edododraw@0.15.0`** (`npm view edododraw
-dist-tags` → `latest: 0.15.0`); the `.d.ts` quotes are from `dist-lib/engine/`. Check
+Everything below was verified against the published **`edododraw@0.16.1`** (`npm view edododraw
+dist-tags` → `latest: 0.16.1`); the `.d.ts` quotes are from `dist-lib/engine/`. Check
 `node_modules/edododraw/dist-lib/engine/render/svgRenderer.d.ts` against whatever version actually
 installs before relying on a method name.
 
-**Use 0.15.0 or newer.** Earlier versions declare `sideEffects` globs that match no shipped
+**Use 0.16.1 or newer** — 0.15.0 is the floor for the reason below. Earlier versions declare `sideEffects` globs that match no shipped
 JavaScript — every line of real JS is in `dist-lib/index.js` and `dist-lib/chunks/*.js`, and the globs
 pointed at `**/viz/generators/*.ts`, where the published build has only `.d.ts` files. The package
 therefore looked side-effect-free, and the visualization registry is populated **by import side
@@ -20,6 +20,13 @@ clean blank frame. A dev server was fine, server-side stills were fine, and only
 tree-shook. 0.15.0 also makes `CLASSIC_PRESET` smooth by default — rough.js perturbs geometry in
 *world* units, so a camera push magnifies the jitter and the stroke width together; the old values
 are still there as `CLASSIC_ROUGH_PRESET`.
+
+**0.16.1 is what a video host wants.** `strokeScale` sets line weight on the renderer (under
+`nonScalingStroke` a preset's 1.8px is 1.8 *screen* px, a hairline at 1080p); pinned ellipses close
+without rough.js's trailing notch; icon strokes stop inverting with glyph size; every stroke has round
+caps and joins; label colours hold 4.5:1; `cameraForBBox` takes `padX`/`padY`; and every viz element
+carries `data-viz-role` (the block title is `title`), so a host can draw the title first and each
+item's label with its own box.
 
 **Install with `npm i edododraw --omit=optional`.** The default install pulls
 `@excalidraw/mermaid-to-excalidraw` (an `optionalDependency`, which npm installs by default) and with

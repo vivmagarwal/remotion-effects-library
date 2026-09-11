@@ -27,20 +27,26 @@ type Note = {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly ink: string;
   readonly paperMuted: string;
   readonly muted: string;
   readonly text: string;
   readonly bg: string;
+  readonly series: readonly string[];
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   ink: '#ffffff',
   paperMuted: '#4a4e5a',
   muted: '#8d93a5',
   text: fontFamily,
   bg: '#0a0b10',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  radius: 18,
 };
 
 type Props = {
@@ -62,10 +68,10 @@ export const NotificationStack: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
   notes = [
-    {app: 'Mail', icon: '✉️', tint: '#4cc9f0', title: 'Render finished', body: 'out/video.mp4 — 1080p, 42s', time: 'now'},
-    {app: 'Messages', icon: '💬', tint: '#c6ff3d', title: 'Sam', body: 'wait, you coded the whole video?', time: '1m ago'},
-    {app: 'GitHub', icon: '🐙', tint: '#c77dff', title: 'PR merged', body: 'feat: add transition sampler', time: '3m ago'},
-    {app: 'Calendar', icon: '📅', tint: '#ff5c39', title: 'Design review', body: 'in 15 minutes · Studio B', time: '5m ago'},
+    {app: 'Mail', icon: '✉️', tint: theme.series[1], title: 'Render finished', body: 'out/video.mp4 — 1080p, 42s', time: 'now'},
+    {app: 'Messages', icon: '💬', tint: theme.series[2], title: 'Sam', body: 'wait, you coded the whole video?', time: '1m ago'},
+    {app: 'GitHub', icon: '🐙', tint: theme.series[4], title: 'PR merged', body: 'feat: add transition sampler', time: '3m ago'},
+    {app: 'Calendar', icon: '📅', tint: theme.series[0], title: 'Design review', body: 'in 15 minutes · Studio B', time: '5m ago'},
   ],
   stagger = 14,
   backgroundColor = theme.bg,
@@ -73,6 +79,11 @@ export const NotificationStack: React.FC<Props> = ({
 }) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
+
+  // A light theme flips the card and its type together. Leaving the card dark
+  // under `broadsheet` is the one thing worse than not theming it at all: a
+  // near-black slab dropped on paper.
+  const light = theme.scheme === 'light';
 
   // Entrance progress per card, on its own spring.
   const progress = notes.map((_, i) =>
@@ -86,7 +97,9 @@ export const NotificationStack: React.FC<Props> = ({
         backgroundColor: transparent ? 'transparent' : backgroundColor,
         backgroundImage: transparent
           ? undefined
-          : 'radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 62%)',
+          : light
+            ? 'radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.6) 0%, rgba(0,0,0,0.05) 62%)'
+            : 'radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 62%)',
         alignItems: 'center',
         paddingTop: 130,
         fontFamily,
@@ -115,10 +128,10 @@ export const NotificationStack: React.FC<Props> = ({
                 alignItems: 'center',
                 gap: 24,
                 padding: '0 30px',
-                borderRadius: 30,
-                backgroundColor: 'rgba(38,41,52,0.92)',
-                border: '1px solid rgba(255,255,255,0.09)',
-                boxShadow: '0 22px 60px rgba(0,0,0,0.45)',
+                borderRadius: (theme.radius * 5) / 3,
+                backgroundColor: light ? 'rgba(255,255,255,0.94)' : 'rgba(38,41,52,0.92)',
+                border: light ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(255,255,255,0.09)',
+                boxShadow: light ? '0 18px 48px rgba(0,0,0,0.12)' : '0 22px 60px rgba(0,0,0,0.45)',
                 translate: `0px ${pushedBy - (1 - Math.min(1, p)) * 150}px`,
                 scale: 0.9 + Math.min(1, p) * 0.1,
                 opacity: Math.min(1, p * 1.6),
@@ -128,7 +141,7 @@ export const NotificationStack: React.FC<Props> = ({
                 style={{
                   width: 88,
                   height: 88,
-                  borderRadius: 22,
+                  borderRadius: (theme.radius * 11) / 9,
                   backgroundColor: n.tint,
                   display: 'flex',
                   alignItems: 'center',

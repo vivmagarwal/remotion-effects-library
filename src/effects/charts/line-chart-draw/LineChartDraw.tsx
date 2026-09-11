@@ -1,3 +1,4 @@
+import {useId} from 'react';
 import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
@@ -20,21 +21,31 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '600', '800'], subsets
 type Theme = {
   readonly ink: string;
   readonly text: string;
+  readonly display: string;
   readonly bg: string;
   readonly pair: string;
+  readonly muted: string;
+  readonly paperMuted: string;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
   ink: '#ffffff',
   text: fontFamily,
+  display: fontFamily,
   bg: '#0a0b10',
   pair: '#4cc9f0',
+  muted: '#8d93a5',
+  paperMuted: '#4a4e5a',
+  stroke: 3,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly title?: string;
@@ -50,6 +61,7 @@ type Props = {
 export const LineChartDraw: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   title = 'Weekly renders',
   values = [12, 19, 15, 28, 24, 41, 38, 56, 72, 68, 91, 118],
   labels = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
@@ -59,6 +71,11 @@ export const LineChartDraw: React.FC<Props> = ({
   drawSeconds = 2.2,
   unit = '',
 }) => {
+  // One SVG id per INSTANCE. A literal id is global to the page: with two copies
+  // mounted (a gallery card and its detail player), every url(#…) resolves to
+  // whichever copy came first in the DOM, and its clip or mask follows the other
+  // copy's frame.
+  const svgId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
 
@@ -99,7 +116,13 @@ export const LineChartDraw: React.FC<Props> = ({
     <AbsoluteFill name="Scene" style={{backgroundColor, padding: '78px 96px', fontFamily}}>
       <Interactive.Div
         name="Title"
-        style={{fontSize: 50, fontWeight: 800, color: theme.ink, letterSpacing: '-0.02em'}}
+        style={{
+          fontSize: 50,
+          fontWeight: 800,
+          fontFamily: displayFamily,
+          color: theme.ink,
+          letterSpacing: '-0.02em',
+        }}
       >
         {title}
       </Interactive.Div>
@@ -119,12 +142,12 @@ export const LineChartDraw: React.FC<Props> = ({
 
       <svg width={W} height={H} style={{marginTop: 24, overflow: 'visible'}}>
         <defs>
-          <linearGradient id="lcd-fill" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id={`lcd-fill-${svgId}`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={fillColor} stopOpacity={0.42} />
             <stop offset="100%" stopColor={fillColor} stopOpacity={0} />
           </linearGradient>
           {/* The area is revealed by a wipe that tracks the same progress as the line. */}
-          <clipPath id="lcd-clip">
+          <clipPath id={`lcd-clip-${svgId}`}>
             <rect x="0" y="0" width={progress * W} height={H} />
           </clipPath>
         </defs>
@@ -141,13 +164,13 @@ export const LineChartDraw: React.FC<Props> = ({
           />
         ))}
 
-        <path d={areaPath} fill="url(#lcd-fill)" clipPath="url(#lcd-clip)" />
+        <path d={areaPath} fill={`url(#lcd-fill-${svgId})`} clipPath={`url(#lcd-clip-${svgId})`} />
 
         <path
           d={linePath}
           fill="none"
           stroke={lineColor}
-          strokeWidth={6}
+          strokeWidth={theme.stroke * 2}
           strokeLinecap="round"
           strokeLinejoin="round"
           // The self-drawing trick: dash as long as the path, offset animating to 0.
@@ -158,7 +181,7 @@ export const LineChartDraw: React.FC<Props> = ({
 
         <circle cx={dotX} cy={dotY} r={16} fill={lineColor} opacity={0.22} />
         <circle cx={dotX} cy={dotY} r={9} fill={lineColor} />
-        <circle cx={dotX} cy={dotY} r={9} fill="none" stroke="#0a0b10" strokeWidth={3} />
+        <circle cx={dotX} cy={dotY} r={9} fill="none" stroke={backgroundColor} strokeWidth={3} />
       </svg>
 
       <div style={{display: 'flex', width: W, marginTop: 12}}>
@@ -170,7 +193,7 @@ export const LineChartDraw: React.FC<Props> = ({
               textAlign: 'center',
               fontSize: 26,
               fontWeight: 600,
-              color: i / (labels.length - 1) <= progress ? '#8d93a5' : '#4a4e5a',
+              color: i / (labels.length - 1) <= progress ? theme.muted : theme.paperMuted,
             }}
           >
             {l}

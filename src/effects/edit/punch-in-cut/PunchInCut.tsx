@@ -38,6 +38,8 @@ type Theme = {
   readonly text: string;
   readonly accent: string;
   readonly bg: string;
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -47,6 +49,8 @@ const THEME: Theme = {
   text: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
@@ -134,7 +138,7 @@ export const PunchInCut: React.FC<Props> = ({
               alignItems: 'baseline',
               gap: 16,
               padding: '14px 26px',
-              borderRadius: 12,
+              borderRadius: (12 * theme.radius) / THEME.radius,
               backgroundColor: 'rgba(10, 11, 16, 0.72)',
               // backdrop-filter is real in Remotion's Chromium and needs no WebGL.
               backdropFilter: 'blur(18px) saturate(1.3)',
@@ -169,7 +173,7 @@ export const PunchInCut: React.FC<Props> = ({
                   position: 'absolute',
                   left: `${(c.at / durationInFrames) * 100}%`,
                   top: -13,
-                  width: 3,
+                  width: (3 * theme.stroke) / THEME.stroke,
                   height: 32,
                   borderRadius: 2,
                   backgroundColor: c === current ? accentColor : 'rgba(255, 255, 255, 0.5)',

@@ -18,20 +18,39 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '800'], subsets: ['lat
  * this file runnable on its own.
  */
 type Theme = {
-  readonly display: string;
-  readonly accent: string;
-  readonly accentOnPaper: string;
+  readonly bg: string;
   readonly bgDeep: string;
+  readonly ink: string;
+  readonly accent: string;
+  readonly accentInk: string;
+  readonly accentOnPaper: string;
   readonly series: readonly string[];
+  readonly display: string;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
-  display: fontFamily,
-  accent: '#ff5c39',
-  accentOnPaper: '#c2410c',
+  bg: '#0a0b10',
   bgDeep: '#04050a',
+  ink: '#ffffff',
+  accent: '#ff5c39',
+  accentInk: '#04050a',
+  accentOnPaper: '#c2410c',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  display: fontFamily,
+  stroke: 3,
+};
+
+const isHex = (s: string) => /^#[0-9a-f]{6}$/i.test(s);
+
+/** WCAG relative luminance. */
+const luminance = (hex: string) => {
+  const [r, g, b] = [1, 3, 5].map((i) => {
+    const c = parseInt(hex.slice(i, i + 2), 16) / 255;
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 };
 
 type Props = {
@@ -46,6 +65,10 @@ type Props = {
   readonly sunBottom?: string;
   readonly skyTop?: string;
   readonly skyBottom?: string;
+  /** The last stop of the sky/floor gradient. Defaults to `theme.bg`. */
+  readonly floorColor?: string;
+  /** The subtitle sits ON the sun. Defaults to the sun's own top colour. */
+  readonly subtitleColor?: string;
   /** Rows of the grid that scroll past per second. */
   readonly speed?: number;
   readonly columns?: number;
@@ -62,6 +85,15 @@ export const RetroGridFloor: React.FC<Props> = ({
   sunBottom = theme.accent,
   skyTop = theme.bgDeep,
   skyBottom = theme.accentOnPaper,
+  floorColor = theme.bg,
+  // The subtitle sits on the sun's upper half, so it is drawn in the sun's own
+  // top colour and read by the slots behind it. That only works while that top
+  // colour is the lighter end of the gradient — under a theme where it is not
+  // (broadsheet lands at 1.05:1, studio at 1.02:1) the line disappears into the
+  // disc, and ink meant to sit on the accent is the honest fallback.
+  subtitleColor = !isHex(sunTop) || !isHex(sunBottom) || luminance(sunTop) > luminance(sunBottom) * 1.5
+    ? sunTop
+    : theme.accentInk,
   speed = 0.55,
   columns = 26,
   rows = 22,
@@ -82,7 +114,7 @@ export const RetroGridFloor: React.FC<Props> = ({
       name="Scene"
       style={{
         overflow: 'hidden',
-        backgroundImage: `linear-gradient(${skyTop} 0%, ${skyBottom} 55%, #0a0b10 100%)`,
+        backgroundImage: `linear-gradient(${skyTop} 0%, ${skyBottom} 55%, ${floorColor} 100%)`,
         fontFamily,
       }}
     >
@@ -125,7 +157,7 @@ export const RetroGridFloor: React.FC<Props> = ({
                 y1={y}
                 y2={y}
                 stroke={gridColor}
-                strokeWidth={1.6}
+                strokeWidth={theme.stroke * (1.6 / 3)}
                 opacity={0.16 + (y / floorDepth) * 0.7}
               />
             );
@@ -142,7 +174,7 @@ export const RetroGridFloor: React.FC<Props> = ({
                 x2={width / 2 + spread}
                 y2={floorDepth}
                 stroke={gridColor}
-                strokeWidth={1.6}
+                strokeWidth={theme.stroke * (1.6 / 3)}
                 opacity={0.5 - Math.abs(i / columns - 0.5) * 0.55}
               />
             );
@@ -167,7 +199,7 @@ export const RetroGridFloor: React.FC<Props> = ({
             fontWeight: 800,
             letterSpacing: '0.06em',
             marginRight: '-0.06em',
-            color: '#fff',
+            color: theme.ink,
             textShadow: `0 0 40px ${gridColor}, 0 6px 0 ${gridColor}77`,
             scale: interpolate(frame, [0, 30], [0.9, 1], {
               extrapolateLeft: 'clamp',
@@ -190,7 +222,7 @@ export const RetroGridFloor: React.FC<Props> = ({
             fontWeight: 500,
             letterSpacing: '0.5em',
             marginRight: '-0.5em',
-            color: sunTop,
+            color: subtitleColor,
             marginTop: 22,
             opacity: interpolate(frame, [16, 40], [0, 1], {
               extrapolateLeft: 'clamp',

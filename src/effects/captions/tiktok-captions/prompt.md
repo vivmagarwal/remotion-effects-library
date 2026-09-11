@@ -10,7 +10,7 @@ were transcribed from, where the word currently being spoken pops and changes co
   is the active one.
 - Captions sit `560` from the bottom — that clears TikTok's own caption stack (484) and the Reels
   action rail at the same time. A gradient scrim rises `bottomInset + 420` behind them.
-- A source label top-left at `90, 260`, 34px/800, `rgba(255,255,255,0.62)`, fading in over frames
+- A source label top-left at `90, 260`, 34px/800, in the theme's `ink` at 0.62, fading in over frames
   0–12 and out over 48–62.
 
 **The data shape**
@@ -118,8 +118,9 @@ position lands it on "the".
 **Requirements**
 - One self-contained `.tsx` file exporting `TiktokCaptions`, and an exported `DeepgramWord` type.
 - The props table below is the complete list. `src` defaults to the clip the transcript came from;
-  set it to `null` to render as a transparent overlay (`--codec=vp8`, or
-  `--codec=prores --prores-profile=4444`) and composite over your own footage.
+  set it to `null` to render as a transparent overlay (`--codec=prores --prores-profile=4444`) and
+  composite over your own footage — ProRes 4444 survives the composite; VP8 WebM alpha comes back as a
+  black box, so keep `--codec=vp8` for web playback only.
 - Inline the default `words` array so the file renders with no assets at all.
 - Load Montserrat via `@remotion/google-fonts/Montserrat` at weights 800 and 900.
 - `checkFrame` 115: the page is "UP IN SPACE", "up" is the active word, "space" is an authored hit

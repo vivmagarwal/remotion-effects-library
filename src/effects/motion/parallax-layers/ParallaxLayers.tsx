@@ -1,7 +1,7 @@
 import {AbsoluteFill, Easing, Interactive, interpolate, random, useCurrentFrame, useVideoConfig} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/BebasNeue';
 
-// palette: data whole-file — a sunset landscape: the sky gradient, the five-step ridge depth ramp and the sun are the SUBJECT. A sunset rendered in EMBER and SKY is not a sunset
+// palette: data whole-file — a sunset landscape: the sky gradient, the five-step ridge depth ramp, the sun, and the title's sun-lit cream (#ffe9d6 / #ffd9c0) are the SUBJECT. A sunset rendered in EMBER and SKY is not a sunset
 
 const {fontFamily} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
 
@@ -27,16 +27,20 @@ type Layer = {
  */
 type Theme = {
   readonly display: string;
+  readonly text: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
   display: fontFamily,
+  text: fontFamily,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the subtitle. Defaults to this file's Bebas Neue, or the theme's text face. */
+  readonly textFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly title?: string;
@@ -51,6 +55,7 @@ type Props = {
 export const ParallaxLayers: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.display,
+  textFamily = theme.text,
   title = 'DEPTH',
   subtitle = 'one rule: travel = depth × camera',
   layers = [
@@ -171,6 +176,7 @@ export const ParallaxLayers: React.FC<Props> = ({
         <Interactive.Div
           name="Subtitle"
           style={{
+            fontFamily: textFamily,
             fontSize: 32,
             letterSpacing: '0.36em',
             color: '#ffd9c0',

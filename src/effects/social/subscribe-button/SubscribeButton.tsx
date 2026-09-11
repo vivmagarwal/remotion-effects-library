@@ -18,18 +18,24 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '600', '700'], subsets
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paper: string;
   readonly paperMuted: string;
   readonly paperInk: string;
   readonly text: string;
   readonly pair: string;
+  readonly series: readonly string[];
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paper: '#f6f5f2',
   paperMuted: '#4a4e5a',
   paperInk: '#1d1b17',
   text: fontFamily,
   pair: '#4cc9f0',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  radius: 18,
 };
 
 type Props = {
@@ -87,7 +93,7 @@ export const SubscribeButton: React.FC<Props> = ({
       name="Scene"
       style={{
         // Leave the background clear when rendering a transparent overlay (WebM/ProRes).
-        backgroundColor: transparent ? 'transparent' : '#f6f5f2',
+        backgroundColor: transparent ? 'transparent' : theme.paper,
         justifyContent: 'center',
         alignItems: 'center',
         fontFamily,
@@ -101,7 +107,7 @@ export const SubscribeButton: React.FC<Props> = ({
           alignItems: 'center',
           gap: 26,
           backgroundColor: '#ffffff',
-          borderRadius: 22,
+          borderRadius: (theme.radius * 22) / 18,
           padding: '26px 30px',
           boxShadow: '0 24px 70px rgba(15,20,40,0.18)',
           scale: 0.86 + cardIn * 0.14,
@@ -141,7 +147,7 @@ export const SubscribeButton: React.FC<Props> = ({
             borderRadius: 99,
             padding: '20px 40px',
             backgroundColor: clicked ? '#eef1f7' : accentColor,
-            color: clicked ? '#4a4e5a' : '#ffffff',
+            color: clicked ? theme.paperMuted : '#ffffff',
             fontSize: 32,
             fontWeight: 600,
             display: 'flex',
@@ -214,7 +220,7 @@ export const SubscribeButton: React.FC<Props> = ({
                     width: 11,
                     height: 11,
                     borderRadius: 3,
-                    backgroundColor: ['#ff5c39', '#ffd166', accentColor, '#c6ff3d'][i % 4],
+                    backgroundColor: [theme.series[0], theme.series[3], accentColor, theme.series[2]][i % 4],
                     translate: `${Math.cos(angle) * dist}px ${Math.sin(angle) * dist}px`,
                     rotate: `${dist * 2}deg`,
                     opacity: interpolate(sinceClick, [6, 24], [1, 0], {

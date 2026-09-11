@@ -70,19 +70,25 @@ this composition exists to argue against.
 **Keep the source on screen.** A grade judged against memory is judged against nothing — after ninety
 seconds every grade looks correct, which is why colourists keep a reference up. A second `<Video>` of
 the same file with no `effects`, in a bordered inset at `left: 84, bottom: 84`, 480px wide, 16:9,
-radius 12, `1px solid rgba(255,255,255,0.18)`, `0 24px 60px rgba(0,0,0,0.55)`, labelled `UNGRADED`.
+radius `theme.radius × 12/18` (12 at house), `1px solid rgba(255,255,255,0.18)`,
+`0 24px 60px rgba(0,0,0,0.55)`, labelled `UNGRADED`.
 
 **The look**
 
 - 1920×1080, 30 fps, 300 frames. Ground `#04050a`. Inter at 500/700/800.
-- Stage list down the right at `right: 84, top: 96`, 700px wide, `gap: 12`. Each stage: its call at
-  34px/700 in a monospace stack, the parameters under it at 28px/500 `#8d93a5`. Not-yet-applied stages
-  at `opacity: 0.3`; the stage that just arrived in `#ff5c39`, nudged 10px → 0 over 8 frames — enough
-  to catch the eye, small enough that ten of them do not read as a bouncing list.
+- Stage list down the right at `right: 84, top: 96`, 760px wide, `gap: 8`. Pin every line's
+  `lineHeight`: calls 1.1, parameter notes 1.15 with `whiteSpace: 'nowrap'`, and 1.15 on the
+  `effects={[` / `]}` lines. This is so a theme's typeface cannot change the column: unpinned,
+  JetBrains Mono's taller line box pushes `]}` off the frame, and a monospace text face wraps the
+  notes until the active stage falls off the bottom. Each stage: its call at 34px/700 in a monospace
+  stack, in `#eef1f7` (the theme's `body`), the parameters under it at 28px/500 `#8d93a5`.
+  Not-yet-applied stages at `opacity: 0.3`; the stage that just arrived in `#ff5c39`, nudged 10px → 0
+  over 8 frames — enough to catch the eye, small enough that ten of them do not read as a bouncing
+  list.
 - The list is wrapped in literal `effects={[` and `]}` lines at 28px/800 `letter-spacing: 0.2em` in
   `#8d93a5`, so the thing on screen is legibly the array.
-- A **left-facing** gradient behind the list, **1100px** wide and holding its alpha most of the way
-  across — `rgba(4,5,10,0.95) 0%, 0.9 50%, 0.55 78%, transparent 100%`. The list box starts 784px in
+- A **left-facing** gradient behind the list, **1160px** wide and holding its alpha most of the way
+  across — `rgba(4,5,10,0.95) 0%, 0.9 50%, 0.55 78%, transparent 100%`. The list box starts 844px in
   from the right, so a gradient that has faded by 44% leaves the parameter lines at about 13% cover and
   they vanish wherever they cross a bright part of the shot. A full-frame dim is not the alternative:
   that would change the grade you came here to judge.

@@ -15,12 +15,20 @@ import {AbsoluteFill, interpolate, random, useCurrentFrame, useVideoConfig} from
  * this file runnable on its own.
  */
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly bg: string;
+  readonly accentOnPaper: string;
+  readonly series: readonly string[];
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   bg: '#0a0b10',
+  accentOnPaper: '#c2410c',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  radius: 18,
 };
 
 type Props = {
@@ -39,7 +47,9 @@ const SHAPES = ['circle', 'square', 'triangle', 'ring', 'cross'] as const;
 export const FloatingShapes: React.FC<Props> = ({
   theme = THEME,
   count = 46,
-  colors = ['#ff5c39', '#4cc9f0', '#ffd166', '#c6ff3d', '#c77dff', '#c2410c'],
+  // Indexed out of the theme's ordered palette rather than picked by eye — the
+  // confetti IS the content, so literals here leave the effect unthemed.
+  colors = [theme.series[0], theme.series[1], theme.series[3], theme.series[2], theme.series[4], theme.accentOnPaper],
   backgroundColor = theme.bg,
   speed = 0.5,
   maxSize = 130,
@@ -54,8 +64,12 @@ export const FloatingShapes: React.FC<Props> = ({
       style={{
         backgroundColor,
         overflow: 'hidden',
+        // A glow rising from below. The dark scrim inverts on a light scheme:
+        // rgba(0,0,0,0.42) over paper is a bruise, not a backdrop.
         backgroundImage:
-          'radial-gradient(ellipse at 50% 120%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 62%)',
+          theme.scheme === 'light'
+            ? 'radial-gradient(ellipse at 50% 120%, rgba(255,255,255,0.55) 0%, rgba(20,18,14,0.06) 62%)'
+            : 'radial-gradient(ellipse at 50% 120%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 62%)',
       }}
     >
       {new Array(count).fill(0).map((_, i) => {
@@ -94,7 +108,12 @@ export const FloatingShapes: React.FC<Props> = ({
           return <div key={i} style={{...base, borderRadius: '50%', backgroundColor: color}} />;
         }
         if (shape === 'square') {
-          return <div key={i} style={{...base, borderRadius: size * 0.22, backgroundColor: color}} />;
+          return (
+            <div
+              key={i}
+              style={{...base, borderRadius: size * 0.22 * (theme.radius / 18), backgroundColor: color}}
+            />
+          );
         }
         if (shape === 'ring') {
           return (
@@ -111,8 +130,8 @@ export const FloatingShapes: React.FC<Props> = ({
         if (shape === 'cross') {
           return (
             <div key={i} style={base}>
-              <div style={{position: 'absolute', left: '42%', top: 0, width: '16%', height: '100%', borderRadius: size * 0.06, backgroundColor: color}} />
-              <div style={{position: 'absolute', top: '42%', left: 0, height: '16%', width: '100%', borderRadius: size * 0.06, backgroundColor: color}} />
+              <div style={{position: 'absolute', left: '42%', top: 0, width: '16%', height: '100%', borderRadius: size * 0.06 * (theme.radius / 18), backgroundColor: color}} />
+              <div style={{position: 'absolute', top: '42%', left: 0, height: '16%', width: '100%', borderRadius: size * 0.06 * (theme.radius / 18), backgroundColor: color}} />
             </div>
           );
         }

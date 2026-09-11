@@ -185,7 +185,8 @@ file you can inspect and diff.
 1. **Transcribe.** `scripts/fetch-footage.sh --transcribe` posts the audio to
    `api.deepgram.com/v1/listen?model=nova-3&…&utterances=true&paragraphs=true&filler_words=true`.
    `filler_words=true` is load-bearing: without it Deepgram drops "um"/"uh" from the transcript and
-   there is nothing to cut on. Add `diarize=true` for more than one speaker.
+   there is nothing to cut on. Add `diarize_model=latest` for more than one speaker — `diarize=true`
+   is deprecated and routes to the v1 diarizer, which merges voices; sending both is an HTTP 400.
 2. **Convert once, at the boundary.** Deepgram times are **seconds** (floats).
    `@remotion/captions`' `Caption` is `{text, startMs, endMs, timestampMs, confidence}` —
    **milliseconds**. Convert in one adapter and never again.
@@ -231,7 +232,8 @@ for fast dialogue, 24–45 f interview→b-roll, 30–60 f for a cinematic scene
 (`Math.sqrt`) crossfades and never linear. B-roll holds — illustrative 45–75 f, establishing 90–150 f,
 reaction 20–36 f, insert 36–60 f, floor 18 f. Ducking — dialogue −12…−6 dBFS, bed −18…−24, duck 9–12 dB,
 look-ahead 250 ms–1 s, only un-duck if the gap exceeds 1.2 s, interpolate in the dB domain and not in
-linear gain, master to −14 LUFS / −1 dBTP. SFX — the transient lands 1–3 frames *before* the visual
+linear gain, master by destination — −16 LUFS / −1.5 dBTP / LRA 11 for social and podcast, −14 LUFS /
+−1 dBTP for YouTube long-form — with a two-pass loudnorm run once, last. SFX — the transient lands 1–3 frames *before* the visual
 event; a whoosh starts 10 f before the cut, a riser *ends* on the cut, an impact lands 1 f before, a pop
 1 f before the scale starts, and never more than 3 SFX in 15 frames. Text over footage — contrast ≥4.5:1
 against the **worst** pixel across the shot, not the average, and prefer a gradient scrim over a blur
@@ -261,7 +263,7 @@ Four things to know before you copy one of these effects:
   magnifies the sketchiness along with everything else. `defaults { node { roughness: 0.35 } edge {
   roughness: 0.35 } }` is the fix that needs no upstream change.
 
-Everything above was verified against edododraw **0.15.0**, which `package.json` pins as `^0.15.0`.
+Everything above was verified against edododraw **0.16.1**, which `package.json` pins as `^0.16.1`.
 
 The first of those fixes is worth reading even if you never touch edododraw, because the failure had no
 symptom. The package populates its visualization registry by **import side effect**, and its
@@ -293,8 +295,10 @@ await renderStill({composition, serveUrl, output, frame, inputProps: {theme: THE
 Remotion resolves a composition's props when it selects it, and passing them
 only to the renderer silently renders the defaults.
 
-The four are `house` (the default look), `broadsheet` (paper ground, serif
-display, ruler-straight), `console` (mono, terminal green) and `studio`. To put
+The five are `house` (the default look), `broadsheet` (paper ground, serif
+display, ruler-straight), `console` (mono, terminal green), `studio`, and
+`edodo` — the EDodo brand the sibling video studio ships in: white canvas, ink
+text, teal as the one accent, purple as its sparse partner, Inter only. To put
 the whole library in one of them at once, without touching a call site:
 
 ```bash
@@ -527,7 +531,9 @@ The registry, the Studio, the gallery grid and the prompt files all follow autom
 - `remotion.config.ts` sets `Config.setChromiumOpenGlRenderer('angle')`, which `@remotion/effects`
   needs. Without it, WebGL effects render black — with no error.
 - Several effects take a `transparent` prop so they can be rendered as alpha overlays
-  (`--codec=vp8`, or `--codec=prores --prores-profile=4444`) and composited over real footage.
+  (`--codec=prores --prores-profile=4444`) and composited over real footage. ProRes 4444 is the only
+  alpha that survives being re-imported into Remotion or composited by ffmpeg — VP8/VP9 WebM alpha
+  comes back as an opaque black box; keep `--codec=vp8` for web `<video>` playback only.
 
 ## Credits
 

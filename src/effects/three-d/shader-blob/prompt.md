@@ -104,18 +104,22 @@ fresnel rim replaces them. `rise` interpolates `0.15 → 1` over frames 0–44 o
 `Easing.bezier(0.16, 1, 0.3, 1)`.
 
 **The scene**
-- 1920×1080, 30fps, 180 frames. Background `#050410`, with a
+- 1920×1080, 30fps, 180 frames. Background `backgroundColor` (`theme.bgDeep`, `#04050a`), with a
   `radial-gradient(ellipse at 50% 48%, <colorB>30 0%, transparent 60%)` behind the canvas.
 - `<ThreeCanvas>` needs explicit `width`/`height` from `useVideoConfig()`.
   Camera `{position: [0, 0, 5.5], fov: 46}`.
 
 **The overlay**
-Bottom-centred, `pointerEvents: 'none'`: Sora 104px weight 700, `letter-spacing: 0.28em` with a
-matching negative `margin-right`, `textShadow: '0 0 70px <rimColor>77'`; monospace subtitle below.
+Bottom-centred, `pointerEvents: 'none'`: `fontFamily` (default `theme.display`, whose inline value
+is this file's Sora) 104px weight 700, colour `theme.ink`, `letter-spacing: 0.28em` with a
+matching negative `margin-right`, `textShadow: '0 0 70px <rimColor>77'`; subtitle below in
+`theme.mono`, colour `theme.muted`.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `ShaderBlob`.
-- Props: `title`, `subtitle`, `amplitude` (0.3), `detail` (2.35), `segments` (40), `colorA`
-  (`#1b0b4d`), `colorB` (`#8b4dff`), `rimColor` (`#57f0ff`), `backgroundColor`.
+- Props: `theme` (destructured FIRST), `fontFamily` (`theme.display`), `title`, `subtitle`,
+  `amplitude` (0.3), `detail` (2.35), `segments` (40), `colorA` (`theme.bg`, house `#0a0b10`),
+  `colorB` (`theme.series[4]`, house `#c77dff`), `rimColor` (`theme.pair`, house `#4cc9f0`),
+  `backgroundColor` (`theme.bgDeep`, house `#04050a`).
 - Load Sora via `@remotion/google-fonts/Sora`.
 - Set `Config.setChromiumOpenGlRenderer('angle')` in `remotion.config.ts`, or pass `--gl=angle`.

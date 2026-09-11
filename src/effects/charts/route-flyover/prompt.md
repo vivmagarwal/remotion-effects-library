@@ -49,16 +49,18 @@ element. Anything inside it gets scaled and dragged along with the map, and a sw
 fastest way to make a tracking shot look broken.
 
 **The look**
-- 1920×1080, 30fps, 200 frames. Sea `#0b0f16`, land `#1d2430`, route `#ff5c39`. SVG viewBox
+- 1920×1080, 30fps, 200 frames. Sea `theme.bg`, land `theme.paperMuted`, route `theme.accent`. SVG viewBox
   `0 0 1600 900` with `preserveAspectRatio="xMidYMid slice"`.
 - Two stylised landmasses as bezier paths, plus ~26 near-invisible contour lines (`opacity: 0.035`,
   seeded jitter via `random()` from `remotion`). **The texture matters**: on a flat fill, a camera push
   is invisible — there is nothing for the eye to track against.
-- Draw the route **twice**: the full path at `opacity: 0.09` underneath, then the lit portion over it
-  with `evolvePath` and `filter: drop-shadow(0 0 14px #ff5c3988)`. Seeing the road ahead is what makes
+- Draw the route **twice**: the full path at `opacity: 0.09` and `theme.stroke * 4 / 3` underneath,
+  then the lit portion over it at `theme.stroke * 2` with `evolvePath` and
+  `filter: drop-shadow(0 0 14px ${routeColor}88)`. Seeing the road ahead is what makes
   it a route rather than a line growing.
-- Stops: a dot plus a label that lights from grey to white as `progress` passes its `at` value. Ring
-  each dot with a 3px stroke in the **sea colour** so it punches out of the route line.
+- Stops: a dot (unlit `theme.paperMuted`, lit `routeColor`) plus a label that lights from
+  `theme.muted` to `theme.ink` as `progress` passes its `at` value. Ring each dot with a
+  `theme.stroke` stroke in the **sea colour** so it punches out of the route line.
 - Marker: a triangle at the origin inside a `<g transform={\`translate(x y) rotate(heading)\`}>`, with a
   soft halo circle behind it.
 

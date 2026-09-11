@@ -56,8 +56,11 @@ Remotion drives the progress, including when the transition is retimed by a diff
 **The composition**
 - 1920×1080, 30fps. Three cards of 60 / 60 / 70 frames, joined by two 26-frame
   `linearTiming` transitions → `190 - 52 = ` **138 frames**.
-- Cards: `#0f1020` on `#f0f2ff`, `#ff5c39` on `#1a0703`, `#0aa06e` on `#02180f`. Sora at 132px weight
-  800, letter-spacing `-0.04em`, `maxWidth: 1500`, with a monospace subtitle at 30px naming the API being shown.
+- Shots are footage under `linear-gradient(to top, rgba(6,7,14,0.86) 0%, rgba(6,7,14,0.4) 36%,
+  rgba(6,7,14,0) 64%)`; a shot without `src` draws on `theme.bg` (`#0a0b10`); titles in `#f6f5f2`.
+- Title in `theme.display` (Sora by default) at 132px weight 800, letter-spacing `-0.04em`,
+  `maxWidth: 1500`, with a monospace subtitle at 30px in `theme.mono`, coloured `theme.series[2]`
+  (`#c6ff3d`), naming the API being shown.
 - First transition from `(22%, 30%)` with a `softness` blur that resolves as it opens; second from
   `(82%, 74%)` with no blur, so the two reads differently.
 
@@ -65,6 +68,11 @@ Remotion drives the progress, including when the transition is retimed by a diff
 - One self-contained `.tsx` file exporting both `CustomCircleReveal` and the reusable `circleReveal`
   factory.
 - Props on the presentation: `originX`, `originY`, `softness`.
+- Props on the composition: `theme` (first, so the rest default off it), `shots`, `origins`,
+  `softness`, `transitionFrames`, `holdFrames`, `fontFamily`, `monoFamily`, `accentColor`,
+  `cardColor`. A shot's own `backgroundColor`/`color`/`accentColor` still wins over the theme, and a
+  card's ground must stay **opaque** — the exiting scene sits under the entering one for the whole
+  reveal.
 - Load Sora via `@remotion/google-fonts/Sora`.
 - Everything the built-in presentations do — `fade`, `slide`, `wipe`, `clockWipe`, `iris`, `flip` — is
   the same shape. Once you can write one, any CSS you can animate becomes a transition.

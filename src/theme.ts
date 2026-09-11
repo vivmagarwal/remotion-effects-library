@@ -123,6 +123,15 @@ export type Theme = {
    * chart series, samplers, legends. Index into it; do not pick from it by eye.
    */
   readonly series: readonly string[];
+  /**
+   * The same job as `series`, for marks that sit ON `paper` — what
+   * `accentOnPaper` is to `accent`. A palette built to glow on a dark ground
+   * does not survive the move: the house lime and amber are near-invisible as a
+   * stroke or a label on paper. Hand-drawn diagrams colour every item from this.
+   * Every entry holds 4.5:1 on its theme's `paper`, so it can letter a label,
+   * not just outline a box.
+   */
+  readonly paperSeries: readonly string[];
 
   /* ── type ───────────────────────────────────────────────────────────── */
   /** CSS family for display type — titles, slams, lock-ups. */
@@ -175,6 +184,7 @@ export const HOUSE: Theme = {
   accentOnPaper: '#c2410c',
   pair: '#4cc9f0',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  paperSeries: ['#2f5eb8', '#b1572a', '#2e7d63', '#7a4fb5', '#8f6822', '#1e7991', '#b0405c', '#5c7a2e'],
 
   display: archivo,
   text: inter,
@@ -223,6 +233,7 @@ export const THEMES: Readonly<Record<string, Theme>> = {
     accentOnPaper: '#9a3412',
     pair: '#1d4ed8',
     series: ['#c2410c', '#1d4ed8', '#047857', '#a16207', '#7c3aed', '#4a4e5a'],
+    paperSeries: ['#c2410c', '#1d4ed8', '#047857', '#a16207', '#7c3aed', '#0e7490', '#be185d', '#4a4e5a'],
     display: playfair,
     text: inter,
     radius: 4,
@@ -240,6 +251,7 @@ export const THEMES: Readonly<Record<string, Theme>> = {
     accentOnPaper: '#3f6212',
     pair: '#4cc9f0',
     series: ['#c6ff3d', '#4cc9f0', '#ff5c39', '#c77dff', '#ffd166', '#8d93a5'],
+    paperSeries: ['#3f6212', '#0e7490', '#c2410c', '#6d28d9', '#a16207', '#475569', '#be185d', '#1d4ed8'],
     display: jetbrains,
     text: jetbrains,
     radius: 2,
@@ -258,10 +270,44 @@ export const THEMES: Readonly<Record<string, Theme>> = {
     accentOnPaper: '#6d28d9',
     pair: '#ffd166',
     series: ['#c77dff', '#ffd166', '#4cc9f0', '#ff5c39', '#c6ff3d', '#8d93a5'],
+    paperSeries: ['#6d28d9', '#a16207', '#0e7490', '#c2410c', '#3f6212', '#57534e', '#be185d', '#1d4ed8'],
     display: sora,
     text: sora,
     radius: 28,
     roughness: 0.3,
+  },
+
+  /**
+   * EDodo: the brand the sibling studio ships every video in — a white canvas,
+   * ink text, teal as the ONE accent and purple as a sparse partner, Inter only
+   * (video_studio/brand/edodo/BRAND.md). It was the one brand that whole body of
+   * work was made in, and the only one the library could not wear.
+   *
+   * `accent` is the brand teal for fills and marks; its text-bearing twin is
+   * the deep teal, because #0d9488 holds only 3.7:1 on white.
+   */
+  edodo: {
+    ...HOUSE,
+    scheme: 'light',
+    bg: '#ffffff',
+    bgDeep: '#f3f4f6',
+    surface: '#f9fafb',
+    paper: '#ffffff',
+    paperInk: '#111827',
+    paperMuted: '#4b5563',
+    ink: '#111827',
+    body: '#111827',
+    muted: '#6b7280',
+    accent: '#0d9488',
+    accentInk: '#ffffff',
+    accentOnPaper: '#0f766e',
+    pair: '#8b5cf6',
+    series: ['#0d9488', '#8b5cf6', '#f59e0b', '#ef4444', '#0ea5e9', '#6b7280'],
+    paperSeries: ['#0f766e', '#7c3aed', '#b45309', '#dc2626', '#0369a1', '#15803d', '#be185d', '#4b5563'],
+    display: inter,
+    text: inter,
+    radius: 18,
+    roughness: 0.35,
   },
 };
 

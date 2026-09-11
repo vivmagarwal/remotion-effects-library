@@ -2,16 +2,19 @@ Build a Remotion composition called **BrowserWindowScroll**: a product landing p
 browser chrome, tilted in 3D.
 
 **The look**
-- 1920×1080, 30fps, 180 frames. Background `#0d0f16` with
-  `radial-gradient(ellipse at 50% 30%, #ff5c391c 0%, transparent 62%)`.
+- 1920×1080, 30fps, 180 frames. Background `theme.bg` (`#0a0b10`) with
+  `radial-gradient(ellipse at 50% 30%, ${accentColor}1c 0%, transparent 62%)`.
 - A 1420px-wide window, radius 18, `overflow: hidden`, white, with
   `boxShadow: '0 60px 140px rgba(0,0,0,0.6)'`.
 - Chrome bar: `#eceef3` with a `#dcdfe8` bottom border, three 16px traffic lights, and a white pill
   URL field at 24px.
 - Viewport 800px tall containing four sections: a hero (84px weight 800 headline, 34px sub, an accent
-  CTA button), a feature-card row on `#f4f5f8` (three white cards, radius 18, `1px solid #e3e5ec`,
-  each with a 56px coloured tile), a dark stat band (`#12141c`, 132px accent number), and a monospace
-  command CTA.
+  CTA button whose 30px bold label is white while white still holds 3:1 on `accentColor` (relative
+  luminance ≤ 0.3, as the house `#ff5c39` does) and `theme.accentInk` (`#04050a`) above that — a light
+  accent such as console's lime `#c6ff3d` makes white type vanish), a feature-card row on `#f4f5f8`
+  (three white cards, radius 18, `1px solid #e3e5ec`, each with a 56px tile in `theme.series[1]`,
+  `theme.series[2]` and `accentColor` (`#4cc9f0`, `#c6ff3d`, `#ff5c39`)), a dark stat band (`#12141c`,
+  132px accent number), and a monospace command CTA in `theme.series[2]`.
 - **Give every section an exact height** — `SECTION_H = pageHeight / sections.length` (600px for a
   2400px page) with its content flex-centred inside. `pageHeight` has to be the page's *real* height,
   because the scroll runs to `pageHeight - VIEW_H`. Lay the sections out with padding and let them size

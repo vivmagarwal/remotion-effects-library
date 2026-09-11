@@ -31,7 +31,10 @@ type Theme = {
   readonly mono: string;
   readonly muted: string;
   readonly text: string;
+  readonly bg: string;
   readonly accent: string;
+  readonly accentInk: string;
+  readonly series: readonly string[];
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -39,7 +42,18 @@ const THEME: Theme = {
   mono: MONO,
   muted: '#8d93a5',
   text: fontFamily,
+  bg: '#0a0b10',
   accent: '#ff5c39',
+  accentInk: '#04050a',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+};
+
+/** WCAG relative luminance of a #rrggbb colour — the house `isDark` arithmetic. */
+const luminance = (hex: string) => {
+  const h = hex.replace('#', '');
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
+  const lin = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
 };
 
 type Props = {
@@ -66,7 +80,7 @@ export const BrowserWindowScroll: React.FC<Props> = ({
     {kind: 'cta', title: 'npx create-video@latest'},
   ],
   accentColor = theme.accent,
-  backgroundColor = '#0d0f16',
+  backgroundColor = theme.bg,
   pageHeight = 2400,
 }) => {
   const frame = useCurrentFrame();
@@ -106,7 +120,8 @@ export const BrowserWindowScroll: React.FC<Props> = ({
               padding: '20px 40px',
               borderRadius: 14,
               backgroundColor: accentColor,
-              color: '#fff',
+              // White while white still holds 3:1 on the accent — the AA floor for 30px bold.
+              color: luminance(accentColor) > 0.3 ? theme.accentInk : '#fff',
               fontSize: 30,
               fontWeight: 700,
             }}
@@ -137,7 +152,7 @@ export const BrowserWindowScroll: React.FC<Props> = ({
                     width: 56,
                     height: 56,
                     borderRadius: 14,
-                    backgroundColor: ['#4cc9f0', '#c6ff3d', accentColor][i],
+                    backgroundColor: [theme.series[1], theme.series[2], accentColor][i],
                     marginBottom: 22,
                   }}
                 />
@@ -171,7 +186,7 @@ export const BrowserWindowScroll: React.FC<Props> = ({
             padding: '26px 44px',
             borderRadius: 14,
             backgroundColor: '#12141c',
-            color: '#c6ff3d',
+            color: theme.series[2],
           }}
         >
           {s.title}

@@ -27,6 +27,7 @@ type Theme = {
   readonly accent: string;
   readonly bg: string;
   readonly ink: string;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -37,6 +38,7 @@ const THEME: Theme = {
   accent: '#ff5c39',
   bg: '#0a0b10',
   ink: '#ffffff',
+  stroke: 3,
 };
 
 type Props = {
@@ -204,7 +206,7 @@ export const QuoteSlam: React.FC<Props> = ({
           >
             {/* flexShrink: 0 — an animated width in a flex row is compressible,
                 and a longer author name would squeeze it. */}
-            <div style={{width: ruleWidth, height: 3, flexShrink: 0, backgroundColor: accentColor}} />
+            <div style={{width: ruleWidth, height: theme.stroke, flexShrink: 0, backgroundColor: accentColor}} />
             <div>
               <div style={{fontSize: 34, fontWeight: 700, color: textColor}}>{author}</div>
               <div style={{fontSize: 26, fontWeight: 500, color: theme.muted, marginTop: 4}}>{role}</div>

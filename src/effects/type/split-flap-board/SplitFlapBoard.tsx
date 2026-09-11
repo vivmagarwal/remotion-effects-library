@@ -22,18 +22,22 @@ const ALPHABET = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:-/';
 type Theme = {
   readonly paperMuted: string;
   readonly muted: string;
+  readonly body: string;
   readonly mono: string;
   readonly bg: string;
   readonly series: readonly string[];
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
   paperMuted: '#4a4e5a',
   muted: '#8d93a5',
+  body: '#eef1f7',
   mono: fontFamily,
   bg: '#0a0b10',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  radius: 18,
 };
 
 type Props = {
@@ -52,6 +56,10 @@ type Props = {
   readonly accentColor?: string;
 };
 
+// Everything the tile paints with arrives as a prop. A tile that reached for the
+// module-level `loadFont` result, or inlined its own radius and glyph colour,
+// would be the one part of the board no theme could touch — and the tiles ARE
+// the board.
 const Tile: React.FC<{
   char: string;
   delay: number;
@@ -59,7 +67,10 @@ const Tile: React.FC<{
   flipFrames: number;
   tileColor: string;
   accentColor: string;
-}> = ({char, delay, frame, flipFrames, tileColor, accentColor}) => {
+  color: string;
+  radius: number;
+  fontFamily: string;
+}> = ({char, delay, frame, flipFrames, tileColor, accentColor, color, radius, fontFamily}) => {
   const target = Math.max(0, ALPHABET.indexOf(char.toUpperCase()));
   const elapsed = frame - delay;
   // Flip through the alphabet from index 0 up to the target, then hold.
@@ -80,9 +91,9 @@ const Tile: React.FC<{
         width: 88,
         height: 118,
         marginRight: 8,
-        borderRadius: 7,
+        borderRadius: radius,
         backgroundColor: tileColor,
-        color: settled ? accentColor : '#eef1f7',
+        color: settled ? accentColor : color,
         fontSize: 70,
         fontFamily,
         // The hairline across the middle is what makes it read as a flap.
@@ -157,6 +168,10 @@ export const SplitFlapBoard: React.FC<Props> = ({
               flipFrames={flipFrames}
               tileColor={tileColor}
               accentColor={accentColor}
+              color={theme.body}
+              // 7 at the house radius of 18.
+              radius={theme.radius * (7 / 18)}
+              fontFamily={fontFamily}
             />
           ))}
         </div>

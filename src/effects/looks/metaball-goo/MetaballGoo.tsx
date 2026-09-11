@@ -1,3 +1,4 @@
+import {useId} from 'react';
 import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
@@ -29,6 +30,7 @@ type Theme = {
   readonly mono: string;
   readonly ink: string;
   readonly text: string;
+  readonly display: string;
   readonly accent: string;
   readonly bg: string;
   readonly series: readonly string[];
@@ -39,6 +41,7 @@ const THEME: Theme = {
   mono: MONO,
   ink: '#ffffff',
   text: fontFamily,
+  display: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
@@ -47,6 +50,8 @@ const THEME: Theme = {
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to this file's Inter, or the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly title?: string;
@@ -67,6 +72,7 @@ type Props = {
 export const MetaballGoo: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   title = 'Metaballs',
   caption = 'feGaussianBlur + feColorMatrix · no WebGL',
   count = 7,
@@ -77,6 +83,11 @@ export const MetaballGoo: React.FC<Props> = ({
   accentColor = theme.accent,
   backgroundColor = theme.bg,
 }) => {
+  // One SVG id per INSTANCE. A literal id is global to the page: with two copies
+  // mounted (a gallery card and its detail player), every url(#…) resolves to
+  // whichever copy came first in the DOM, and its clip or mask follows the other
+  // copy's frame.
+  const svgId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();
 
@@ -92,7 +103,7 @@ export const MetaballGoo: React.FC<Props> = ({
 
       <svg width={width} height={height} style={{position: 'absolute', inset: 0}}>
         <defs>
-          <filter id="goo" x="-30%" y="-30%" width="160%" height="160%">
+          <filter id={`goo-${svgId}`} x="-30%" y="-30%" width="160%" height="160%">
             {/* 1. Bleed neighbouring shapes into each other. */}
             <feGaussianBlur in="SourceGraphic" stdDeviation={blur} result="blurred" />
             {/* 2. Snap the alpha back to a hard edge. Only the ALPHA row is
@@ -111,7 +122,7 @@ export const MetaballGoo: React.FC<Props> = ({
           </filter>
         </defs>
 
-        <g filter="url(#goo)">
+        <g filter={`url(#goo-${svgId})`}>
           {new Array(count).fill(0).map((_, i) => {
             // Each blob gets its own orbit radius, speed and phase, so they
             // drift apart and re-merge instead of moving as one rigid ring.
@@ -144,6 +155,7 @@ export const MetaballGoo: React.FC<Props> = ({
         <Interactive.Div
           name="Title"
           style={{
+            fontFamily: displayFamily,
             fontSize: 62,
             fontWeight: 800,
             letterSpacing: '-0.025em',

@@ -26,6 +26,7 @@ type Theme = {
   readonly accent: string;
   readonly bg: string;
   readonly ink: string;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -37,6 +38,7 @@ const THEME: Theme = {
   accent: '#ff5c39',
   bg: '#0a0b10',
   ink: '#ffffff',
+  stroke: 3,
 };
 
 type Props = {
@@ -121,7 +123,7 @@ export const StatSlam: React.FC<Props> = ({
             width: 620,
             height: 620,
             borderRadius: '50%',
-            border: `4px solid ${accentColor}`,
+            border: `${(theme.stroke * 4) / 3}px solid ${accentColor}`,
             scale: ringScale,
             opacity: interpolate(since, [0, 26], [0.75, 0], {
               extrapolateLeft: 'clamp',
@@ -139,6 +141,9 @@ export const StatSlam: React.FC<Props> = ({
             fontSize: 430,
             lineHeight: 0.86,
             letterSpacing: '-0.03em',
+            // A serif theme's default old-style figures otherwise drop the 7 and
+            // the 3 straight through the accent rule below.
+            fontVariantNumeric: 'lining-nums',
             color,
             scale: slam * recoil,
             opacity: interpolate(frame, [0, 4], [0, 1], {
@@ -174,6 +179,9 @@ export const StatSlam: React.FC<Props> = ({
             marginTop: 30,
             maxWidth: 1250,
             textAlign: 'center',
+            // A wider face fills the max-width and leaves one orphan word;
+            // balancing evens the two lines instead.
+            textWrap: 'balance',
             translate: interpolate(since, [6, 24], ['0px 26px', '0px 0px'], {
               extrapolateLeft: 'clamp',
               extrapolateRight: 'clamp',

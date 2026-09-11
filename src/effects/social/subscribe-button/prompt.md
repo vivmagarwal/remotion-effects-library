@@ -2,13 +2,15 @@ Build a Remotion composition called **SubscribeButton**: a channel card where a 
 presses Subscribe, and the button confirms.
 
 **The look**
-- 1920×1080, 30fps, 120 frames. Light page `#f3f4f7`, card centred.
-- White card, radius 22, padding `26px 30px`, `boxShadow: 0 24px 70px rgba(15,20,40,0.18)`, laid out as
-  a flex row with 26px gaps: a 92px circular avatar (gradient `linear-gradient(140deg, #2f6bff, #7c3aed)`
-  with the channel initial), the channel name at 38px weight 700 with a subscriber count at 26px in
-  `#767c8c`, then the button.
-- The button is a pill (radius 99, padding `20px 40px`) — blue `#2f6bff` with white text before the
-  click, grey `#e8eaef` with `#5c6373` text after, plus a ✓ that pops in.
+- 1920×1080, 30fps, 120 frames. Light page `theme.paper` (`#f6f5f2`), card centred.
+- White card, radius `theme.radius * 22 / 18` (22 at house), padding `26px 30px`,
+  `boxShadow: 0 24px 70px rgba(15,20,40,0.18)`, laid out as a flex row with 26px gaps: a 92px circular
+  avatar (``linear-gradient(140deg, ${accentColor}, #c77dff)`` with the channel initial), the channel
+  name at 38px weight 700 in `theme.paperInk` (`#1d1b17`) with a subscriber count at 26px in
+  `theme.paperMuted` (`#4a4e5a`), then the button.
+- The button is a pill (radius 99, padding `20px 40px`) — `accentColor` (`theme.pair`, `#4cc9f0`) with
+  white text before the click, grey `#eef1f7` with `theme.paperMuted` (`#4a4e5a`) text after, plus a ✓
+  that pops in.
 - The card springs in: `spring({frame, fps, config: {damping: 14, stiffness: 110}})`, applied as
   `scale: 0.86 + cardIn * 0.14`.
 
@@ -21,7 +23,8 @@ presses Subscribe, and the button confirms.
   clipped to the pill — that clip is what makes it read as a material ripple rather than a growing
   blob.
 - The label swaps to `Subscribed` and the pill changes colour.
-- Twelve confetti chips (11px, radius 3, alternating `#ff5c39`, `#ffd166`, `#2f6bff`, `#12c48b`)
+- Twelve confetti chips (11px, radius 3, alternating `theme.series[0]`, `theme.series[3]`,
+  `accentColor`, `theme.series[2]` — house `#ff5c39`, `#ffd166`, `#4cc9f0`, `#c6ff3d`)
   radiate from the button: `angle = (i / 12) * Math.PI * 2`, distance 0→190px over 22 frames on
   `Easing.bezier(0.1, 0.9, 0.2, 1)`, applied as
   `translate: \`${Math.cos(angle) * dist}px ${Math.sin(angle) * dist}px\`` with a `rotate` that grows
@@ -42,6 +45,7 @@ a press *causing* a confirmation. Simultaneity is the whole trick.
 - Props: `channel`, `subscribers`, `label`, `subscribedLabel`, `accentColor`, `clickAt`, and
   `transparent` — when `transparent` is true the root `<AbsoluteFill>` background is `'transparent'`,
   so the composition can be rendered as an overlay to composite over footage:
-  `npx remotion render SubscribeButton --codec=vp8 --image-format=png` (WebM with alpha), or
-  `--codec=prores --prores-profile=4444`.
+  `npx remotion render SubscribeButton --codec=prores --prores-profile=4444 --image-format=png`.
+  ProRes 4444 survives an ffmpeg composite or a re-import into Remotion; VP8 WebM alpha
+  (`--codec=vp8`) comes back as a black box there, so keep it for web playback only.
 - Load Inter via `@remotion/google-fonts/Inter`.

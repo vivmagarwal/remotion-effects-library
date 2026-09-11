@@ -2,16 +2,19 @@ Build a Remotion composition called **BarChartRace**: horizontal bars that grow,
 and re-sort as a time series advances.
 
 **The look**
-- 1920×1080, 30fps, 200 frames. Background `#0c0d13`, padding `80px 96px`, Inter throughout.
-- A title at 52px weight 800. Five series, each with a label, a colour and six values —
-  Remotion `#4cc9f0`, After Effects `#f72585`, Blender `#ffd166`, Figma `#8ac926`, Canva `#a78bfa`.
+- 1920×1080, 30fps, 200 frames. Background `theme.bg`, padding `80px 96px`, Inter throughout.
+- A title at 52px weight 800 in `displayFamily` (default `theme.display`). Five series, each with a
+  label, a colour and six values — colours read from the theme, as the `series` default: Remotion
+  `theme.series[1]`, After Effects `theme.series[4]`, Blender `theme.series[3]`, Figma
+  `theme.series[2]`, Canva `theme.accentOnPaper`.
   Remotion starts last and finishes first; that overtake is the story of the shot.
-- Each row: a right-aligned 320px label at 36px weight 700, then a rounded bar (radius 10) in the
-  series colour with `boxShadow: 0 8px 30px COLOR33`, and the current value at 34px weight 800 in the
-  background colour, right-aligned inside the bar. Row pitch 118px, bar height 98px.
+- Each row: a right-aligned 320px label at 36px weight 700, then a rounded bar (radius
+  `theme.radius * 10 / 18` — 10 at the house radius) in the series colour with
+  `boxShadow: 0 8px 30px COLOR33`, and the current value at 34px weight 800 in `theme.accentInk`,
+  right-aligned inside the bar. Row pitch 118px, bar height 98px.
 - The period label (`Jan`, `Feb`, …) sits bottom-right at 150px weight 800 in `#ffffff0f` — behind
   everything, like a watermark.
-- A 5px progress rail along the bottom fills as the series advances.
+- A 5px progress rail (track `rgba(255,255,255,0.07)`) fills in `theme.pair` as the series advances.
 
 **The mechanics — two things make or break this**
 

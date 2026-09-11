@@ -12,5 +12,5 @@ export const meta: EffectMeta = {
   difficulty: 'advanced', checkFrame: 40, // 430, not 300: the thread is still filling at 300. The last frame before the
   // composition ends is the only one where the conversation is a conversation.
  posterFrame: 430,
-  ground: 'transparent', audience: ['youtuber', 'agency'],
+  ground: 'dark', audience: ['youtuber', 'agency'],
 };

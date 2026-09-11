@@ -95,10 +95,11 @@ const flash = interpolate(frame, [lastLanding + 1, lastLanding + 7, lastLanding 
 ```
 
 **The scene**
-- 1920×1080, 30fps, **150 frames**. Background `#0b0b10`, and inside the kicked wrapper a
-  `radial-gradient(ellipse at 50% 46%, <accentColor>1c 0%, transparent 64%)`.
-- Content vertically centred, `padding: '0 132px'`, `fontFamily` = Playfair Display.
-- An oversized quote mark (`&ldquo;`) in **Playfair Display**, absolutely at `left: 74, top: 118`,
+- 1920×1080, 30fps, **150 frames**. Background `backgroundColor` (`theme.bg`, `#0a0b10`), and inside
+  the kicked wrapper a `radial-gradient(ellipse at 50% 46%, <accentColor>1c 0%, transparent 64%)`.
+- Content vertically centred, `padding: '0 132px'`, `fontFamily: displayFamily` (`theme.display`;
+  Playfair Display is the inline value).
+- An oversized quote mark (`&ldquo;`) in `displayFamily`, absolutely at `left: 74, top: 118`,
   `fontSize: 300`, `lineHeight: 1`, weight 700, in `accentColor`, fading `0.08 → 0.22` over frames
   0–18. It goes **inside** the kicked wrapper — it is scene texture and should take the hit. It
   starts at 0.08 rather than 0 so frame 0 is not an empty frame.
@@ -113,10 +114,11 @@ text leaves an orange dash sitting next to a ghost:
 const ruleWidth = interpolate(frame, [lastLanding + 10, lastLanding + 30], [0, 148],
   {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.bezier(0.16, 1, 0.3, 1)});
 ```
-- the rule: `width: ruleWidth`, `height: 3`, `backgroundColor: accentColor`, and **`flexShrink: 0`**
-  — an animated width in a flex row is compressible, and a longer author name squeezes it
-- author: Inter 34px weight 700, `textColor`
-- role: Inter 26px weight 500, `#8b8b98`, `margin-top: 4`
+- the rule: `width: ruleWidth`, `height: theme.stroke` (3 at house), `backgroundColor: accentColor`,
+  and **`flexShrink: 0`** — an animated width in a flex row is compressible, and a longer author name
+  squeezes it
+- author: `textFamily` 34px weight 700, `textColor`
+- role: `textFamily` 26px weight 500, `theme.muted` (`#8d93a5`), `margin-top: 4`
 - the whole row (rule included) fades in over frames `lastLanding + 10 → lastLanding + 30`
 
 **Fonts**
@@ -133,4 +135,4 @@ const {fontFamily: sans}  = loadSans('normal',  {weights: ['500', '700'], subset
 - Props, with defaults: `quote`
   (`'We stopped\nrendering videos\nand started\nprogramming them.'`), `author` (`'Jonny Burger'`),
   `role` (`'Creator of Remotion'`), `lineStagger` (7), `startAt` (12), `accentColor` (`#ff5c39`),
-  `backgroundColor` (`#0b0b10`), `textColor` (`#f6f4ef`), `fontSize` (104).
+  `backgroundColor` (`theme.bg`, `#0a0b10`), `textColor` (`theme.ink`, `#ffffff`), `fontSize` (104).

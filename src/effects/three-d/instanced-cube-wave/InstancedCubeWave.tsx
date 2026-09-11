@@ -32,7 +32,7 @@ const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 type Theme = {
   readonly mono: string;
   readonly ink: string;
-  readonly text: string;
+  readonly display: string;
   readonly bg: string;
   readonly bgDeep: string;
   readonly pair: string;
@@ -42,14 +42,14 @@ type Theme = {
 const THEME: Theme = {
   mono: MONO,
   ink: '#ffffff',
-  text: fontFamily,
+  display: fontFamily,
   bg: '#0a0b10',
   bgDeep: '#04050a',
   pair: '#4cc9f0',
 };
 
 type Props = {
-  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  /** CSS family for the title. Defaults to this file's own loaded Sora, or the theme's display face. */
   readonly fontFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
@@ -139,7 +139,7 @@ const CubeField: React.FC<{
 
 export const InstancedCubeWave: React.FC<Props> = ({
   theme = THEME,
-  fontFamily = theme.text,
+  fontFamily = theme.display,
   title = 'FOUR THOUSAND',
   subtitle = 'one draw call · instancedMesh',
   grid = 64,

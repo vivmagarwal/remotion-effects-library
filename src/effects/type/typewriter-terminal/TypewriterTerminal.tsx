@@ -23,12 +23,16 @@ type Line = {readonly text: string; readonly prompt?: string; readonly color?: s
 type Theme = {
   readonly mono: string;
   readonly accent: string;
+  readonly bg: string;
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
   mono: fontFamily,
   accent: '#ff5c39',
+  bg: '#0a0b10',
+  radius: 18,
 };
 
 type Props = {
@@ -44,6 +48,8 @@ type Props = {
   readonly backgroundColor?: string;
   readonly color?: string;
   readonly accentColor?: string;
+  /** Corner radius of the window. */
+  readonly radius?: number;
 };
 
 export const TypewriterTerminal: React.FC<Props> = ({
@@ -57,9 +63,11 @@ export const TypewriterTerminal: React.FC<Props> = ({
   ],
   charsPerSecond = 26,
   blinkFrames = 15,
-  backgroundColor = '#0b0d12',
+  backgroundColor = theme.bg,
   color = '#f2f2f4',
   accentColor = theme.accent,
+  // 16 at the house radius of 18: hard corners under console, soft under studio.
+  radius = theme.radius * (16 / 18),
 }) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
@@ -88,7 +96,7 @@ export const TypewriterTerminal: React.FC<Props> = ({
         style={{
           backgroundColor: '#12141b',
           border: '1px solid #232733',
-          borderRadius: 16,
+          borderRadius: radius,
           overflow: 'hidden',
           boxShadow: '0 40px 90px rgba(0,0,0,0.55)',
           scale: interpolate(frame, [0, 18], [0.94, 1], {

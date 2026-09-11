@@ -50,10 +50,15 @@ A single flipped copy of the **face only** below the word: `transform: scaleY(-1
 reads as a second object.
 
 **The look**
-- 1920×1080, 30fps, 210 frames. Background `#0b0c12` with
-  `radial-gradient(ellipse at 50% 46%, #ff5c391f 0%, transparent 62%)`.
-- Anton at 300px. Face `#fdfbf6`, side `#ff5c39`, shaded side `#8f2a12`. `whiteSpace: 'nowrap'`.
-- A tracked monospace caption below, with a matching negative right margin so it stays centred.
+- 1920×1080, 30fps, 210 frames. Background `theme.bg` (house `#0a0b10`) with
+  `radial-gradient(ellipse at 50% 46%, ${accentColor}1f 0%, transparent 62%)` (`accentColor` =
+  `theme.accent`).
+- Anton at 300px, `fontWeight: 800` on the word and its reflection, with `fontSynthesis: 'none'` on the
+  scene. Anton ships 400 only, so it renders unchanged, and a theme's display face gets its heavy cut
+  instead of its regular one. Face `theme.paper` (house `#f6f5f2`), side `theme.accent` (house
+  `#ff5c39`), shaded side `theme.accentOnPaper` (house `#c2410c`). `whiteSpace: 'nowrap'`.
+- A tracked monospace caption below, in `theme.mono`, colour `theme.muted`, with a matching negative
+  right margin so it stays centred.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `ExtrudedText`.

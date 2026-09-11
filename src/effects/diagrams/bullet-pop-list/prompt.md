@@ -34,24 +34,30 @@ const p = Math.min(1, pop);
   instead of arriving with it.
 
 **The spine**
-A 3px vertical rule behind the markers at `left: 27`, whose height interpolates from 0 to
-`items.length * ROW_H - 80` across the whole stagger. It should only ever be as long as the items that
-have landed — a full-length spine drawn up front tells the viewer how many items are coming and kills
-the reveal.
+A `theme.stroke` px vertical rule behind the markers, centred on the marker at
+`left: 28.5 - theme.stroke / 2`, whose height interpolates from 0 to `items.length * ROW_H - 80` across
+the whole stagger. It should only ever be as long as the items that have landed — a full-length spine
+drawn up front tells the viewer how many items are coming and kills the reveal.
 
 **The look**
-- 1920×1080, 30fps, 165 frames. Background `#0f1117` with
-  `radial-gradient(ellipse at 26% 30%, #1b2130 0%, #0b0d13 66%)`. 150px side padding, vertically centred.
-- An accent kicker chip (26px weight 800, `letter-spacing: 0.22em`, dark text on `#ff5c39`, radius 7)
-  that slides in from the left, then a title at 92px weight 800 that rises.
-- Rows: a 58px marker then the item at 54px weight 700 and a note at 30px in `#8a8f9e`.
-- `marker` prop switches between `'dot'` (a circle), `'number'` (radius 14 with the index) and
-  `'arrow'` (radius 14 with `→`).
+- 1920×1080, 30fps, 165 frames. Background `theme.bg`. On a dark scheme overlay
+  `radial-gradient(ellipse at 26% 30%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 66%)`; on
+  `theme.scheme === "light"` use `rgba(255,255,255,0.5) 0%` → `rgba(0,0,0,0.05) 66%`, because a 42%
+  black vignette turns paper grey. 150px side padding, vertically centred.
+- An accent kicker chip (26px weight 800, `letter-spacing: 0.22em`, `theme.paperInk` text on
+  `accentColor`, radius `7 * theme.radius / 18`) that slides in from the left, then a title at 92px
+  weight 800 in `displayFamily` (defaults to `theme.display`) that rises.
+- The title and the item text are `paperColor`, which defaults to `theme.paper` on a dark scheme and
+  `theme.ink` on a light one — `paper` is a GROUND token, so under a light theme it *is* the ground and
+  white type would vanish into it.
+- Rows: a 58px marker then the item at 54px weight 700 and a note at 30px in `theme.muted`.
+- `marker` prop switches between `'dot'` (a circle), `'number'` (radius `14 * theme.radius / 18` with
+  the index) and `'arrow'` (the same radius with `→`).
 
 **Requirements**
 - One self-contained `.tsx` file exporting `BulletPopList`.
 - Props: `kicker`, `title`, `items` (array of `{text, note?}`), `stagger`, `startAt`, `travel`,
-  `accentColor`, `backgroundColor`, `paperColor`, `marker`.
+  `accentColor`, `backgroundColor`, `paperColor`, `displayFamily`, `marker`.
 - Clamp springs with `Math.min(1, pop)` anywhere you need a 0–1 factor; leave them unclamped where you
   want the overshoot.
 - Load Inter via `@remotion/google-fonts/Inter`.

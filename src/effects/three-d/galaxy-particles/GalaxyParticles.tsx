@@ -32,7 +32,7 @@ type Theme = {
   readonly mono: string;
   readonly body: string;
   readonly ink: string;
-  readonly text: string;
+  readonly display: string;
   readonly bgDeep: string;
   readonly pair: string;
   readonly series: readonly string[];
@@ -43,14 +43,14 @@ const THEME: Theme = {
   mono: MONO,
   body: '#eef1f7',
   ink: '#ffffff',
-  text: fontFamily,
+  display: fontFamily,
   bgDeep: '#04050a',
   pair: '#4cc9f0',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
 };
 
 type Props = {
-  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  /** CSS family for the title. Defaults to this file's own loaded Sora, or the theme's display face. */
   readonly fontFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
@@ -141,7 +141,7 @@ const Galaxy: React.FC<{
 
 export const GalaxyParticles: React.FC<Props> = ({
   theme = THEME,
-  fontFamily = theme.text,
+  fontFamily = theme.display,
   title = 'ANDROMEDA',
   subtitle = '30,000 points · one seeded buffer',
   count = 30000,

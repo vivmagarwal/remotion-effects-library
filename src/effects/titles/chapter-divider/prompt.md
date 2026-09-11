@@ -35,8 +35,8 @@ const HALF = height / 2;
 {/* bottom */} <AbsoluteFill style={{height: HALF, top: HALF, backgroundColor,
                                      translate: `0px ${ bandShift * HALF}px`}} />
 ```
-The scene's own background is a darker `#08080b`, so what you see between the parted bands during
-the entrance and exit is that darker ground.
+The scene's own background is `theme.bgDeep` (house `#04050a`), a step darker than the bands, so
+what you see between the parted bands during the entrance and exit is that darker ground.
 
 **Text: one interpolation, four stops**
 Rising in, holding, then dropping out is a single `interpolate` — no second "exit" value to keep in
@@ -55,9 +55,9 @@ The `delay * 0.4` on the way out makes the exit tighter than the entrance, which
 
 | element | position | type | reveal |
 |---|---|---|---|
-| `CHAPTER {number}` | `top: HALF - 232` | Archivo 30px/800, `letter-spacing: 0.42em` with a matching negative `margin-right`, `accentColor` | `reveal(0)`, `translate: 0px (1-r)*18` |
+| `CHAPTER {number}` | `top: HALF - 232` | Archivo 30px/800, `letter-spacing: 0.42em` with a matching negative `margin-right`, `font-variant-numeric: lining-nums`, `accentColor` | `reveal(0)`, `translate: 0px (1-r)*18` |
 | title | `top: HALF - 168`, full width | Archivo 96px/800, `letter-spacing: -0.03em`, `line-height: 1.06`, `textColor` | `reveal(6)`, `translate: 0px (1-r)*26` |
-| subtitle | `top: HALF + 44`, full width | Archivo 30px/400, `#9a9aa8` | `reveal(14)`, `translate: 0px (1-r)*22` |
+| subtitle | `top: HALF + 44`, full width | Archivo 30px/400, `theme.muted` (house `#8d93a5`) | `reveal(14)`, `translate: 0px (1-r)*22` |
 
 All three centred, inside an `<AbsoluteFill>` with `justify-content: center; align-items: center;
 text-align: center`.
@@ -72,21 +72,21 @@ const rule = interpolate(frame, [22, 52, exitAt - 4, exitAt + 12], [0, 1, 1, 0],
 <div style={{
   position: 'absolute',
   left: width / 2 - (width * 0.34 * rule) / 2,   // grows from the centre outward
-  top: HALF - 1.5,
+  top: HALF - theme.stroke / 2,
   width: width * 0.34 * rule,
-  height: 3,
+  height: theme.stroke,                          // 3 at house
   backgroundColor: accentColor,
 }} />
 ```
 
 **The scene**
-- 1920×1080, 30fps, **150 frames**. Scene background `#08080b`; the bands are `backgroundColor`
-  (`#101014`).
+- 1920×1080, 30fps, **150 frames**. Scene background `theme.bgDeep` (`#04050a`); the bands are
+  `backgroundColor` (`theme.bg`, `#0a0b10`).
 - Load Archivo: `loadFont('normal', {weights: ['400', '600', '800'], subsets: ['latin']})`.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `ChapterDivider`.
 - Props, with defaults: `number` (`'02'`), `title` (`'Timing & Easing'`), `subtitle`
   (`'springs, béziers, and when to use which'`), `exitAt` (108 — the frame the exit begins, so
-  everything before it is entrance and hold), `accentColor` (`#ffd166`), `backgroundColor`
-  (`#101014`), `textColor` (`#f4f4f7`).
+  everything before it is entrance and hold), `accentColor` (`theme.series[3]`, `#ffd166`),
+  `backgroundColor` (`theme.bg`, `#0a0b10`), `textColor` (`theme.ink`, `#ffffff`).

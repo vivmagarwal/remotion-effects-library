@@ -18,23 +18,35 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '600', '800'], subsets
  * this file runnable on its own.
  */
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly text: string;
+  readonly display: string;
   readonly bg: string;
   readonly body: string;
+  readonly muted: string;
   readonly series: readonly string[];
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   text: fontFamily,
+  display: fontFamily,
   bg: '#0a0b10',
   body: '#eef1f7',
+  muted: '#8d93a5',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to this file's own face, or the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly title?: string;
@@ -56,6 +68,7 @@ const CHECK_LEN = 24;
 export const ChecklistTicks: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   title = 'Before you hit render',
   items = [
     'Every animation reads useCurrentFrame()',
@@ -83,7 +96,12 @@ export const ChecklistTicks: React.FC<Props> = ({
       name="Scene"
       style={{
         backgroundColor,
-        backgroundImage: 'radial-gradient(ellipse at 30% 22%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 68%)',
+        // A 42% black vignette turns paper grey, so a light scheme gets a much
+        // lighter one rather than the dark ground's.
+        backgroundImage:
+          theme.scheme === 'light'
+            ? 'radial-gradient(ellipse at 30% 22%, rgba(255,255,255,0.5) 0%, rgba(0,0,0,0.05) 68%)'
+            : 'radial-gradient(ellipse at 30% 22%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 68%)',
         fontFamily,
         overflow: 'hidden',
       }}
@@ -94,6 +112,7 @@ export const ChecklistTicks: React.FC<Props> = ({
           position: 'absolute',
           left: LEFT,
           top: 150,
+          fontFamily: displayFamily,
           fontSize: 60,
           fontWeight: 800,
           letterSpacing: '-0.025em',
@@ -165,11 +184,13 @@ export const ChecklistTicks: React.FC<Props> = ({
                 y={1.4}
                 width={21.2}
                 height={21.2}
-                rx={6}
+                rx={theme.radius / 3}
                 fill={accentColor}
                 fillOpacity={fill * 0.16}
-                stroke={fill > 0.5 ? accentColor : 'rgba(255,255,255,0.16)'}
-                strokeWidth={1.8}
+                stroke={
+                  fill > 0.5 ? accentColor : theme.scheme === 'light' ? 'rgba(0,0,0,0.18)' : 'rgba(255,255,255,0.16)'
+                }
+                strokeWidth={(theme.stroke / 3) * 1.8}
               />
               {/* strokeDasharray + a dashoffset that runs to 0 IS the draw-on.
                   The dash must be at least the path length or the tail never lands. */}
@@ -177,7 +198,7 @@ export const ChecklistTicks: React.FC<Props> = ({
                 d={CHECK_PATH}
                 fill="none"
                 stroke={accentColor}
-                strokeWidth={2.6}
+                strokeWidth={theme.stroke * (2.6 / 3)}
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeDasharray={CHECK_LEN}
@@ -195,7 +216,7 @@ export const ChecklistTicks: React.FC<Props> = ({
                   display: 'inline-block',
                   fontSize: 38,
                   fontWeight: 600,
-                  color: strike > 0.5 ? '#8d93a5' : textColor,
+                  color: strike > 0.5 ? theme.muted : textColor,
                   lineHeight: 1.3,
                 }}
               >
@@ -207,7 +228,7 @@ export const ChecklistTicks: React.FC<Props> = ({
                     position: 'absolute',
                     left: 0,
                     top: '52%',
-                    height: 2.5,
+                    height: theme.stroke * (2.5 / 3),
                     width: `${strike * 100}%`,
                     backgroundColor: accentColor,
                     opacity: 0.75,

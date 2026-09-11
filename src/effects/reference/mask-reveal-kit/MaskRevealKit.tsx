@@ -82,6 +82,7 @@ const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 type Theme = {
   readonly mono: string;
+  readonly display: string;
   readonly ink: string;
   readonly text: string;
   readonly bg: string;
@@ -91,6 +92,7 @@ type Theme = {
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
   mono: MONO,
+  display: fontFamily,
   ink: '#ffffff',
   text: fontFamily,
   bg: '#0a0b10',
@@ -100,6 +102,8 @@ const THEME: Theme = {
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the pattern name. Defaults to this file's own loaded face, or the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly src?: string;
@@ -116,6 +120,7 @@ type Props = {
 export const MaskRevealKit: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   src,
   patterns = ['wipe', 'softWipe', 'diagonalStripes', 'iris', 'barnDoor', 'stairStep'],
   revealFrames = 30,
@@ -202,6 +207,7 @@ export const MaskRevealKit: React.FC<Props> = ({
           <Interactive.Div
             name="Pattern"
             style={{
+              fontFamily: displayFamily,
               fontSize: 84,
               fontWeight: 800,
               letterSpacing: '-0.03em',

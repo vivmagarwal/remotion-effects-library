@@ -60,7 +60,10 @@ type Theme = {
   readonly muted: string;
   readonly ink: string;
   readonly text: string;
+  readonly display: string;
   readonly bgDeep: string;
+  readonly series: readonly string[];
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -68,12 +71,17 @@ const THEME: Theme = {
   muted: '#8d93a5',
   ink: '#ffffff',
   text: fontFamily,
+  display: fontFamily,
   bgDeep: '#04050a',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  radius: 18,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS font family for the track title. Defaults to the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly src?: string;
@@ -89,11 +97,12 @@ type Props = {
 export const FftBars: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   src,
   title = 'Frame by Frame',
   artist = 'The Renderers',
   bars = 48,
-  colors = ['#4cc9f0', '#c77dff'],
+  colors = [theme.series[1], theme.series[4]],
   backgroundColor = theme.bgDeep,
   gamma = 0.42,
 }) => {
@@ -133,7 +142,7 @@ export const FftBars: React.FC<Props> = ({
 
       <Interactive.Div
         name="Title"
-        style={{fontSize: 74, fontWeight: 700, color: theme.ink, letterSpacing: '-0.02em'}}
+        style={{fontSize: 74, fontWeight: 700, color: theme.ink, letterSpacing: '-0.02em', fontFamily: displayFamily}}
       >
         {title}
       </Interactive.Div>
@@ -165,7 +174,7 @@ export const FftBars: React.FC<Props> = ({
               style={{
                 width: 16,
                 height: h,
-                borderRadius: 8,
+                borderRadius: theme.radius * (8 / 18),
                 background: `linear-gradient(${colors[0]}, ${colors[1]})`,
                 opacity: 0.45 + mix * 0.55,
                 boxShadow: shaped > 0.35 ? `0 0 22px ${colors[0]}77` : undefined,
@@ -175,12 +184,12 @@ export const FftBars: React.FC<Props> = ({
         })}
       </div>
 
-      <div style={{width: 1180, height: 5, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.08)', marginTop: 62}}>
+      <div style={{width: 1180, height: 5, borderRadius: theme.radius / 6, backgroundColor: 'rgba(255,255,255,0.08)', marginTop: 62}}>
         <div
           style={{
             height: '100%',
             width: `${progress}%`,
-            borderRadius: 3,
+            borderRadius: theme.radius / 6,
             background: `linear-gradient(90deg, ${colors[0]}, ${colors[1]})`,
           }}
         />

@@ -53,9 +53,10 @@ type Theme = {
   readonly mono: string;
   readonly muted: string;
   readonly ink: string;
-  readonly text: string;
+  readonly display: string;
   readonly bgDeep: string;
   readonly pair: string;
+  readonly series: readonly string[];
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -63,13 +64,14 @@ const THEME: Theme = {
   mono: MONO,
   muted: '#8d93a5',
   ink: '#ffffff',
-  text: fontFamily,
+  display: fontFamily,
   bgDeep: '#04050a',
   pair: '#4cc9f0',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
 };
 
 type Props = {
-  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  /** CSS family for the title. Defaults to this file's own loaded Sora, or the theme's display face. */
   readonly fontFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
@@ -88,7 +90,7 @@ type Props = {
 
 export const DnaHelix: React.FC<Props> = ({
   theme = THEME,
-  fontFamily = theme.text,
+  fontFamily = theme.display,
   title = 'SEQUENCE',
   subtitle = 'custom Curve · quaternion alignment',
   radius = 1.15,
@@ -96,7 +98,7 @@ export const DnaHelix: React.FC<Props> = ({
   turns = 2.6,
   basePairs = 40,
   strandColor = theme.pair,
-  pairColors = ['#ff5c39', '#c6ff3d'],
+  pairColors = [theme.series[0], theme.series[2]],
   backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();

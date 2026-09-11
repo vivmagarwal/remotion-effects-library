@@ -59,9 +59,10 @@ plain `<div>` cannot do. Inside the overlay, `useVideoConfig().durationInFrames`
 **overlay's** length, so this drives the leak across exactly its own span with no hard-coded numbers.
 
 **The shots**
-- 1920×1080, 30fps. Three cards: `Golden hour` on `#1d1410`, `Blue hour` on `#0e1420`, `Night` on
-  `#08080e`, each with a DM Serif Display title at 148px slowly scaling 1.05→1 across its own shot,
-  and an uppercase Inter caption at 28px, `letter-spacing: 0.3em`, `opacity: 0.6`.
+- 1920×1080, 30fps. Three footage shots (`broll-sunrise`, `broll-earth`, `broll-night`) under a flat
+  `rgba(8,7,12,0.42)` dim; a shot without `src` sits on the ground, `theme.bgDeep` (`#04050a`). Each
+  carries a DM Serif Display title at 148px slowly scaling 1.05→1 across its own shot, and an
+  uppercase Inter caption at 28px, `letter-spacing: 0.3em`, `opacity: 0.6`.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `LightLeakTransition`.

@@ -101,7 +101,10 @@ const ShotView: React.FC<{shot: Shot; displayFamily: string; textFamily: string}
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: shot.backgroundColor ?? '#1d1b17',
+        // No fallback on purpose: shots never overlap here, so an undefined
+        // ground lets the outer `theme.bgDeep` show through rather than pinning
+        // a literal the theme cannot reach.
+        backgroundColor: shot.backgroundColor,
         justifyContent: 'center',
         alignItems: 'center',
         color: shot.color ?? '#f6f5f2',

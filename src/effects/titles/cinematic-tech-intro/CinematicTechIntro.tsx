@@ -19,7 +19,7 @@ const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['lat
 type Theme = {
   readonly muted: string;
   readonly ink: string;
-  readonly text: string;
+  readonly display: string;
   readonly bgDeep: string;
   readonly pair: string;
 };
@@ -28,7 +28,7 @@ type Theme = {
 const THEME: Theme = {
   muted: '#8d93a5',
   ink: '#ffffff',
-  text: fontFamily,
+  display: fontFamily,
   bgDeep: '#04050a',
   pair: '#4cc9f0',
 };
@@ -46,7 +46,7 @@ type Props = {
 
 export const CinematicTechIntro: React.FC<Props> = ({
   theme = THEME,
-  fontFamily = theme.text,
+  fontFamily = theme.display,
   title = 'REMOTION',
   subtitle = 'video, written in React',
   accentColor = theme.pair,
@@ -193,7 +193,7 @@ export const CinematicTechIntro: React.FC<Props> = ({
               extrapolateRight: 'clamp',
               easing: Easing.bezier(0.16, 1, 0.3, 1),
             }),
-            backgroundColor: '#04050a',
+            backgroundColor: theme.bgDeep,
           }}
         />
       ))}

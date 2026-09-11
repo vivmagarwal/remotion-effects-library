@@ -20,22 +20,28 @@ const {fontFamily: sans} = loadSans('normal', {weights: ['500'], subsets: ['lati
  * this file runnable on its own.
  */
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly muted: string;
   readonly hand: string;
   readonly text: string;
   readonly bg: string;
   readonly paper: string;
+  readonly ink: string;
   readonly series: readonly string[];
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   muted: '#8d93a5',
   hand: hand,
   text: sans,
   bg: '#0a0b10',
   paper: '#f6f5f2',
+  ink: '#ffffff',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  stroke: 3,
 };
 
 type Props = {
@@ -54,6 +60,10 @@ type Props = {
   /** Frames after a glyph's outline completes before its fill appears. */
   readonly fillDelay?: number;
   readonly startAt?: number;
+  /**
+   * The glyph fill: `theme.paper` on a dark scheme, `theme.ink` on a light one
+   * (where `paper` IS the ground and would write in invisible ink).
+   */
   readonly inkColor?: string;
   readonly strokeColor?: string;
   readonly backgroundColor?: string;
@@ -76,7 +86,7 @@ export const WriteOnText: React.FC<Props> = ({
   strokeFrames = 16,
   fillDelay = 5,
   startAt = 14,
-  inkColor = theme.paper,
+  inkColor = theme.scheme === 'light' ? theme.ink : theme.paper,
   strokeColor = theme.series[3],
   backgroundColor = theme.bg,
   fontSize = 168,
@@ -94,14 +104,23 @@ export const WriteOnText: React.FC<Props> = ({
 
   return (
     <AbsoluteFill name="Scene" style={{backgroundColor, overflow: 'hidden'}}>
+      {/* A 42% black vignette turns paper grey, so a light scheme gets a much
+          lighter one rather than the dark ground's. */}
       <AbsoluteFill
-        style={{backgroundImage: 'radial-gradient(ellipse at 50% 42%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 70%)'}}
+        style={{
+          backgroundImage:
+            theme.scheme === 'light'
+              ? 'radial-gradient(ellipse at 50% 42%, rgba(255,255,255,0.5) 0%, rgba(0,0,0,0.05) 70%)'
+              : 'radial-gradient(ellipse at 50% 42%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 70%)',
+        }}
       />
 
       {/* Faint ruled paper, so the writing has something to sit on. */}
       <AbsoluteFill
         style={{
-          backgroundImage: `repeating-linear-gradient(to bottom, transparent 0 ${lineHeight - 2}px, #ffffff0e ${lineHeight - 2}px ${lineHeight}px)`,
+          // The ink at 5.5% — a white hairline on a dark theme, a dark one on a
+          // light theme, without either being hard-coded.
+          backgroundImage: `repeating-linear-gradient(to bottom, transparent 0 ${lineHeight - 2}px, ${theme.ink}0e ${lineHeight - 2}px ${lineHeight}px)`,
           backgroundPosition: `0 ${blockTop + fontSize * 0.34}px`,
         }}
       />
@@ -149,7 +168,7 @@ export const WriteOnText: React.FC<Props> = ({
                   {...common}
                   fill="none"
                   stroke={strokeColor}
-                  strokeWidth={2.4}
+                  strokeWidth={(theme.stroke / 3) * 2.4}
                   strokeLinejoin="round"
                   strokeDasharray={DASH}
                   strokeDashoffset={DASH * (1 - stroke)}

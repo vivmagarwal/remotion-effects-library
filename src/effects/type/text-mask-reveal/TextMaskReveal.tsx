@@ -1,7 +1,9 @@
 import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/AntonSC';
+import {loadFont as loadInter} from '@remotion/google-fonts/Inter';
 
 const {fontFamily} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
+const {fontFamily: inter} = loadInter('normal', {weights: ['500'], subsets: ['latin']});
 
 /**
  * Text Mask Reveal
@@ -18,16 +20,22 @@ const {fontFamily} = loadFont('normal', {weights: ['400'], subsets: ['latin']});
  * this file runnable on its own.
  */
 type Theme = {
+  readonly paperInk: string;
   readonly paperMuted: string;
   readonly display: string;
+  readonly text: string;
   readonly paper: string;
+  readonly series: readonly string[];
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  paperInk: '#1d1b17',
   paperMuted: '#4a4e5a',
   display: fontFamily,
+  text: inter,
   paper: '#f6f5f2',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
 };
 
 type Props = {
@@ -47,11 +55,14 @@ export const TextMaskReveal: React.FC<Props> = ({
   title = 'INSIDE',
   caption = 'the type is the window',
   backgroundColor = theme.paper,
+  // The field seen through the letters IS the picture here, so it is indexed out
+  // of the theme palette rather than picked by eye. Still a prop default, so an
+  // explicit `blobs` wins.
   blobs = [
-    {color: '#ff5c39', x: 22, y: 40, r: 46},
-    {color: '#4cc9f0', x: 68, y: 30, r: 40},
-    {color: '#ffd166', x: 50, y: 74, r: 42},
-    {color: '#c6ff3d', x: 84, y: 68, r: 34},
+    {color: theme.series[0], x: 22, y: 40, r: 46},
+    {color: theme.series[1], x: 68, y: 30, r: 40},
+    {color: theme.series[3], x: 50, y: 74, r: 42},
+    {color: theme.series[2], x: 84, y: 68, r: 34},
   ],
 }) => {
   const frame = useCurrentFrame();
@@ -82,9 +93,13 @@ export const TextMaskReveal: React.FC<Props> = ({
         name="Masked title"
         style={{
           fontSize: 380,
+          fontWeight: 800, // font-weight-check: ignore — theme display faces; Anton SC ships 400 only and fontSynthesis 'none' keeps it unsynthesised
+          // No faux bold: Anton SC has one cut and must render it untouched,
+          // while a theme's display family supplies a real heavy one.
+          fontSynthesis: 'none',
           lineHeight: 0.92,
           letterSpacing: `${tracking}em`,
-          backgroundImage: `${scene}, linear-gradient(#1d1b17, #1d1b17)`,
+          backgroundImage: `${scene}, linear-gradient(${theme.paperInk}, ${theme.paperInk})`,
           WebkitBackgroundClip: 'text',
           backgroundClip: 'text',
           color: 'transparent',
@@ -102,9 +117,9 @@ export const TextMaskReveal: React.FC<Props> = ({
       <Interactive.Div
         name="Caption"
         style={{
-          fontFamily: 'Inter, -apple-system, Helvetica, sans-serif',
+          fontFamily: theme.text,
           fontSize: 30,
-          fontWeight: 500, // font-weight-check: ignore — this rule targets the system Inter stack above, not AntonSC (which ships 400 only)
+          fontWeight: 500,
           letterSpacing: '0.28em',
           marginRight: '-0.28em',
           textTransform: 'uppercase',

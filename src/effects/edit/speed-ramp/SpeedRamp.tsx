@@ -75,7 +75,11 @@ type Theme = {
   readonly body: string;
   readonly text: string;
   readonly accent: string;
+  readonly series: readonly string[];
   readonly bgDeep: string;
+  readonly paper: string;
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -84,7 +88,11 @@ const THEME: Theme = {
   body: '#eef1f7',
   text: fontFamily,
   accent: '#ff5c39',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
   bgDeep: '#04050a',
+  paper: '#f6f5f2',
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
@@ -222,7 +230,7 @@ export const SpeedRamp: React.FC<Props> = ({
               left: 84,
               top: 84,
               padding: '16px 26px',
-              borderRadius: 12,
+              borderRadius: (12 * theme.radius) / THEME.radius,
               backgroundColor: 'rgba(10,11,16,0.72)',
               backdropFilter: 'blur(18px) saturate(1.3)',
               border: '1px solid rgba(255,255,255,0.14)',
@@ -271,13 +279,13 @@ export const SpeedRamp: React.FC<Props> = ({
                 x2={total}
                 y2={130 - (1 / 2) * 130}
                 stroke="rgba(238,241,247,0.34)"
-                strokeWidth={2}
+                strokeWidth={(2 * theme.stroke) / THEME.stroke}
                 vectorEffect="non-scaling-stroke"
               />
               <polyline
                 fill="none"
                 stroke={accentColor}
-                strokeWidth={5}
+                strokeWidth={(5 * theme.stroke) / THEME.stroke}
                 vectorEffect="non-scaling-stroke"
                 points={Array.from({length: total}, (_, i) => `${i},${130 - (speedAt(i) / 2) * 130}`).join(' ')}
               />
@@ -286,8 +294,8 @@ export const SpeedRamp: React.FC<Props> = ({
                 y1={0}
                 x2={frame}
                 y2={130}
-                stroke="#f6f5f2"
-                strokeWidth={3}
+                stroke={theme.paper}
+                strokeWidth={(3 * theme.stroke) / THEME.stroke}
                 vectorEffect="non-scaling-stroke"
               />
             </svg>
@@ -305,7 +313,7 @@ export const SpeedRamp: React.FC<Props> = ({
                 style={{
                   width: `${Math.min(100, spent * 100)}%`,
                   height: '100%',
-                  backgroundColor: spent > 0.98 ? '#ffd166' : '#c6ff3d',
+                  backgroundColor: spent > 0.98 ? theme.series[3] : theme.series[2],
                 }}
               />
             </div>

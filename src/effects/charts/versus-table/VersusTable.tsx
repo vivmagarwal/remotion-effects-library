@@ -24,25 +24,39 @@ type Side = {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly muted: string;
   readonly body: string;
   readonly text: string;
+  readonly display: string;
   readonly bg: string;
   readonly paper: string;
+  readonly accent: string;
+  readonly pair: string;
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   muted: '#8d93a5',
   body: '#eef1f7',
   text: fontFamily,
+  display: fontFamily,
   bg: '#0a0b10',
   paper: '#f6f5f2',
+  accent: '#ff5c39',
+  pair: '#4cc9f0',
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly kicker?: string;
@@ -60,24 +74,29 @@ type Props = {
 export const VersusTable: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   kicker = 'TWO WAYS TO GRADE',
   title = 'Product only vs triangulated',
+  // The two sides are the theme's semantic pair — one warm, one cool — not two
+  // colours picked by eye.
   left = {
     heading: 'Product only',
     rows: ['Rewards polish', 'Hides the struggle', 'One snapshot', 'Easy to fake'],
-    color: '#ff5c39',
+    color: theme.accent,
     good: false,
   },
   right = {
     heading: 'Triangulated',
     rows: ['Rewards thinking', 'Sees the process', 'Three windows', 'Hard to fake'],
-    color: '#4cc9f0',
+    color: theme.pair,
     good: true,
   },
   stagger = 11,
   startAt = 34,
   backgroundColor = theme.bg,
-  paperColor = theme.paper,
+  // The ink for the title, headings and badge — never the ground the effect is
+  // drawn on, which is what `paper` is under a light theme.
+  paperColor = theme.scheme === 'light' ? theme.body : theme.paper,
   showVersusBadge = true,
 }) => {
   const frame = useCurrentFrame();
@@ -111,7 +130,7 @@ export const VersusTable: React.FC<Props> = ({
           letterSpacing: '-0.02em',
           color: paperColor,
           paddingBottom: 22,
-          borderBottom: `3px solid ${side.color}`,
+          borderBottom: `${theme.stroke}px solid ${side.color}`,
           marginBottom: 26,
           opacity: head,
           translate: `${(head - 1) * (isLeft ? -50 : 50)}px 0px`,
@@ -163,9 +182,9 @@ export const VersusTable: React.FC<Props> = ({
                 alignItems: 'center',
                 gap: 20,
                 padding: '0 26px',
-                borderRadius: 14,
+                borderRadius: (theme.radius * 14) / 18,
                 backgroundColor: `${side.color}14`,
-                border: `1px solid ${side.color}33`,
+                border: `${theme.stroke / 3}px solid ${side.color}33`,
                 fontSize: 40,
                 fontWeight: 500,
                 color: theme.body,
@@ -182,7 +201,7 @@ export const VersusTable: React.FC<Props> = ({
                   // The losing column's text is struck through as it lands.
                   textDecoration: side.good ? 'none' : 'line-through',
                   textDecorationColor: `${side.color}cc`,
-                  textDecorationThickness: 3,
+                  textDecorationThickness: theme.stroke,
                   opacity: side.good ? 1 : 0.72,
                 }}
               >
@@ -200,7 +219,12 @@ export const VersusTable: React.FC<Props> = ({
       name="Scene"
       style={{
         backgroundColor,
-        backgroundImage: 'radial-gradient(ellipse at 50% 24%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 68%)',
+        // A dark scrim reads as depth on a dark ground and as dirt on a light
+        // one, so the scheme picks which way the vignette runs.
+        backgroundImage:
+          theme.scheme === 'light'
+            ? 'radial-gradient(ellipse at 50% 24%, rgba(255,255,255,0.5) 0%, rgba(0,0,0,0.06) 68%)'
+            : 'radial-gradient(ellipse at 50% 24%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 68%)',
         justifyContent: 'center',
         padding: '0 120px',
         fontFamily,
@@ -227,6 +251,7 @@ export const VersusTable: React.FC<Props> = ({
           alignSelf: 'center',
           fontSize: 68,
           fontWeight: 800,
+          fontFamily: displayFamily,
           letterSpacing: '-0.03em',
           color: paperColor,
           marginBottom: 56,

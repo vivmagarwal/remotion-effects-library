@@ -21,6 +21,7 @@ type Theme = {
   readonly paperMuted: string;
   readonly text: string;
   readonly bgDeep: string;
+  readonly series: readonly string[];
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -28,6 +29,7 @@ const THEME: Theme = {
   paperMuted: '#4a4e5a',
   text: fontFamily,
   bgDeep: '#04050a',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
 };
 
 type Props = {
@@ -48,7 +50,10 @@ export const GradientTextSweep: React.FC<Props> = ({
   fontFamily = theme.text,
   title = 'Gradient',
   subtitle = 'background-clip: text',
-  colors = ['#ff5c39', '#ffd166', '#c6ff3d', '#4cc9f0', '#c77dff', '#ff5c39'],
+  // Six stops walked out of the theme palette, warm → cool → warm, closing on
+  // the colour it opened with so the loop has no seam. Still a prop default, so
+  // an explicit `colors` wins.
+  colors = [theme.series[0], theme.series[3], theme.series[2], theme.series[1], theme.series[4], theme.series[0]],
   backgroundColor = theme.bgDeep,
   sweepSeconds = 3,
 }) => {

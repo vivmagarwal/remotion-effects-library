@@ -22,8 +22,10 @@ A turn with no `reply` simply skips the indicator and the answer — which is ho
 unanswered message. Hard-coding frames per bubble works once and rots the moment anyone edits the text.
 
 **The look**
-- **1080×1920 (vertical)**, 30fps, ~440 frames. Background `#101218`, a 980px column, Inter.
-- Contact name centred at 34px weight 600 in `#8d93a5` with a `1px solid #23262f` rule under it.
+- **1080×1920 (vertical)**, 30fps, ~440 frames. Background `backgroundColor` (`theme.surface`,
+  `#101218`), a 980px column, Inter.
+- Contact name centred at 34px weight 600 in `theme.muted` (`#8d93a5`) with a `1px solid #23262f` rule
+  under it.
 - Bubbles at 38px, line-height 1.35, padding `24px 32px`, max-width 78%. Outgoing: accent `#2f6bff`,
   white text, radius `26px 26px 8px 26px`, right-aligned. Incoming: `#2a2d38`, `#e7e9ef`, radius
   `26px 26px 26px 8px`, left-aligned. **The asymmetric corner is what makes it read as a chat app.**

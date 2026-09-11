@@ -60,7 +60,7 @@ Render them only when `fill > 0`, identical to the stroked paths but `stroke={fi
 `opacity={fill}`, with no dash props.
 
 **The scene**
-- 1920×1080, 30fps, **150 frames**. Background `#0a0b12` plus
+- 1920×1080, 30fps, **150 frames**. Background `theme.bg` (`#0a0b10`) plus
   `radial-gradient(ellipse at 50% 44%, <accentColor>18 0%, transparent 62%)`.
 - `<svg width={SIZE} height={SIZE * 0.58} viewBox="40 10 300 180" style={{overflow: 'visible'}}>`
   where `SIZE = Math.min(width * 0.42, 760)`. `overflow: visible` matters — round caps at
@@ -71,9 +71,9 @@ Render them only when `fill > 0`, identical to the stroked paths but `stroke={fi
 
 | | |
 |---|---|
-| title | `margin-top: 58`, 62px weight 700, `letter-spacing: 0.34em` with a matching negative `margin-right`, `#f2f4fa`, fades in over `lastDone → lastDone + 22` |
-| subtitle | `margin-top: 16`, monospace 25px, `#7f88a0`, fades in over `lastDone + 12 → lastDone + 34` |
-| readout | absolute `bottom: 76`, monospace 22px, `#4e556a`, `font-variant-numeric: tabular-nums`, fades in over `startAt → startAt + 16` |
+| title | `margin-top: 58`, `displayFamily` (defaults to `theme.display`), 62px weight 700, `letter-spacing: 0.34em` with a matching negative `margin-right`, `theme.ink` (`#ffffff`), fades in over `lastDone → lastDone + 22` |
+| subtitle | `margin-top: 16`, `theme.mono` 25px, `theme.muted` (`#8d93a5`), fades in over `lastDone + 12 → lastDone + 34` |
+| readout | absolute `bottom: 76`, `theme.mono` 22px, `theme.paperMuted` (`#4a4e5a`), `font-variant-numeric: tabular-nums`, fades in over `startAt → startAt + 16` |
 
 The readout prints `total path length {n} units` using
 `Math.round(strokes.reduce((a, s) => a + getLength(s.d), 0))` — the same measurement `evolvePath`
@@ -84,4 +84,5 @@ does internally, shown so the number is visibly real rather than a guess.
 - Props, with defaults: `title` (`'PATHS'`), `subtitle`
   (`'evolvePath() · one call, correct dashes'`), `strokes` (the three above), `viewBox`
   (`'40 10 300 180'`), `startAt` (14), `fillDelay` (10), `strokeWidth` (9), `accentColor`
-  (`#ff5c39`), `fillColor` (`#ffffff`), `backgroundColor` (`#0a0b12`).
+  (`theme.accent`, `#ff5c39`), `fillColor` (`theme.ink`, `#ffffff`), `backgroundColor`
+  (`theme.bg`, `#0a0b10`), `displayFamily` (`theme.display`).

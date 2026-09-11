@@ -2,8 +2,6 @@ import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVide
 import {ThreeCanvas} from '@remotion/three';
 import {loadFont} from '@remotion/google-fonts/Sora';
 
-// palette: data whole-file — a three.js lighting setup: material colour, emissive and a point light are physical quantities, not brand choices
-
 const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['latin']});
 
 /**
@@ -15,21 +13,43 @@ const {fontFamily} = loadFont('normal', {weights: ['300', '700'], subsets: ['lat
  */
 
 /**
+ * Darkens a `#rrggbb` by a flat factor. The self-glow of a metal has to be the
+ * knot's OWN colour turned down, not a second hue — so deriving it from `color`
+ * keeps the emissive doing the same job whatever accent a theme hands over.
+ */
+const shade = (hex: string, k: number) =>
+  '#' + [1, 3, 5].map((i) => Math.round(parseInt(hex.slice(i, i + 2), 16) * k).toString(16).padStart(2, '0')).join('');
+
+/**
  * The shared theme, narrowed to the tokens this file uses. TypeScript is
  * structural, so the library's full theme object is assignable to it.
  */
 type Theme = {
+  readonly display: string;
   readonly text: string;
+  readonly ink: string;
+  readonly muted: string;
+  readonly bgDeep: string;
+  readonly accent: string;
+  readonly pair: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  display: fontFamily,
   text: fontFamily,
+  ink: '#ffffff',
+  muted: '#8d93a5',
+  bgDeep: '#04050a',
+  accent: '#ff5c39',
+  pair: '#4cc9f0',
 };
 
 type Props = {
-  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  /** CSS family for the subtitle and any inherited text. Defaults to this file's Sora, or the theme's text face. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to this file's own Sora, or the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly title?: string;
@@ -44,11 +64,12 @@ type Props = {
 export const ThreeRotatingLogo: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   title = 'DIMENSION',
   subtitle = 'three.js, frame-driven',
-  color = '#7c5cff',
-  emissive = '#2a1a6b',
-  backgroundColor = '#06060d',
+  color = theme.accent,
+  emissive = shade(color, 0.36),
+  backgroundColor = theme.bgDeep,
   metalness = 0.92,
   roughness = 0.18,
 }) => {
@@ -80,7 +101,7 @@ export const ThreeRotatingLogo: React.FC<Props> = ({
         <ambientLight intensity={0.55} />
         <directionalLight position={[6, 7, 5]} intensity={2.4} color="#ffffff" />
         <directionalLight position={[-7, -3, 3]} intensity={1.3} color={color} />
-        <pointLight position={[0, 0, 5]} intensity={22} color="#ff7bd5" distance={16} />
+        <pointLight position={[0, 0, 5]} intensity={22} color={theme.pair} distance={16} />
 
         <mesh rotation={[spinX, spinY, 0]} position={[0, rise, 0]} scale={scaleIn}>
           <torusKnotGeometry args={[1.35, 0.42, 220, 36]} />
@@ -106,10 +127,11 @@ export const ThreeRotatingLogo: React.FC<Props> = ({
         <Interactive.Div
           name="Title"
           style={{
+            fontFamily: displayFamily,
             fontSize: 108,
             fontWeight: 700,
             letterSpacing: '0.26em',
-            color: '#f2f0ff',
+            color: theme.ink,
             textShadow: `0 0 60px ${color}88`,
             opacity: interpolate(frame, [22, 46], [0, 1], {
               extrapolateLeft: 'clamp',
@@ -127,7 +149,7 @@ export const ThreeRotatingLogo: React.FC<Props> = ({
             letterSpacing: '0.32em',
             marginRight: '-0.32em',
             textTransform: 'uppercase',
-            color: '#8b86b8',
+            color: theme.muted,
             marginTop: 16,
             opacity: interpolate(frame, [34, 58], [0, 1], {
               extrapolateLeft: 'clamp',

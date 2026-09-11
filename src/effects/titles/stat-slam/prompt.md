@@ -1,17 +1,23 @@
 Build a Remotion composition called **StatSlam**: a cold open where one statistic arrives hard.
 
 **The look**
-- 1920×1080, 30fps, 120 frames. Background `#0a0a0f` with a red glow behind the number:
-  `radial-gradient(ellipse at 50% 46%, #ff2d5522 0%, transparent 60%)`. Accent `#ff2d55`.
-- The stat in Anton at 430px, line-height 0.86, letter-spacing `-0.03em`, white. Default `73%`.
-- A 7px accent rule below it, a context line in Inter at 52px weight 700 (`#c9ccd6`, max-width 1250,
-  centred), and a small source credit at 26px in `#5d6172`.
+- 1920×1080, 30fps, 120 frames. Background `backgroundColor` (`theme.bg`, `#0a0b10`) with a glow
+  behind the number: ``radial-gradient(ellipse at 50% 46%, ${accentColor}22 0%, transparent 60%)``.
+  Accent `accentColor` (`theme.accent`, `#ff5c39`).
+- The stat in `displayFamily` (`theme.display`; Anton is the inline value) at 430px, line-height 0.86,
+  letter-spacing `-0.03em`, `color` (`theme.ink`), with `fontVariantNumeric: 'lining-nums'`, because a
+  serif theme's default old-style figures otherwise drop the 7 and 3 through the accent rule. Default
+  `73%`.
+- A 7px accent rule below it, a context line in Inter at 52px weight 700 (`theme.body` `#eef1f7`,
+  max-width 1250, centred, `textWrap: 'balance'`), and a small source credit at 26px in
+  `theme.paperMuted` (`#4a4e5a`).
 
 **The impact — three cues on the same frame (`impactFrame = 14`)**
 
 1. **The slam.** `interpolate(frame, [0, impactFrame], [7, 1], {easing: Easing.bezier(0.2, 0.9, 0.1, 1),
    output: 'perceptual-scale'})` — the number comes from 7× and decelerates hard into place.
-2. **The shockwave.** A 620px ring (`4px solid #ff2d55`, `borderRadius: 50%`) centred behind the
+2. **The shockwave.** A 620px ring (``${theme.stroke * 4/3}px solid ${accentColor}`` — 4px at house,
+   `borderRadius: 50%`) centred behind the
    number, scaling 0.2→3.4 over 26 frames and fading 0.75→0.
 3. **The camera kick.** On the **root `<AbsoluteFill>`**:
 

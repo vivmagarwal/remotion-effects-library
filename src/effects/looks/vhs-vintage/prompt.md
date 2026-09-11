@@ -40,8 +40,9 @@ strobing every frame — a single-frame glitch is invisible at 30fps.
   `linear-gradient(rgba(255,255,255,0) 0%, rgba(255,255,255,0.22) 40%, rgba(255,255,255,0.05) 100%)`,
   `mixBlendMode: 'screen'`, whose `top` is `(100 - ((frame * 1.6) % 130)) - 8` in percent, so it
   drifts up the frame and wraps.
-- On-screen display in VT323 (`@remotion/google-fonts/VT323`), pale green `#eafff2` with
-  `textShadow: '0 0 14px rgba(160,255,200,0.7)'`: `▶ PLAY` top-left, blinking via
+- On-screen display in `theme.mono` (VT323 by default, `@remotion/google-fonts/VT323`), coloured
+  `theme.body` (`#eef1f7`), with `textShadow: '0 0 14px rgba(160,255,200,0.7)'` — the phosphor glow, a
+  property of the tube, not the brand: `▶ PLAY` top-left, blinking via
   `Math.floor(frame / 12) % 4 === 3 ? 0.35 : 1`, and a running timecode bottom-right derived from
   `Math.floor(frame / fps)`.
 

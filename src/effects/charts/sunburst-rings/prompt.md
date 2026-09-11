@@ -29,8 +29,8 @@ The layout is a pure function of the data — deterministic on every frame, so o
 ```tsx
 const arcGen = useMemo(() =>
   d3arc<{startAngle: number; endAngle: number; innerRadius: number; outerRadius: number}>()
-    .padAngle(0.008).padRadius(radius).cornerRadius(3),
-  [radius]);
+    .padAngle(0.008).padRadius(radius).cornerRadius(theme.radius / 6),
+  [radius, theme.radius]);
 ```
 
 **The reveal — two things at once**
@@ -56,7 +56,7 @@ never means restating a palette:
 const colorOf = (n) => {
   let cur = n;
   while (cur) { if (cur.data.color) return cur.data.color; cur = cur.parent; }
-  return '#8892a6';
+  return theme.muted;
 };
 ```
 
@@ -66,17 +66,19 @@ Suppress any wedge narrower than `0.16 rad`, and only draw once `p > 0.85` — a
 that is still sweeping open spills outside it.
 
 **The scene**
-- 1920×1080, 30fps, 180 frames. Background `#0a0c14` with
-  `radial-gradient(ellipse at 50% 52%, #161a28 0%, #070810 70%)`.
+- 1920×1080, 30fps, 180 frames. Background `theme.bg` under a scrim picked by `theme.scheme`: dark
+  `rgba(255,255,255,0.055) -> rgba(0,0,0,0.42) at 70%`, light
+  `rgba(255,255,255,0.5) -> rgba(0,0,0,0.06) at 70%`.
 - `radius = Math.min(width - 560, height - 300) / 2`, centred at `(width/2, height/2 + 44)`.
-- Depth 1 is solid (`fillOpacity: 0.92`, dark text); deeper rings are `fillOpacity: 0.42` with a
-  `1.6px` stroke in the same colour and light text.
+- Depth 1 is solid (`fillOpacity: 0.92`, text knocked out in `backgroundColor`); deeper rings are
+  `fillOpacity: 0.42` with a `theme.stroke * 1.6 / 3` stroke in the same colour and light text.
 - The root's name sits in the middle hole at 30px/800.
-- Title (Inter 56px/800) and monospace subtitle centred at the top.
+- Title (56px/800 in `displayFamily`) and monospace subtitle centred at the top.
 
 **Data**
 A four-branch tree — compose / animate / draw / encode — each with 3–4 leaves carrying values.
-Colours `#4cc9f0`, `#ff5c39`, `#c77dff`, `#8ac926`.
+Branch colours `theme.series[1]`, `[0]`, `[4]`, `[2]` (compose, animate, draw, encode), from a
+`defaultData(theme.series)` default.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `SunburstRings`.

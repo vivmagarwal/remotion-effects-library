@@ -46,16 +46,18 @@ read as a bar chart.
 **The layout**
 - **1080×1920 (vertical)**, 30fps, 180 frames. Background `#0d0f16` with
   `radial-gradient(ellipse at 50% 22%, #c6ff3d18 0%, transparent 62%)`. Padding `120px 90px`.
-- **Cover art**: a 420px square, radius 34, filled with
-  `linear-gradient(145deg, #c6ff3d, #12c48b 55%, #0aa06e)` and a heavy shadow. Generating it as a
+- **Cover art**: a 520px square, radius `theme.radius × 42/18` (42 at house), filled with
+  `linear-gradient(145deg, accentColor, theme.series[2] 55%, theme.series[1])`, which is
+  `#c6ff3d, #c6ff3d 55%, #4cc9f0` at house, and a heavy shadow. Generating it as a
   gradient rather than loading an image keeps the effect dependency-free — swap in a `<CanvasImage>`
   when you have real art.
 - Show name at 30px weight 700, `letter-spacing: 0.34em` (with a matching `marginRight: '-0.34em'` so
   the tracked line stays optically centred); episode title at 38px in `#8e94a6`.
 - **Captions in the middle**, between the art and the waveform — that is where the eye lands. Pages of
-  four words at 66px weight 800; the spoken word takes the accent colour, words not yet reached sit at
-  `opacity: 0.34` so the viewer can read ahead.
-- Waveform at the bottom: 34 bars, 14px wide, 10px apart, radius 7. A progress rail under it.
+  four words at 66px weight 800; the spoken word takes the accent colour and the rest are the theme's
+  `ink`, words not yet reached sit at `opacity: 0.34` so the viewer can read ahead.
+- Waveform at the bottom: 34 bars, 19px wide, 13px apart, radius `theme.radius × 10/18` (10 at house).
+  A progress rail under it.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `Audiogram` and a `Word` type

@@ -3,22 +3,28 @@ a glowing star, seen from a low angle, genuinely passing in front of and behind 
 plain CSS and trigonometry.
 
 **The look**
-- 1920×1080, 30fps, 300 frames. Background `#04040a`. Sora throughout.
-- A glowing star at centre: 180px, `radial-gradient(circle, #fff8e0 0%, #ffcf5c 45%, #ffcf5c00 72%)`
-  with `boxShadow: '0 0 180px #ffcf5c88, 0 0 400px #ffcf5c44'`, scaling 0→1 over 26 frames
+- 1920×1080, 30fps, 300 frames. Background `theme.bgDeep` (`#04050a`). Sora for the labels (the file's
+  `text` default); the star's name in `displayFamily = theme.display`.
+- A glowing star at centre: 180px,
+  `` `radial-gradient(circle, #ffffff 0%, ${starColor} 45%, ${starColor}00 72%)` `` with
+  `` `boxShadow: '0 0 180px ${starColor}88, 0 0 400px ${starColor}44'` `` — `starColor` defaults to
+  `theme.series[3]` (`#ffd166` in the house theme) — scaling 0→1 over 26 frames
   (`output: 'perceptual-scale'`).
 - Five bodies. Use exactly these — the numbers matter, see below:
 
   | name | colour | radius | size | speed | phase | ring |
   |---|---|---|---|---|---|---|
-  | Mercury | `#c9b39b` | 158 | 26 | 2.6 | 0.4 | |
-  | Venus | `#e9b06a` | 248 | 38 | 1.75 | 2.35 | |
-  | Earth | `#4fa3e3` | 338 | 42 | 1.2 | 4.2 | |
-  | Mars | `#e0663f` | 432 | 32 | 0.85 | 5.55 | |
-  | Saturn | `#e8cf94` | 548 | 56 | 0.58 | 1.15 | ✓ |
+  | Mercury | `theme.muted` (`#8d93a5`) | 206 | 30 | 2.6 | 0.4 | |
+  | Venus | `theme.series[3]` (`#ffd166`) | 324 | 44 | 1.75 | 2.35 | |
+  | Earth | `theme.series[1]` (`#4cc9f0`) | 442 | 50 | 1.2 | 4.2 | |
+  | Mars | `theme.series[0]` (`#ff5c39`) | 564 | 38 | 0.85 | 5.55 | |
+  | Saturn | `theme.body` (`#eef1f7`) | 716 | 64 | 0.58 | 1.15 | ✓ |
 
-- Faint orbit paths (`1px solid #ffffff14`), a 20px name label under each planet with
-  `letter-spacing: 0.2em` in `#7d8598`, and the star's name top-left at 52px weight 700.
+  Index the palette rather than picking five colours by eye: a theme swap then moves the whole system
+  together instead of leaving three planets on last season's hues.
+- Orbit paths (`2px solid #ffffff52`), a 26px name label under each planet with
+  `letter-spacing: 0.18em` in `theme.body`, and the star's name top-left at 52px weight 700. The
+  starfield dots are `theme.body` too.
 
 **The two ideas that make it work**
 
@@ -51,14 +57,17 @@ Check it before you ship. The star's gradient fades out at 72%, so its visible r
 `180 / 2 × 0.72 ≈ 65px`. At `elevation = 17` (`squash = 0.292`):
 
 ```
-Mercury  158 × 0.292 = 46px  − 13 (half its size) = 33  <  65  → transits ✓
-Venus    248 × 0.292 = 72px  − 19               = 53  <  65  → transits ✓
-Earth    338 × 0.292 = 99px  − 21               = 78  >  65  → clears
+Mercury  206 × 0.292 = 60px  − 15 (half its size) = 45  <  65  → transits ✓
+Venus    324 × 0.292 = 95px  − 22               = 73  >  65  → clears
+Earth    442 × 0.292 = 129px − 25               = 104 >  65  → clears
 ```
 
-A shallow elevation like 60–70° gives `squash ≈ 0.87–0.94`: the innermost planet then stays ~140px
-clear of a 65px star, nothing ever crosses, **and** Saturn's vertical excursion (`548 × 0.9 = 493px`)
-overflows the 540px half-frame and gets clipped off the bottom. Low elevation fixes both at once.
+Only Mercury transits at these radii, and one planet crossing the star is enough to sell the depth —
+but it has to be a real crossing, not a near miss.
+
+A shallow elevation like 60–70° gives `squash ≈ 0.87–0.94`: even Mercury then stays ~165px clear of a
+65px star, nothing ever crosses, **and** Saturn's vertical excursion (`716 × 0.9 = 644px`) overflows
+the 540px half-frame and gets clipped off the bottom. Low elevation fixes both at once.
 
 Verify it by rendering the extreme frames rather than trusting it: find the frame where a body is at
 `sin(angle) ≈ -1` (deepest behind) and at `≈ +1` (deepest in front) and look at both. At these
@@ -70,7 +79,7 @@ squash the y component, exactly as the position is squashed:
 
 ```tsx
 backgroundImage: `radial-gradient(circle at ${50 - Math.cos(angle) * 26}% ${50 - Math.sin(angle) * squash * 26}%,
-  ${color}, ${color}44 62%, #05050c 100%)`,
+  ${color}, ${color}44 62%, ${backgroundColor} 100%)`,
 ```
 
 Omitting `squash` on y leaves the highlight disagreeing with the geometry, which is invisible at high

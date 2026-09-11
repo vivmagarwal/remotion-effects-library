@@ -64,6 +64,7 @@ type Theme = {
   readonly bgDeep: string;
   readonly paper: string;
   readonly series: readonly string[];
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -74,6 +75,7 @@ const THEME: Theme = {
   bgDeep: '#04050a',
   paper: '#f6f5f2',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  radius: 18,
 };
 
 type Props = {
@@ -265,7 +267,7 @@ export const PauseAwareCaptions: React.FC<Props> = ({
                 backgroundColor: 'rgba(8,9,14,0.42)',
                 backdropFilter: 'blur(18px) saturate(1.4)',
                 border: '1px solid rgba(255,255,255,0.14)',
-                borderRadius: 18,
+                borderRadius: theme.radius,
                 padding: '14px 34px',
                 maxWidth: 1500,
                 fontSize: 54,
@@ -310,7 +312,7 @@ export const PauseAwareCaptions: React.FC<Props> = ({
               left: 84,
               top: 84,
               padding: '16px 26px',
-              borderRadius: 12,
+              borderRadius: theme.radius * (12 / 18),
               backgroundColor: 'rgba(10,11,16,0.72)',
               backdropFilter: 'blur(18px) saturate(1.3)',
               border: '1px solid rgba(255,255,255,0.14)',
@@ -322,7 +324,7 @@ export const PauseAwareCaptions: React.FC<Props> = ({
                 fontSize: 32,
                 fontWeight: 700,
                 letterSpacing: '0.16em',
-                color: active && brokeOnSilence.has(active.index) ? activeColor : '#8d93a5',
+                color: active && brokeOnSilence.has(active.index) ? activeColor : theme.muted,
               }}
             >
               {active
@@ -348,7 +350,7 @@ export const PauseAwareCaptions: React.FC<Props> = ({
               right: 84,
               bottom: 70,
               height: 26,
-              borderRadius: 6,
+              borderRadius: theme.radius / 3,
               // A track, and it is not decoration: without it the non-accent
               // blocks sit at 0.34 x 0.55 alpha directly over daylight footage,
               // which is an effective 19% and reads as nothing. Only the accent
@@ -371,8 +373,8 @@ export const PauseAwareCaptions: React.FC<Props> = ({
                     width: `${((e - s) / span) * 100}%`,
                     top: 0,
                     bottom: 0,
-                    borderRadius: 4,
-                    backgroundColor: brokeOnSilence.has(i) ? activeColor : '#eef1f7',
+                    borderRadius: theme.radius * (4 / 18),
+                    backgroundColor: brokeOnSilence.has(i) ? activeColor : theme.body,
                     opacity: active?.index === i ? 1 : 0.42,
                   }}
                 />

@@ -71,6 +71,7 @@ having loaded it. There is no way to load "whatever family this string names".
 | `accent` · `accentInk` · `accentOnPaper` | `string` | the brand colour, type that sits on it, and the version that holds contrast on paper |
 | `pair` | `string` | the accent's semantic partner — before/after, gain/loss. Never a second warm |
 | `series` | `readonly string[]` | an ordered categorical palette. Index into it; never pick by eye |
+| `paperSeries` | `readonly string[]` | the same, for marks ON `paper` — what `accentOnPaper` is to `accent`. The house `series` glows on dark and its lime and amber vanish on paper |
 | `display` · `text` · `mono` · `hand` | `string` | CSS families for titles, body, code, hand-lettering |
 | `radius` · `stroke` · `roughness` | `number` | corner radius and stroke at 1920×1080; roughness 0 (ruler) to 1 (sketchy) |
 | `safe` | `number` | margin at 1920×1080 |
@@ -93,6 +94,8 @@ const HOUSE = {
   pair: '#4cc9f0',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
   //         orange     cyan       lime       amber      violet     grey
+  paperSeries: ['#2f5eb8', '#b1572a', '#2e7d63', '#7a4fb5', '#8f6822', '#1e7991', '#b0405c', '#5c7a2e'],
+  //              blue       rust       green      violet     bronze     teal       rose       olive   — each ≥ 4.5:1 on paper
   display: 'Archivo', text: 'Inter', mono: 'JetBrains Mono', hand: 'Kalam',
   radius: 18, stroke: 3, roughness: 0.45, safe: 84,
 };

@@ -17,9 +17,12 @@ makes the edit inspectable, diffable, and identical on every render tab.
 **The algorithm — three thresholds, and the margin is the one people forget**
 
 ```tsx
-const buildKeepList = (words, {minSilence, margin, minSegment, fillers}) => {
+const buildKeepList = (words, {minSilence, margin, minSegment, fillers, fillerPad = 0.05}) => {
   const drop = new Set(fillers.map((f) => f.toLowerCase()));
-  const kept = words.filter((w) => !drop.has(w.w.toLowerCase().replace(/[^a-z']/g, '')));
+  const isFiller = (w) => drop.has(w.w.toLowerCase().replace(/[^a-z']/g, ''));
+  const kept = words.filter((w) => !isFiller(w));
+  // A filler is cut as its OWN interval, padded ±fillerPad — see below.
+  const cuts = words.filter(isFiller).map((w) => ({s: w.s - fillerPad, e: w.e + fillerPad}));
 
   // 1. Group into runs, breaking wherever the gap is real dead air.
   const runs = [{s: kept[0].s, e: kept[0].e}];
@@ -29,14 +32,25 @@ const buildKeepList = (words, {minSilence, margin, minSegment, fillers}) => {
   }
 
   // 2. Pad, drop the clicks, merge what the padding overlapped.
-  const out = [];
+  const padded = [];
   for (const r of runs) {
     const s = Math.max(0, r.s - margin);
     const e = r.e + margin;
     if (e - s < minSegment) continue;
-    const last = out[out.length - 1];
+    const last = padded[padded.length - 1];
     if (last && s <= last.e) last.e = Math.max(last.e, e);
-    else out.push({s, e});
+    else padded.push({s, e});
+  }
+
+  // 3. Subtract the filler cuts LAST, so a margin can never grow back into one.
+  const out = [];
+  for (const k of padded) {
+    let segs = [{s: k.s, e: k.e}];
+    for (const c of cuts) {
+      segs = segs.flatMap((g) => (c.e <= g.s || c.s >= g.e) ? [g]
+        : [...(c.s > g.s ? [{s: g.s, e: c.s}] : []), ...(c.e < g.e ? [{s: c.e, e: g.e}] : [])]);
+    }
+    out.push(...segs.filter((g) => g.e - g.s >= minSegment));
   }
   return out;
 };
@@ -50,19 +64,27 @@ const buildKeepList = (words, {minSilence, margin, minSegment, fillers}) => {
 - **`minSegment` 0.25s.** Anything shorter after padding is a click, not a segment.
 - **The merge in step 2 is not optional.** Two adjacent removals whose margins overlap become a
   stutter of micro-cuts without it.
+- **A filler is a cut, not a deletion from a list.** The first version of this file only dropped
+  `um` from the word array — and whenever its neighbours sat closer than `minSilence`, the run was kept
+  whole and the "um" stayed in the picture. Three of the four in this transcript survived that way.
+  So fillers are subtracted as their own intervals, ±50 ms, *after* padding, where no margin can grow
+  back into them.
 
 **Playing the result** — a cut list *is* a `<Series>`:
 
 ```tsx
 <Series>
   {shown.map((k) => (
-    <Series.Sequence key={k.s} durationInFrames={Math.max(1, Math.round((k.e - k.s) * fps))} premountFor={fps}>
+    <Series.Sequence key={k.s} durationInFrames={Math.max(1, Math.round(k.e * fps) - Math.round(k.s * fps))} premountFor={fps}>
       <Video src={source} trimBefore={Math.round(k.s * fps)} trimAfter={Math.round(k.e * fps)} muted
              objectFit="cover" style={{width: '100%', height: '100%'}} />
     </Series.Sequence>
   ))}
 </Series>
 ```
+
+**Round at the boundaries, never the duration.** `round(e − s)` is not `round(e) − round(s)`, and
+the difference is a frame of drift per segment between the Sequence length and the trims inside it.
 
 **`objectFit` is a prop on `<Video>`, not a style.** It decodes into a canvas, so CSS `object-fit`
 has nothing to act on and is silently ignored — which looks fine right up until the source and the
@@ -72,14 +94,15 @@ composition stop sharing an aspect ratio.
 boundary, and round — a float frame index silently resamples.
 
 **The look**
-- 1920×1080, 30fps, 312 frames. Ground `#0a0b10`.
+- 1920×1080, 30fps, 298 frames — exactly the keep-list total, so the last frame is footage, not a held tail. Ground `#0a0b10`.
 - Readout pill top-left at `84, 84`: `−3.0s` at 54px/800 white, `2 SEGMENTS` at 28px/700
   `letter-spacing: 0.16em` in `#ff5c39`, then `350ms gate · 200ms margin` at 28px/500 in `#8d93a5`.
-  Pill: `padding: 14px 26px`, radius 12, `rgba(10,11,16,0.72)`,
+  Pill: `padding: 14px 26px`, radius `12 × theme.radius / 18`, `rgba(10,11,16,0.72)`,
   `backdropFilter: 'blur(18px) saturate(1.3)'`, `1px solid rgba(255,255,255,0.14)`.
-- A strip at `left/right: 84, bottom: 110`, 26px tall, radius 6, track `rgba(255,255,255,0.1)` with a
-  `rgba(255,255,255,0.16)` border. **The strip is the SOURCE timeline, not the output**: kept ranges
-  filled with the accent at 0.85 opacity, everything between them removed, and a 3px white playhead.
+- A strip at `left/right: 84, bottom: 110`, 26px tall, radius `6 × theme.radius / 18`, track
+  `rgba(255,255,255,0.1)` with a `rgba(255,255,255,0.16)` border. **The strip is the SOURCE timeline,
+  not the output**: kept ranges filled with the accent at 0.85 opacity, everything between them
+  removed, and a `3 × theme.stroke / 3`px (3 at house) `theme.ink` playhead.
 - Below it, three labels at 34px/500 `#8d93a5`: the window start, `source 44.20s · out 4.20s` in
   `#eef1f7`, and the window end. **The playhead jumps at each cut** — that jump, and the two clocks
   disagreeing, is the clearest possible picture of what the edit did.

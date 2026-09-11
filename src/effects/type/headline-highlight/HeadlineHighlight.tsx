@@ -22,20 +22,28 @@ type Span = {readonly text: string; readonly highlight?: boolean};
  * this file runnable on its own.
  */
 type Theme = {
+  readonly scheme: 'dark' | 'light';
+  readonly paper: string;
   readonly paperInk: string;
   readonly paperMuted: string;
+  readonly accentOnPaper: string;
   readonly display: string;
   readonly text: string;
   readonly series: readonly string[];
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
+  paper: '#f6f5f2',
   paperInk: '#1d1b17',
   paperMuted: '#4a4e5a',
+  accentOnPaper: '#c2410c',
   display: serif,
   text: sans,
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  radius: 18,
 };
 
 type Props = {
@@ -49,6 +57,7 @@ type Props = {
   readonly headline?: readonly Span[];
   readonly byline?: string;
   readonly meta?: string;
+  readonly backgroundColor?: string;
   readonly highlightColor?: string;
   /** Frames before the first marker stroke starts. */
   readonly startAt?: number;
@@ -60,6 +69,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
   theme = THEME,
   displayFamily = theme.display,
   textFamily = theme.text,
+  backgroundColor = theme.paper,
   kicker = 'Technology',
   headline = [
     {text: 'Remotion turns '},
@@ -70,7 +80,10 @@ export const HeadlineHighlight: React.FC<Props> = ({
   ],
   byline = 'By Ada Lovelace, Grace Hopper',
   meta = 'Updated on: January 31, 2026 / 9:59 AM EST / Frame News',
-  highlightColor = theme.series[3],
+  // A light theme's palette is dark ink meant to be read on paper, and a solid
+  // bar of it would bury the very words it marks. Drop to 40% alpha there and
+  // the stroke still reads as a highlighter passing over the line.
+  highlightColor = theme.scheme === 'light' ? `${theme.series[3]}66` : theme.series[3],
   startAt = 24,
   strokeFrames = 20,
 }) => {
@@ -81,7 +94,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
   let strokeIndex = -1;
 
   return (
-    <AbsoluteFill name="Scene" style={{backgroundColor: '#f6f5f2', padding: '0 150px', justifyContent: 'center'}}>
+    <AbsoluteFill name="Scene" style={{backgroundColor, padding: '0 150px', justifyContent: 'center'}}>
       <Interactive.Div
         name="Kicker"
         style={{
@@ -159,7 +172,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
         style={{
           fontFamily: textFamily,
           fontSize: 28,
-          color: '#c2410c',
+          color: theme.accentOnPaper,
           marginTop: 44,
           textDecoration: 'underline',
           textUnderlineOffset: 5,
@@ -190,7 +203,8 @@ export const HeadlineHighlight: React.FC<Props> = ({
           fontWeight: 600,
           color: theme.paperMuted,
           border: '1px solid rgba(29,27,23,0.16)',
-          borderRadius: 8,
+          // 8 at the house radius of 18, and it follows a theme from there.
+          borderRadius: theme.radius * (8 / 18),
           padding: '10px 18px',
           marginTop: 34,
           alignSelf: 'flex-start',

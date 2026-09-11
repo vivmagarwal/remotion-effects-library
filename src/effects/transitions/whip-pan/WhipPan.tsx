@@ -94,14 +94,16 @@ export type Shot = {
  * this file runnable on its own.
  */
 type Theme = {
-  readonly display: string;
+  readonly bg: string;
   readonly bgDeep: string;
+  readonly display: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
-  display: fontFamily,
+  bg: '#0a0b10',
   bgDeep: '#04050a',
+  display: fontFamily,
 };
 
 type Props = {
@@ -127,6 +129,8 @@ type Props = {
   /** Frames each shot holds. The last one holds this plus one transition. */
   readonly holdFrames?: number;
   readonly backgroundColor?: string;
+  /** Ground for a shot that has no `src`. Defaults to `theme.bg`. */
+  readonly cardColor?: string;
 };
 
 const SHOTS: Shot[] = [
@@ -138,14 +142,16 @@ const SHOTS: Shot[] = [
 
 const ShotView: React.FC<{shot: Shot;
   fontFamily: string;
-}> = ({shot, fontFamily}) => {
+  /** Threaded: at module scope a bare `theme` is not in lexical reach. */
+  cardColor: string;
+}> = ({shot, fontFamily, cardColor}) => {
   const frame = useCurrentFrame();
   const color = shot.color ?? '#f6f5f2';
 
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: shot.backgroundColor ?? '#0a0b10',
+        backgroundColor: shot.backgroundColor ?? cardColor,
         color,
         fontFamily,
         justifyContent: 'flex-end',
@@ -228,6 +234,7 @@ export const WhipPan: React.FC<Props> = ({
   transitionFrames = 12,
   holdFrames = 52,
   backgroundColor = theme.bgDeep,
+  cardColor = theme.bg,
 }) => {
   const timing = linearTiming({durationInFrames: transitionFrames});
 
@@ -243,7 +250,7 @@ export const WhipPan: React.FC<Props> = ({
               durationInFrames={i === shots.length - 1 ? holdFrames + transitionFrames : holdFrames}
               name={shot.kicker ?? `Shot ${i + 1}`}
             >
-              <ShotView shot={shot} fontFamily={fontFamily} />
+              <ShotView shot={shot} fontFamily={fontFamily} cardColor={cardColor} />
             </TransitionSeries.Sequence>
             {i < shots.length - 1 ? (
               <TransitionSeries.Transition

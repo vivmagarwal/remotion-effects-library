@@ -2,8 +2,9 @@ Build a Remotion composition called **TypewriterTerminal**: a terminal window in
 type themselves out, with a block cursor that blinks.
 
 **The look**
-- 1920×1080, 30fps, 180 frames. Page background `#0b0d12`.
-- A rounded terminal window (radius 16) centred with 96px page padding, fill `#12141b`, 1px border
+- 1920×1080, 30fps, 180 frames. Page background `backgroundColor` = `theme.bg` (house `#0a0b10`).
+- A rounded terminal window (radius `theme.radius * 16 / 18`, 16 at house) centred with 96px page
+  padding, fill `#12141b`, 1px border
   `#232733`, and a large soft drop shadow. It springs in over the first ~18 frames: scale 0.94→1
   (with `output: 'perceptual-scale'`) and opacity 0→1.
 - A title bar with the three traffic-light dots (`#ff5f57`, `#febc2e`, `#28c840`, 14px circles) and the
@@ -26,6 +27,6 @@ type themselves out, with a block cursor that blinks.
 **Requirements**
 - One self-contained `.tsx` file exporting `TypewriterTerminal`.
 - Props: `lines` (array of `{text, prompt?, color?}`), `charsPerSecond`, `blinkFrames`,
-  `backgroundColor`, `color`, `accentColor` — all optional with the defaults above.
+  `backgroundColor`, `color`, `accentColor`, `radius` — all optional with the defaults above.
 - Load JetBrains Mono via `@remotion/google-fonts/JetBrainsMono` so the render does not fall back to a
   system font. Use `white-space: pre` so leading spaces survive.

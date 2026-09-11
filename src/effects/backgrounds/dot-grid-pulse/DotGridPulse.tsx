@@ -15,13 +15,17 @@ import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
  * this file runnable on its own.
  */
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly bg: string;
+  readonly muted: string;
   readonly pair: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   bg: '#0a0b10',
+  muted: '#8d93a5',
   pair: '#4cc9f0',
 };
 
@@ -45,10 +49,11 @@ export const DotGridPulse: React.FC<Props> = ({
   columns = 42,
   rows = 24,
   dotSize = 7,
-  // The resting dot. 0.22 alpha multiplied by a 0.35 base opacity is an
-  // effective 0.077 against #0a0b10 — a grid that is not there. The grid has
-  // to be visible for the wave to be a wave THROUGH something.
-  color = 'rgba(141,147,165,0.5)',
+  // The resting dot: the theme's secondary ink at 50% alpha (`80`). A dimmer
+  // grid — 0.22 alpha under a 0.35 base opacity is an effective 0.077 against
+  // `#0a0b10` — is a grid that is not there, and the wave has to be a wave
+  // THROUGH something.
+  color = `${theme.muted}80`,
   accentColor = theme.pair,
   backgroundColor = theme.bg,
   frequency = 0.28,
@@ -99,10 +104,13 @@ export const DotGridPulse: React.FC<Props> = ({
   return (
     <AbsoluteFill name="Scene" style={{backgroundColor, overflow: 'hidden'}}>
       {dots}
+      {/* The vignette has to fade toward the GROUND, not toward black: a
+          near-black edge on a paper theme reads as a burn, not as a falloff. */}
       <AbsoluteFill
         style={{
-          backgroundImage:
-            'radial-gradient(ellipse at 50% 50%, transparent 54%, rgba(8,10,16,0.7) 100%)',
+          backgroundImage: `radial-gradient(ellipse at 50% 50%, transparent 54%, ${
+            theme.scheme === 'light' ? `${backgroundColor}b3` : 'rgba(8,10,16,0.7)'
+          } 100%)`,
         }}
       />
     </AbsoluteFill>

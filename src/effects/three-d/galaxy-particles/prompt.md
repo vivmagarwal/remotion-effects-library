@@ -47,7 +47,9 @@ for (let i = 0; i < count; i++) {
   positions[i3 + 1] = stray(`y-${i}`, 0.32);          // thin disc
   positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * r + stray(`z-${i}`, 1);
 
-  mixed.copy(cIn).lerp(cOut, Math.min(1, r / radius));
+  // Power < 1 biases the ramp inward so the cold colour reaches the core
+  // region. A LINEAR ramp leaves the whole visible galaxy warm.
+  mixed.copy(cIn).lerp(cOut, Math.pow(Math.min(1, r / radius), 0.55));
   colors[i3] = mixed.r; colors[i3 + 1] = mixed.g; colors[i3 + 2] = mixed.b;
 }
 
@@ -76,7 +78,7 @@ g.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 looks moth-eaten.
 
 **The scene**
-- 1920×1080, 30fps, 180 frames. Background `#03030a`.
+- 1920×1080, 30fps, 180 frames. Background `backgroundColor` (`theme.bgDeep`, `#04050a`).
 - `<ThreeCanvas>` from `@remotion/three` **must** be given explicit `width`/`height` from
   `useVideoConfig()`. Camera `{position: [0, 3.4, 7.2], fov: 52}`.
 - The camera never moves. Wrap the points in a `<group>` and animate that instead:
@@ -89,14 +91,17 @@ looks moth-eaten.
   keeps the render deterministic.
 
 **The overlay**
-Bottom-centred, `pointerEvents: 'none'`: title in Sora 100px weight 700, `letter-spacing: 0.3em`
-with a matching `margin-right: -0.3em`, `textShadow: '0 0 70px <outsideColor>aa'`; a monospace
-subtitle below. Staggered fades at frames 26–52 and 40–66.
+Bottom-centred, `pointerEvents: 'none'`: title in `fontFamily` (default `theme.display`, whose
+inline value is this file's Sora) 100px weight 700, colour `theme.ink`, `letter-spacing: 0.3em`
+with a matching `margin-right: -0.3em`, `textShadow: '0 0 70px <outsideColor>aa'`; a subtitle below
+in `theme.mono`, colour `theme.body`. Staggered fades at frames 26–52 and 40–66.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `GalaxyParticles`.
-- Props: `title`, `subtitle`, `count`, `branches`, `radius`, `spin`, `randomness`, `insideColor`,
-  `outsideColor`, `backgroundColor`. Defaults: 30000, 5 branches, radius 5.2, spin 0.72,
-  randomness 0.34, `#ffb03a` → `#3d6bff`.
+- Props: `theme` (destructured FIRST), `fontFamily` (`theme.display`), `title`, `subtitle`, `count`,
+  `branches`, `radius`, `spin`, `randomness`, `insideColor`, `outsideColor`, `backgroundColor`.
+  Defaults: 30000, 5 branches, radius 5.2, spin 0.72, randomness 0.34, `insideColor`
+  `theme.series[3]` (house `#ffd166`) → `outsideColor` `theme.pair` (house `#4cc9f0`),
+  `backgroundColor` `theme.bgDeep`.
 - Load Sora via `@remotion/google-fonts/Sora`.
 - Set `Config.setChromiumOpenGlRenderer('angle')` in `remotion.config.ts`, or pass `--gl=angle`.

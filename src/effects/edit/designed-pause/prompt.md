@@ -94,21 +94,31 @@ exactly once, at the boundary, and round.
 **The look**
 
 - 1920×1080, 30 fps, 323 frames. Ground `#04050a`. Inter at 500/700/800.
-- Readout pill top-left at `84, 84`, `padding: 18px 28px`, radius 12, `rgba(10,11,16,0.72)`,
+- The chapter title (116px/800) in `theme.display` via a `displayFamily` prop; kicker, readout and
+  strip labels in `theme.text`.
+- Centre the chapter card with `padding: '80px 200px 180px'`. The readout pill grows a line in a wider
+  typeface (five lines in a monospace theme) and must never reach the kicker. Keep `1–5s` unbreakable
+  with U+2060 word joiners around the dash.
+- Readout pill top-left at `84, 84`, `padding: 18px 28px`, radius `12 × theme.radius / 18` (12 at
+  house), `rgba(10,11,16,0.72)`,
   `backdropFilter: 'blur(18px) saturate(1.3)'`, `1px solid rgba(255,255,255,0.14)`, `maxWidth: 900`.
   Three lines at 34px: `SCENE GAP · 3.36s` at 800 weight `letter-spacing: 0.16em` in `#ff5c39`, the
   budget sentence at 500 in `#eef1f7`, the classifier count at 500 in `#8d93a5`.
 - A 460px gradient scrim along the bottom, `rgba(4,5,10,0.94)` → transparent, so the timelines read
   over any footage.
 - **Two strips, and they are different clocks.** `SOURCE · every gap classified` at `bottom: 210`:
-  a 46px track with every word as a pale block and every gap tinted by class — `micro` `#4a4e5a`,
-  `breath` `#4cc9f0`, `beat` `#c6ff3d`, `sentence` `#ffd166`, `scene` `#ff5c39`. Only the scene gap
+  a 46px track with radius `6 × theme.radius / 18`, every word as a pale block and every gap tinted by
+  class — `micro` `#4a4e5a` (neutral), `breath` `theme.series[1]`, `beat` `theme.series[2]`,
+  `sentence` `theme.series[3]` (house `#4cc9f0` / `#c6ff3d` / `#ffd166`), and `scene` in `accentColor`
+  — the same colour as the hold on the OUTPUT strip, because it is the same pause. Only the scene gap
   gets full opacity; the rest sit at 0.34 so you can see it is the outlier rather than the pick. Two
-  white 3px markers at the cut points.
-- `OUTPUT · A · designed hold · B` at `bottom: 92`: a flex row, each section `flexGrow` by its own
-  frame count, the hold in the accent with its length written in it.
-- **The playhead goes on the OUTPUT strip only.** After a cut the two clocks disagree, and one
-  playhead drawn across both is precisely what makes people mis-time a caption.
+  3px markers in `theme.paper` (`#f6f5f2`) at the cut points.
+- `OUTPUT · A · designed hold · B` at `bottom: 92`: a 46px flex row with radius
+  `6 × theme.radius / 18`, each section `flexGrow` by its own frame count, the hold in the accent with
+  its length written in `theme.accentInk` (`#04050a`), A and B in `theme.body` (`#eef1f7`).
+- **The playhead goes on the OUTPUT strip only**, 3px in `theme.paper` (`#f6f5f2`) like the markers.
+  After a cut the two clocks disagree, and one playhead drawn across both is precisely what makes
+  people mis-time a caption.
 - Section labels at 26px/800, `letter-spacing: 0.18em`, `#8d93a5`.
 
 **Requirements**

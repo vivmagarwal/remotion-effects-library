@@ -2,12 +2,12 @@ Build a Remotion composition called **CharDropSpring**: a word whose letters fal
 real springs, overshooting and settling rather than easing politely to a stop.
 
 **The look**
-- 1920×1080, 30fps, 90 frames. Dark background `#101014`, centred.
+- 1920×1080, 30fps, 90 frames. Background `theme.bg` (house `#0a0b10`), centred.
 - Word in Archivo, 210px, weight 900, line-height 1, letter-spacing `-0.02em`, 6px gap between letters
-  in a flex row. Default word: `BOUNCE`. Alternate letters take an accent colour (`#ffd166`) against
-  off-white (`#fafaf8`).
-- An eyebrow line above at 30px, weight 700, uppercase, letter-spacing `0.22em`, muted `#6a6a78`,
-  36px above the word. It fades in after the last letter has landed.
+  in a flex row. Default word: `BOUNCE`. Odd-indexed letters take `accentColor` = `theme.series[3]`
+  (house `#ffd166`); the rest take `color` = `theme.ink` (house `#ffffff`).
+- An eyebrow line above at 30px, weight 700, uppercase, letter-spacing `0.22em`, `theme.muted`
+  (house `#8d93a5`), 36px above the word. It fades in after the last letter has landed.
 
 **The animation — springs, done right**
 - Give each character its own spring, delayed by index:

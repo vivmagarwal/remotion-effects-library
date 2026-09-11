@@ -39,6 +39,7 @@ type Theme = {
   readonly paperMuted: string;
   readonly muted: string;
   readonly text: string;
+  readonly display: string;
   readonly accent: string;
   readonly bg: string;
   readonly ink: string;
@@ -50,6 +51,7 @@ const THEME: Theme = {
   paperMuted: '#4a4e5a',
   muted: '#8d93a5',
   text: fontFamily,
+  display: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
   ink: '#ffffff',
@@ -58,6 +60,8 @@ const THEME: Theme = {
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the lock-up title. Defaults to this file's own face, or the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly title?: string;
@@ -87,6 +91,7 @@ const DEFAULT_STROKES: Stroke[] = [
 export const LogoPathDraw: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   title = 'PATHS',
   subtitle = 'evolvePath() · one call, correct dashes',
   strokes = DEFAULT_STROKES,
@@ -174,6 +179,7 @@ export const LogoPathDraw: React.FC<Props> = ({
           name="Title"
           style={{
             marginTop: 58,
+            fontFamily: displayFamily,
             fontSize: 62,
             fontWeight: 700,
             letterSpacing: '0.34em',

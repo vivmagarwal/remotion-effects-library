@@ -88,7 +88,7 @@ Each half is `<cylinderGeometry args={[0.055, 0.055, r.len / 2, 10]} />` at `pos
 / `r.quarterB`, `quaternion={r.quaternion}`, `scale={[pop, pop, pop]}`.
 
 **The scene**
-- 1920×1080, 30fps, 180 frames. Background `#04060e` with a
+- 1920×1080, 30fps, 180 frames. Background `backgroundColor` (`theme.bgDeep`, `#04050a`) with a
   `radial-gradient(ellipse at 50% 50%, <strandColor>1f 0%, transparent 62%)` behind the canvas.
 - `<ThreeCanvas>` with explicit `width`/`height`, camera `{position: [0, 0, 12], fov: 42}`.
 - Lights: `<ambientLight intensity={0.5} />`, `<directionalLight position={[5, 6, 8]}
@@ -100,12 +100,17 @@ Each half is `<cylinderGeometry args={[0.055, 0.055, r.len / 2, 10]} />` at `pos
   6–62 on `Easing.bezier(0.36, 0, 0.2, 1)` — the ladder grows out of nothing.
 
 **The overlay**
-Left-aligned, vertically centred, 108px left padding, `pointerEvents: 'none'`: Sora 92px weight 700
-with `textShadow: '0 0 60px <strandColor>66'`; monospace subtitle below, `maxWidth: 520`.
+Left-aligned, vertically centred, 108px left padding, `pointerEvents: 'none'`: the display face
+(`fontFamily`, default `theme.display`, whose inline value is this file's Sora) 92px weight 700 in
+`theme.ink` with `textShadow: '0 0 60px <strandColor>66'`; monospace subtitle below in `theme.mono`,
+colour `theme.muted`, `maxWidth: 520`.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `DnaHelix`.
-- Props: `title`, `subtitle`, `radius` (1.15), `helixHeight` (7.4), `turns` (2.6), `basePairs` (40),
-  `strandColor` (`#3ea9ff`), `pairColors` (`['#ff5c7a', '#8affc1']`), `backgroundColor`.
+- Props: `theme` (destructured FIRST), `fontFamily` (`theme.display`), `title`, `subtitle`,
+  `radius` (1.15), `helixHeight` (7.4), `turns` (2.6), `basePairs` (40),
+  `strandColor` (`theme.pair`, house `#4cc9f0`),
+  `pairColors` (`[theme.series[0], theme.series[2]]`, house `['#ff5c39', '#c6ff3d']`),
+  `backgroundColor` (`theme.bgDeep`).
 - Load Sora via `@remotion/google-fonts/Sora`.
 - Set `Config.setChromiumOpenGlRenderer('angle')` in `remotion.config.ts`, or pass `--gl=angle`.

@@ -2,16 +2,18 @@ Build a Remotion composition called **GlitchText**: a word whose colour channels
 horizontal slices displace, in short repeating bursts.
 
 **The look**
-- 1920×1080, 30fps, 120 frames. Near-black `#08080c`, centred. Word in Anton, 260px,
+- 1920×1080, 30fps, 120 frames. `theme.bgDeep` (`#04050a`), centred. Word in Anton, 260px,
   letter-spacing `0.02em`, inside a `position: relative` box 1300×300.
-- A monospace subtitle below in cyan, 28px, uppercase, letter-spacing `0.28em`.
+- A subtitle below in `theme.mono`, coloured `theme.series[1]`, 28px, uppercase,
+  letter-spacing `0.28em`.
 - A permanent scanline overlay on top of everything:
   `repeating-linear-gradient(to bottom, rgba(255,255,255,0.045) 0 2px, transparent 2px 5px)` in an
   `<AbsoluteFill>` with `pointerEvents: 'none'`.
 
 **The glitch**
 - Stack **three absolutely positioned copies** of the same word, each `inset: 0` and flex-centred:
-  cyan `#00e5ff`, magenta `#ff2d6f` (both `mixBlendMode: 'screen'`), and white on top in `normal`.
+  `theme.series[1]` and `theme.series[4]` (`#4cc9f0` and `#c77dff` in the house theme, both
+  `mixBlendMode: 'screen'`), and white on top in `normal`.
 - Burst timing: `cycle = Math.floor(frame / cycleFrames)`, `withinCycle = frame % cycleFrames`,
   `bursting = withinCycle < burstFrames`, with `cycleFrames = 26` and `burstFrames = 7`.
 - **Between bursts every layer must sit at exactly zero offset**, in perfect register. This is what

@@ -95,18 +95,20 @@ const s = typeof l.source === 'object' ? (l.source as Node).id : String(l.source
 Keep a `Map<id, index>` so you can look positions up out of the snapshot array.
 
 **The scene**
-- 1920×1080, 30fps, 180 frames. Background `#0a0c14` with
-  `radial-gradient(ellipse at 50% 54%, #161a28 0%, #070810 72%)`.
+- 1920×1080, 30fps, 180 frames. Background `theme.bg` under a scrim picked by `theme.scheme`: dark
+  `rgba(255,255,255,0.055) -> rgba(0,0,0,0.42) at 72%`, light
+  `rgba(255,255,255,0.5) -> rgba(0,0,0,0.06) at 72%`.
 - Draw in centred coordinates: `<g transform={`translate(${width/2} ${height/2 + 62})`}>`, which
   matches `forceCenter(0, 0)`.
-- Six hubs (r=20, solid, 26px/800 label above) each with 3–6 leaves (r=9, 20%-alpha fill + 2px
-  stroke, 17px label below). Colours
-  `['#ff5c39', '#4cc9f0', '#c77dff', '#ffd166', '#20e3b2', '#ff7bd5']` by cluster.
+- Six hubs (r=20, solid, 26px/800 label above) each with 3–6 leaves (r=9, 20%-alpha fill +
+  `theme.stroke * 2 / 3` stroke, 17px label below in `theme.muted`). Colours
+  `[theme.series[0], theme.series[1], theme.series[4], theme.series[3], theme.series[2],
+  theme.accentOnPaper]` by cluster, as the `colors` default.
 - Link the hubs in a **ring** (`value: 3`), then add two or three extra ties between *leaves of
   different clusters* (`value: 1`) — without them you get six drifting islands instead of one
-  graph. Hub-to-hub links are drawn heavier (`2.4px`, `#5c657daa`); the rest are `1.4px`,
-  `#39405280`.
-- Title (Inter 54px/800) and monospace subtitle centred at the top.
+  graph. Hub-to-hub links are heavier (`theme.stroke * 2.4 / 3`, `${theme.muted}8c`); the rest
+  `theme.stroke * 1.4 / 3`, `${theme.muted}47`.
+- Title (54px/800 in `displayFamily`) and monospace subtitle centred at the top.
 - Bottom-right, a monospace `tick 042 / 280` readout with `fontVariantNumeric: 'tabular-nums'` —
   it makes the technique legible: this is a recording being played back.
 
@@ -114,7 +116,7 @@ Keep a `Map<id, index>` so you can look positions up out of the snapshot array.
 - One self-contained `.tsx` file exporting `ForceNetwork`.
 - Props, with defaults: `title` (`'One package, many neighbours'`), `subtitle`
   (`'force-directed graph · d3-force, pre-ticked'`), `colors` (the six above), `ticks` (280),
-  `ticksPerFrame` (1.9), `startAt` (12), `backgroundColor` (`#0a0c14`), and `paperColor`
-  (`#eef1f7`) — the **ink** colour, used for the title and the hub labels. `backgroundColor` is the
+  `ticksPerFrame` (1.9), `startAt` (12), `backgroundColor` (`theme.bg`), and `paperColor`
+  (`theme.body`) — the **ink** colour, used for the title and the hub labels. `backgroundColor` is the
   surface; `paperColor` is what is written on it.
 - Load Inter via `@remotion/google-fonts/Inter`.

@@ -30,10 +30,13 @@ mistake even when the viewer cannot say why.
   frame drags its edge into view; the overscan is what makes the move possible at all.
 - A sun (300px `radial-gradient(circle, #ffe9b0 0%, #ffb26b 58%, #ffb26b00 74%)`) and 60 seeded stars
   sit at **depth 0** — they never move, which is exactly right for things at infinity.
-- A Bebas Neue title at 300px with `letter-spacing: 0.14em` treated as a **foreground** element at
-  depth 0.55 — enough that it separates from the nearest ridge, not so much that it pans out of frame
-  by the last few seconds. Depth is a dial, and a title is the one layer whose legibility outranks its
-  realism.
+- A title at 300px in the display face (Bebas Neue by default), coloured `#ffe9d6` — a tint of the sun,
+  part of the scene's palette rather than a theme token — with `letter-spacing: 0.14em`, treated as a
+  **foreground** element at depth 0.55: enough that it separates from the nearest ridge, not so much
+  that it pans out of frame by the last few seconds. Depth is a dial, and a title is the one layer
+  whose legibility outranks its realism.
+- A subtitle under the title in the text face (`textFamily = theme.text`, Bebas Neue by default):
+  `#ffd9c0`, 32px, letter-spacing `0.36em`, fading to 0.85.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `ParallaxLayers`.

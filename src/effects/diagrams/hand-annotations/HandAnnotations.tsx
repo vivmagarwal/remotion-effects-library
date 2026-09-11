@@ -23,6 +23,8 @@ type Theme = {
   readonly text: string;
   readonly paper: string;
   readonly paperInk: string;
+  readonly stroke: number;
+  readonly roughness: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -31,6 +33,8 @@ const THEME: Theme = {
   text: fontFamily,
   paper: '#f6f5f2',
   paperInk: '#1d1b17',
+  stroke: 3,
+  roughness: 0.45,
 };
 
 type Props = {
@@ -109,31 +113,63 @@ export const HandAnnotations: React.FC<Props> = ({
           }),
         }}
       >
+        {/* Each mark and the punctuation after it share a `nowrap` span. The
+            mark's wrapper is inline-block, which IS a wrap opportunity, so a
+            wider face strands the full stop on a line of its own. The
+            inter-word {' '} stays outside, so spacing is unchanged. */}
         Every mark here is{' '}
-        <Highlight color="rgba(255, 214, 64, 0.55)" progress={at(0)}>
-          hand drawn
-        </Highlight>
-        , and every one is{' '}
-        <Circle color="#4cc9f0" progress={at(1)}>
-          deterministic
-        </Circle>
-        . Not{' '}
-        <StrikeThrough color="#ff5c39" progress={at(2)}>
+        <span style={{whiteSpace: 'nowrap'}}>
+          <Highlight color="rgba(255, 214, 64, 0.55)" progress={at(0)} roughness={theme.roughness / 0.15}>
+            hand drawn
+          </Highlight>
+          ,
+        </span>{' '}
+        and every one is{' '}
+        <span style={{whiteSpace: 'nowrap'}}>
+          <Circle
+            color="#4cc9f0"
+            progress={at(1)}
+            roughness={theme.roughness / 0.3}
+            strokeWidth={theme.stroke * (20 / 3)}
+          >
+            deterministic
+          </Circle>
+          .
+        </span>{' '}
+        Not{' '}
+        <StrikeThrough
+          color="#ff5c39"
+          progress={at(2)}
+          roughness={theme.roughness / 0.3}
+          strokeWidth={theme.stroke * (20 / 3)}
+        >
           approximately
         </StrikeThrough>{' '}
         the same each render —{' '}
-        <Underline color="#c6ff3d" progress={at(3)}>
+        <Underline
+          color="#c6ff3d"
+          progress={at(3)}
+          roughness={theme.roughness / 0.3}
+          strokeWidth={theme.stroke * (20 / 3)}
+        >
           exactly
         </Underline>{' '}
         the same, because the roughness is seeded and the{' '}
-        <Box color="#c77dff" progress={at(4)}>
+        <Box color="#c77dff" progress={at(4)} roughness={theme.roughness / 0.3} strokeWidth={theme.stroke * (7 / 3)}>
           progress
         </Box>{' '}
         comes from the frame, not from a{' '}
-        <CrossedOff color="#ff5c39" progress={at(5)}>
-          timer
-        </CrossedOff>
-        .
+        <span style={{whiteSpace: 'nowrap'}}>
+          <CrossedOff
+            color="#ff5c39"
+            progress={at(5)}
+            roughness={theme.roughness / 0.3}
+            strokeWidth={theme.stroke * (20 / 3)}
+          >
+            timer
+          </CrossedOff>
+          .
+        </span>
       </Interactive.Div>
     </AbsoluteFill>
   );

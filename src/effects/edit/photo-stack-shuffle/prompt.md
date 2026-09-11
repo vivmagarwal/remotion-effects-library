@@ -42,11 +42,14 @@ arc is what makes it read as being flicked off the top. Fading it late rather th
 solid long enough to see it go.
 
 **The look**
-- 1920×1080, 30fps, 330 frames. Background `#15161c` with
-  `radial-gradient(ellipse at 50% 44%, #232633 0%, #101116 66%)`.
-- Cards 900px wide, `#fbfaf7`, radius 10, 20px padding and 74px at the bottom — a photographic print
-  with a wide lower border. Image inside at 3:2, `objectFit: 'cover'`, radius 4.
-- A monospace caption at 34px in `#3c3a35` in the bottom border.
+- 1920×1080, 30fps, 330 frames. Background `theme.bg` (`#0a0b10`) with
+  `radial-gradient(ellipse at 50% 44%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 66%)`.
+- Cards 900px wide in `theme.paper` (`#f6f5f2`), radius `10 × theme.radius / 18` (10 at house), 20px
+  padding and 74px at the bottom — a photographic print with a wide lower border. Image inside at 3:2,
+  `objectFit: 'cover'`, radius `4 × theme.radius / 18`, on a `theme.bgDeep` (`#04050a`) well.
+- A caption at 34px/500 in `theme.mono`, whose inline default is the system stack
+  `'ui-monospace, SFMono-Regular, Menlo, monospace'` (no font download), coloured `theme.paperMuted`
+  (`#4a4e5a`), centred in the bottom border.
 - Give each card a **seeded** tilt, `(random(\`tilt-${i}\`) - 0.5) * 9` degrees, and ease it toward 0 as
   it reaches the top — so the deck looks hand-stacked but the top card sits square. Use `random()` from
   `remotion`, never `Math.random()`, or the deck re-scatters on every rendered frame.

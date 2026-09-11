@@ -59,10 +59,11 @@ export const whipPan = (props: WhipPanProps = {}): TransitionPresentation<WhipPa
   `linearTiming` transitions → `216 − 36 = ` **180 frames**. Whips are short; 12 frames at 30fps is
   already 0.4s.
 - Directions `left`, `up`, `right` so the moves do not all repeat.
-- Shots: saturated grounds with a kicker at 30px weight 800 (`letter-spacing: 0.4em`, with a matching
-  negative right margin so the tracked line stays centred) and a line at 104px weight 800. Give each
-  shot a slow 1→1.05 drift so it is never quite still — the whip then feels like it interrupted
-  something.
+- Shots are footage under `linear-gradient(to top, rgba(8,7,12,0.86) 0%, rgba(8,7,12,0.42) 34%,
+  rgba(8,7,12,0) 62%)`; a shot without `src` sits on `theme.bg` (`#0a0b10`); type in `theme.display`,
+  coloured `#f6f5f2`. A kicker at 30px weight 800 (`letter-spacing: 0.4em`, with a matching negative
+  right margin so the tracked line stays centred) and a line at 104px weight 800. Give each shot a
+  slow 1→1.05 drift so it is never quite still — the whip then feels like it interrupted something.
 - Wrap the `<TransitionSeries>` in a dark `<AbsoluteFill>`: while both scenes are mid-travel the frame
   edge is briefly uncovered.
 

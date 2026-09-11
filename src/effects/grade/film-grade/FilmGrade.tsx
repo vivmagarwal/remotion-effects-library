@@ -77,6 +77,7 @@ type Theme = {
   readonly text: string;
   readonly accent: string;
   readonly bgDeep: string;
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -87,6 +88,7 @@ const THEME: Theme = {
   text: fontFamily,
   accent: '#ff5c39',
   bgDeep: '#04050a',
+  radius: 18,
 };
 
 type Props = {
@@ -166,11 +168,11 @@ export const FilmGrade: React.FC<Props> = ({
               right: 0,
               top: 0,
               bottom: 0,
-              // 1100 wide, and the alpha is held high most of the way across:
-              // the list box starts 784px in from the right, and at the old
+              // 1160 wide, and the alpha is held high most of the way across:
+              // the list box starts 844px in from the right, and at the old
               // 900/44% ramp that landed on about 13% — the parameter lines
               // disappeared wherever they crossed the bright backdrop.
-              width: 1100,
+              width: 1160,
               backgroundImage:
                 'linear-gradient(to left, rgba(4,5,10,0.95) 0%, rgba(4,5,10,0.9) 50%, rgba(4,5,10,0.55) 78%, rgba(4,5,10,0) 100%)',
             }}
@@ -182,16 +184,17 @@ export const FilmGrade: React.FC<Props> = ({
               position: 'absolute',
               right: 84,
               top: 96,
-              width: 700,
+              width: 760,
               display: 'flex',
               flexDirection: 'column',
-              gap: 12,
+              gap: 8,
             }}
           >
             <div
               style={{
                 fontSize: 28,
                 fontWeight: 800,
+                lineHeight: 1.15,
                 letterSpacing: '0.2em',
                 color: theme.muted,
                 marginBottom: 8,
@@ -208,8 +211,9 @@ export const FilmGrade: React.FC<Props> = ({
                     style={{
                       fontSize: 34,
                       fontWeight: 700,
+                      lineHeight: 1.1,
                       fontFamily: theme.mono,
-                      color: isActive ? accentColor : '#eef1f7',
+                      color: isActive ? accentColor : theme.body,
                       // A 2px nudge on arrival. Enough to catch the eye, small
                       // enough that ten of them do not read as a bouncing list.
                       translate: `${isActive ? interpolate(justArrived, [0, 8], [10, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) : 0}px 0px`,
@@ -217,7 +221,16 @@ export const FilmGrade: React.FC<Props> = ({
                   >
                     {i === 0 ? s.name : `  ${s.name}(…)`}
                   </div>
-                  <div style={{fontSize: 28, fontWeight: 500, color: theme.muted, marginTop: 3}}>
+                  <div
+                    style={{
+                      fontSize: 28,
+                      fontWeight: 500,
+                      lineHeight: 1.15,
+                      whiteSpace: 'nowrap',
+                      color: theme.muted,
+                      marginTop: 3,
+                    }}
+                  >
                     {s.note}
                   </div>
                 </div>
@@ -227,6 +240,7 @@ export const FilmGrade: React.FC<Props> = ({
               style={{
                 fontSize: 28,
                 fontWeight: 800,
+                lineHeight: 1.15,
                 letterSpacing: '0.2em',
                 color: theme.muted,
                 marginTop: 8,
@@ -245,7 +259,7 @@ export const FilmGrade: React.FC<Props> = ({
               left: 84,
               bottom: 84,
               width: 480,
-              borderRadius: 12,
+              borderRadius: theme.radius * (12 / 18),
               overflow: 'hidden',
               border: '1px solid rgba(255,255,255,0.18)',
               boxShadow: '0 24px 60px rgba(0,0,0,0.55)',

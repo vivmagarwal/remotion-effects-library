@@ -36,6 +36,7 @@ type Theme = {
   readonly bgDeep: string;
   readonly ink: string;
   readonly series: readonly string[];
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -47,6 +48,7 @@ const THEME: Theme = {
   bgDeep: '#04050a',
   ink: '#ffffff',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  stroke: 3,
 };
 
 type Props = {
@@ -188,8 +190,10 @@ export const VoronoiShatter: React.FC<Props> = ({
                   extrapolateRight: 'clamp',
                 }),
               }}
-              stroke="#04050a"
-              strokeWidth={1.4}
+              // The crack is the ground showing through, so it is the ground's
+              // own colour — not a literal that a theme cannot reach.
+              stroke={backgroundColor}
+              strokeWidth={theme.stroke * (1.4 / 3)}
             />
           );
         })}

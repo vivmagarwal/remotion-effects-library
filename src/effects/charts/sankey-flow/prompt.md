@@ -74,7 +74,7 @@ outputs, so the right half would be a single green. One `<linearGradient>` per l
   <stop offset="100%" stopColor={colorOf(l.target as LaidOutNode)} />
 </linearGradient>
 ```
-then `stroke={`url(#sankey-link-${i})`}` with `strokeOpacity={0.46}`.
+then `stroke={`url(#sankey-link-${svgId}-${i})`}` with `strokeOpacity={0.46}` — `svgId` from `useId()`, so two copies on one page never share a gradient.
 
 **The reveal**
 A sankey reads as a journey, so wipe along the direction of flow — an SVG `clipPath` whose rect
@@ -113,14 +113,15 @@ The flip puts terminal labels **on top of** their flow bands, so give both a kno
 `style={{paintOrder: 'stroke', stroke: backgroundColor, strokeWidth: 5}}`.
 
 **The scene**
-- 1920×1080, 30fps, **180 frames**. Background `#0a0c14` plus
-  `radial-gradient(ellipse at 50% 56%, #161a28 0%, #070810 74%)`.
+- 1920×1080, 30fps, **180 frames**. Background `theme.bg` under a scrim picked by `theme.scheme`:
+  dark `rgba(255,255,255,0.055) -> rgba(0,0,0,0.42) at 74%`, light
+  `rgba(255,255,255,0.5) -> rgba(0,0,0,0.06) at 74%`.
 - Padding `{left: 150, right: 150, top: 232, bottom: 118}`, so
   `plotW = width - left - right` (1620) and `plotH = height - top - bottom` (730). Nodes are
-  `rx={4}` rects. The plot group is `translate(150, 232)`.
+  `rx={theme.radius * 4 / 18}` rects. The plot group is `translate(150, 232)`.
 - Title and subtitle both at `left: 150` — flush with the plot's left edge. Title `top: 96`
-  (Inter 58px/800, `letter-spacing: -0.025em`); monospace subtitle `top: 168` (24px, `#7b849b`).
-  Fading in over frames 0–20 and 8–28.
+  (58px/800 in `displayFamily`, `letter-spacing: -0.025em`); monospace subtitle `top: 168`
+  (24px, `theme.muted`). Fading in over frames 0–20 and 8–28.
 
 **Data — use these exact values**
 Invented numbers give a visibly different chart, so they are pinned here. Note the columns are
@@ -128,17 +129,20 @@ Invented numbers give a visibly different chart, so they are pinned here. Note t
 sink from the graph alone.
 
 ```tsx
-const DEFAULT_NODES: NodeExtra[] = [
-  {name: 'Script',          color: '#ff5c39'},
-  {name: 'Stock footage',   color: '#ff9f1c'},
-  {name: 'Screen capture',  color: '#ffd166'},
-  {name: 'Edit',            color: '#4cc9f0'},
-  {name: 'Motion graphics', color: '#c77dff'},
-  {name: 'Colour',          color: '#20e3b2'},
-  {name: 'YouTube',         color: '#ff5c7a'},
-  {name: 'Shorts',          color: '#8affc1'},
-  {name: 'Archive',         color: '#7f88a0'},
+// Colours come from the theme's categorical palette; `deep` is the one entry
+// that needs a darker warm than the series carries.
+const defaultNodes = (s: readonly string[], deep: string): NodeExtra[] => [
+  {name: 'Script',          color: s[0]},
+  {name: 'Stock footage',   color: deep},
+  {name: 'Screen capture',  color: s[3]},
+  {name: 'Edit',            color: s[1]},
+  {name: 'Motion graphics', color: s[4]},
+  {name: 'Colour',          color: s[2]},
+  {name: 'YouTube',         color: s[0]},
+  {name: 'Shorts',          color: s[1]},
+  {name: 'Archive',         color: s[5]},
 ];
+// called as: nodes = defaultNodes(theme.series, theme.accentOnPaper)
 
 const DEFAULT_LINKS = [
   {source: 'Script',          target: 'Edit',            value: 42},
@@ -146,11 +150,11 @@ const DEFAULT_LINKS = [
   {source: 'Stock footage',   target: 'Edit',            value: 30},
   {source: 'Screen capture',  target: 'Edit',            value: 22},
   {source: 'Screen capture',  target: 'Motion graphics', value: 14},
-  {source: 'Edit',            target: 'Colour',          value: 74},
+  {source: 'Edit',            target: 'Colour',          value: 94},
   {source: 'Motion graphics', target: 'Colour',          value: 40},
-  {source: 'Colour',          target: 'YouTube',         value: 62},
-  {source: 'Colour',          target: 'Shorts',          value: 34},
-  {source: 'Colour',          target: 'Archive',         value: 18},
+  {source: 'Colour',          target: 'YouTube',         value: 72},
+  {source: 'Colour',          target: 'Shorts',          value: 42},
+  {source: 'Colour',          target: 'Archive',         value: 20},
 ];
 ```
 
@@ -158,5 +162,5 @@ const DEFAULT_LINKS = [
 - One self-contained `.tsx` file exporting `SankeyFlow`.
 - Props, with defaults: `title` (`'Where the footage ends up'`), `subtitle`
   (`'sankey · d3-sankey, laid out once'`), `nodes`, `links`, `drawFrames` (104), `startAt` (18),
-  `backgroundColor` (`#0a0c14`), `paperColor` (`#eef1f7`).
+  `backgroundColor` (`theme.bg`), `paperColor` (`theme.body`).
 - Load Inter via `@remotion/google-fonts/Inter`, weights `['700', '800']` — the only two the design uses.

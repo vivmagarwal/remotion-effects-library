@@ -40,27 +40,37 @@ type PackNode = {
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly mono: string;
   readonly body: string;
   readonly muted: string;
   readonly text: string;
+  readonly display: string;
   readonly bg: string;
   readonly paper: string;
+  readonly series: readonly string[];
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   mono: MONO,
   body: '#eef1f7',
   muted: '#8d93a5',
   text: fontFamily,
+  display: fontFamily,
   bg: '#0a0b10',
   paper: '#f6f5f2',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  stroke: 3,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly title?: string;
@@ -89,24 +99,25 @@ const DEFAULT_DATA: Datum[] = [
   {label: 'Node', value: 14, group: 'data'},
 ];
 
-const DEFAULT_PALETTE: Record<string, string> = {
-  ui: '#4cc9f0',
-  video: '#ff5c39',
-  gfx: '#c77dff',
-  data: '#c6ff3d',
-};
-
 export const BubblePack: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   title = 'What a Remotion video is made of',
   subtitle = 'circle packing · d3-hierarchy',
   data = DEFAULT_DATA,
-  palette = DEFAULT_PALETTE,
+  palette = {
+    ui: theme.series[1],
+    video: theme.series[0],
+    gfx: theme.series[4],
+    data: theme.series[2],
+  },
   stagger = 5,
   startAt = 18,
   backgroundColor = theme.bg,
-  paperColor = theme.paper,
+  // The ink for the title and bubble labels — never the ground the chart is
+  // drawn on, which is what `paper` is under a light theme.
+  paperColor = theme.scheme === 'light' ? theme.body : theme.paper,
 }) => {
   const frame = useCurrentFrame();
   const {fps, width, height} = useVideoConfig();
@@ -132,7 +143,12 @@ export const BubblePack: React.FC<Props> = ({
       name="Scene"
       style={{
         backgroundColor,
-        backgroundImage: 'radial-gradient(ellipse at 50% 46%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 68%)',
+        // A dark scrim reads as depth on a dark ground and as dirt on a light
+        // one, so the scheme picks which way the vignette runs.
+        backgroundImage:
+          theme.scheme === 'light'
+            ? 'radial-gradient(ellipse at 50% 46%, rgba(255,255,255,0.5) 0%, rgba(0,0,0,0.06) 68%)'
+            : 'radial-gradient(ellipse at 50% 46%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 68%)',
         fontFamily,
         overflow: 'hidden',
       }}
@@ -148,6 +164,7 @@ export const BubblePack: React.FC<Props> = ({
           fontSize: 58,
           fontWeight: 800,
           letterSpacing: '-0.025em',
+          fontFamily: displayFamily,
           color: paperColor,
           opacity: interpolate(frame, [0, 20], [0, 1], {
             extrapolateLeft: 'clamp',
@@ -184,7 +201,7 @@ export const BubblePack: React.FC<Props> = ({
       >
         {leaves.map((leaf, i) => {
           const d = leaf.data;
-          const colour = palette[d.group ?? ''] ?? '#8d93a5';
+          const colour = palette[d.group ?? ''] ?? theme.muted;
           // Biggest bubbles first: the chart builds from its centre of mass out.
           const pop = spring({
             frame: frame - (startAt + i * stagger),
@@ -208,7 +225,7 @@ export const BubblePack: React.FC<Props> = ({
                 r={r}
                 fill={`${colour}26`}
                 stroke={colour}
-                strokeWidth={2.5}
+                strokeWidth={(theme.stroke * 5) / 6}
               />
               {showLabel ? (
                 <>

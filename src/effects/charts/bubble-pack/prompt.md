@@ -55,18 +55,23 @@ its centre of mass for free.
   still 20% of its final size.
 
 **The look**
-- 1920×1080, 30fps, 180 frames. Background `#0b0d14` with
-  `radial-gradient(ellipse at 50% 46%, #171b28 0%, #080a10 68%)`.
-- Bubbles: `fill: ${colour}26`, `stroke: colour`, `strokeWidth: 2.5` — a tinted fill with a solid
-  stroke reads far better against a dark ground than a solid fill.
-- Four groups keyed by colour: `#4cc9f0`, `#ff5c39`, `#c77dff`, `#8ac926`.
-- Title at 58px weight 800, a monospace subtitle, and a legend built by iterating the **palette object
-  itself** so it can never drift from the chart's colours.
+- 1920×1080, 30fps, 180 frames. Background `theme.bg` under a scrim picked by `theme.scheme`: dark
+  `rgba(255,255,255,0.055) -> rgba(0,0,0,0.42) at 68%`, light
+  `rgba(255,255,255,0.5) -> rgba(0,0,0,0.06) at 68%`.
+- Bubbles: `fill: ${colour}26`, `stroke: colour`, `strokeWidth: theme.stroke * 5 / 6` (2.5 at the
+  house stroke) — a tinted fill with a solid stroke reads far better against a dark ground than a
+  solid fill.
+- Four groups keyed by `theme.series[1]` (ui), `theme.series[0]` (video), `theme.series[4]` (gfx),
+  `theme.series[2]` (data), as the `palette` default; unknown groups fall back to `theme.muted`.
+- Title at 58px weight 800 in `displayFamily` (default `theme.display`), a monospace subtitle, and a
+  legend built by iterating the **palette object itself** so it can never drift from the chart's
+  colours.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `BubblePack`.
 - Props: `title`, `subtitle`, `data` (array of `{label, value, group}`), `palette`, `stagger`,
-  `startAt`, `backgroundColor`, `paperColor`.
+  `startAt`, `backgroundColor`, `paperColor` — the ink for the title and bubble labels:
+  `theme.paper` on a dark scheme, `theme.body` on a light one; never the ground the effect is drawn on.
 - Size the chart from `useVideoConfig()` — `Math.min(width - 260, height - 300)` — and centre it.
 - Give the `<svg>` `overflow: 'visible'` so strokes on edge bubbles are not clipped.
 - SVG `<text>` needs `fontFamily` set on the element; it does not inherit from an ancestor div.

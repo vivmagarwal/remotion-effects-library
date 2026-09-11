@@ -20,13 +20,15 @@ const {fontFamily: serif} = loadSerif('normal', {weights: ['400'], subsets: ['la
  * structural, so the library's full theme object is assignable to it.
  */
 type Theme = {
-  readonly display: string;
+  readonly scheme: 'dark' | 'light';
+  readonly bg: string;
   readonly text: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
-  display: serif,
+  scheme: 'dark',
+  bg: '#0a0b10',
   text: fontFamily,
 };
 
@@ -35,7 +37,7 @@ type Props = {
   readonly theme?: Theme;
   /** CSS family for the UI chrome. Defaults to this file's sans, or the theme's text face. */
   readonly uiFamily?: string;
-  /** CSS family for the greeting. Defaults to this file's serif, or the theme's display face. */
+  /** CSS family for the greeting. Defaults to this file's Playfair — the greeting face is part of the recreation, so no theme reaches it. */
   readonly greetingFamily?: string;
   readonly greeting?: string;
   readonly prompt?: string;
@@ -75,7 +77,8 @@ const Sunburst: React.FC<{size: number; color: string; spin?: number}> = ({size,
 export const ClaudeFullUi: React.FC<Props> = ({
   theme = THEME,
   uiFamily = theme.text,
-  greetingFamily = theme.display,  greeting = 'How can I help you today?',
+  greetingFamily = serif,
+  greeting = 'How can I help you today?',
   prompt = 'can you render this as a video?',
   answer = 'Yes. Describe the frame as a React component, register it as a composition, and Remotion will render every frame and encode them into an MP4 for you.',
   model = 'Claude Opus 4.5',
@@ -135,7 +138,16 @@ export const ClaudeFullUi: React.FC<Props> = ({
   const zoom = 1 + (zoomWhileTyping - 1) * typingProgress * (1 - handover);
 
   return (
-    <AbsoluteFill name="Scene" style={{backgroundColor: '#141310', fontFamily: uiFamily, overflow: 'hidden'}}>
+    <AbsoluteFill
+      name="Scene"
+      style={{
+        // The authored warm near-black is Claude's own dark; a light theme stands
+        // the window on its own ground rather than fading it up from black.
+        backgroundColor: theme.scheme === 'light' ? theme.bg : '#141310',
+        fontFamily: uiFamily,
+        overflow: 'hidden',
+      }}
+    >
       <Interactive.Div
         name="Window"
         style={{

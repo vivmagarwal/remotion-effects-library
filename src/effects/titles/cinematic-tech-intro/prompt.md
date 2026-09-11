@@ -2,19 +2,22 @@ Build a Remotion composition called **CinematicTechIntro**: light streaks race i
 collide at the centre in a flash, and leave a wordmark behind.
 
 **The look**
-- 1920×1080, 30fps, 150 frames. Background `#04050a` with `overflow: hidden`. Accent `#4cc9f0`.
+- 1920×1080, 30fps, 150 frames. Background `backgroundColor` (`theme.bgDeep`, `#04050a`) with
+  `overflow: hidden`. Accent `accentColor` (`theme.pair`, `#4cc9f0`).
 - A soft floor glow behind everything:
-  `radial-gradient(ellipse at 50% 50%, #4cc9f022 0%, transparent 62%)` in an `<AbsoluteFill>`.
-- Title in Sora, 168px, weight 700, white, with `textShadow: '0 0 60px #4cc9f066'`.
+  ``radial-gradient(ellipse at 50% 50%, ${accentColor}22 0%, transparent 62%)`` in an
+  `<AbsoluteFill>`.
+- Title in `fontFamily` (default `theme.display`; this file loads Sora as the inline value), 168px,
+  weight 700, `theme.ink`, with ``textShadow: `0 0 60px ${accentColor}66` ``.
 - A 1px accent hairline 30px below it, and a subtitle at 34px weight 300, uppercase,
-  letter-spacing `0.34em`, in `#8f9bb3`.
+  letter-spacing `0.34em`, in `theme.muted` (house `#8d93a5`).
 
 **The streaks**
 - 14 absolutely positioned bars, alternating `fromLeft` by index parity. For each, seed with
   `random()` from `remotion`: vertical position `8 + rand*84` (%), thickness `1 + rand*3.2` px,
   start delay `rand*10` frames, speed multiplier `0.6 + rand*0.6`, length `18 + rand*30` (%).
 - Each is a gradient fading to transparent at its tail —
-  `linear-gradient(90deg, transparent, #4cc9f0)` from the left, `270deg` from the right — with
+  ``linear-gradient(90deg, transparent, ${accentColor})`` from the left, `270deg` from the right — with
   `borderRadius` equal to its thickness and `filter: 'blur(0.5px)'`.
 - Animate travel with a single progress `p` from 0→1, easing `Easing.bezier(0.4, 0, 0.2, 1)`, and
   position with `left: \`${-len + p * (52 + len)}%\`` for left-movers (`right:` for the others) — so
@@ -32,7 +35,7 @@ collide at the centre in a flash, and leave a wordmark behind.
 - The hairline grows 0→620px starting 6 frames after impact; the subtitle fades in after that.
 
 **Letterboxing**
-- Two black bars, one pinned `top: 0` and one `bottom: 0`, full width, whose height animates
+- Two bars in `theme.bgDeep` (house `#04050a`), one pinned `top: 0` and one `bottom: 0`, full width, whose height animates
   0 → `height * 0.075` over the first 0.8s. Cheap, and it does more for the "cinematic" read than
   anything else in the shot.
 

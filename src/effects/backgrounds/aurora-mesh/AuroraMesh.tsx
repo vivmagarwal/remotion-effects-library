@@ -28,11 +28,13 @@ type Blob = {
  */
 type Theme = {
   readonly bgDeep: string;
+  readonly series: readonly string[];
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
   bgDeep: '#04050a',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
 };
 
 type Props = {
@@ -46,12 +48,15 @@ type Props = {
 
 export const AuroraMesh: React.FC<Props> = ({
   theme = THEME,
+  // Five colours from the theme's ordered palette, indexed rather than picked by
+  // eye — the blobs ARE the content here, so a literal would leave the whole
+  // effect unthemed.
   blobs = [
-    {color: '#c77dff', x: 28, y: 32, size: 62, travel: 11, speed: 0.31, phase: 0},
-    {color: '#4cc9f0', x: 70, y: 28, size: 58, travel: 13, speed: 0.23, phase: 1.9},
-    {color: '#ff5c39', x: 62, y: 70, size: 54, travel: 10, speed: 0.27, phase: 3.4},
-    {color: '#c6ff3d', x: 33, y: 72, size: 60, travel: 12, speed: 0.19, phase: 5.1},
-    {color: '#ffd166', x: 50, y: 50, size: 40, travel: 16, speed: 0.15, phase: 2.6},
+    {color: theme.series[4], x: 28, y: 32, size: 62, travel: 11, speed: 0.31, phase: 0},
+    {color: theme.series[1], x: 70, y: 28, size: 58, travel: 13, speed: 0.23, phase: 1.9},
+    {color: theme.series[0], x: 62, y: 70, size: 54, travel: 10, speed: 0.27, phase: 3.4},
+    {color: theme.series[2], x: 33, y: 72, size: 60, travel: 12, speed: 0.19, phase: 5.1},
+    {color: theme.series[3], x: 50, y: 50, size: 40, travel: 16, speed: 0.15, phase: 2.6},
   ],
   backgroundColor = theme.bgDeep,
   blur = 90,

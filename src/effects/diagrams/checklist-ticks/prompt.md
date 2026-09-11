@@ -19,7 +19,7 @@ const CHECK_LEN  = 24;   // round the length UP — a dash shorter than the path
   d={CHECK_PATH}
   fill="none"
   stroke={accentColor}
-  strokeWidth={2.6}
+  strokeWidth={theme.stroke * (2.6 / 3)}      // 2.6 at the house stroke 3
   strokeLinecap="round"
   strokeLinejoin="round"
   strokeDasharray={CHECK_LEN}
@@ -59,33 +59,44 @@ strikes through the empty space after the label as well, which looks broken:
 <div style={{flex: 1, minWidth: 0}}>
   <span style={{position: 'relative', display: 'inline-block',
                 fontSize: 38, fontWeight: 600, lineHeight: 1.3,
-                color: strike > 0.5 ? '#79808f' : textColor}}>
+                color: strike > 0.5 ? theme.muted : textColor}}>
     {item}
-    <span style={{position: 'absolute', left: 0, top: '52%', height: 2.5,
+    <span style={{position: 'absolute', left: 0, top: '52%', height: theme.stroke * (2.5 / 3),
                   width: `${strike * 100}%`, backgroundColor: accentColor, opacity: 0.75}} />
   </span>
 </div>
 ```
 
 **The box**
-A 62px `<svg viewBox="0 0 24 24">`, `flex-shrink: 0`, holding the rect and the path:
+A 62px `<svg viewBox="0 0 24 24">`, `flex-shrink: 0`, holding the rect and the path. The shape values
+here are in that 24-unit viewBox, so they are fractions of the theme's own numbers — at the house
+`radius: 18` and `stroke: 3` they come out as the 6 and 1.8 this was drawn with:
 
 ```tsx
-<rect x={1.4} y={1.4} width={21.2} height={21.2} rx={6}
+<rect x={1.4} y={1.4} width={21.2} height={21.2} rx={theme.radius / 3}
       fill={accentColor} fillOpacity={fill * 0.16}
-      stroke={fill > 0.5 ? accentColor : '#39404f'} strokeWidth={1.8} />
+      stroke={fill > 0.5
+        ? accentColor
+        : theme.scheme === 'light' ? 'rgba(0,0,0,0.18)' : 'rgba(255,255,255,0.16)'}
+      strokeWidth={(theme.stroke / 3) * 1.8} />
 ```
+
+An unticked box outlined in white vanishes on a paper ground, which is why the idle stroke is picked
+from `theme.scheme` rather than hard-coded light.
 
 **Layout**
 - Rows are absolutely positioned at `top: 292 + i * ROW_H` with `ROW_H = 108`, `left: 168`,
   `right: 168`, `height: 62`, `display: flex`, `align-items: center`, `gap: 30`.
 - Row entrance: `opacity: Math.min(1, enter * 1.5)`, `translate: ${(1 - enter) * -34}px 0px`.
-- Title at `left: 168, top: 150`, Inter 60px weight 800, `letter-spacing: -0.025em`, `textColor`,
-  fading in over frames 0–20 and rising 16px→0 over 0–24 on `Easing.bezier(0.16, 1, 0.3, 1)`.
+- Title at `left: 168, top: 150`, `displayFamily` (defaults to `theme.display`) 60px weight 800,
+  `letter-spacing: -0.025em`, `textColor`, fading in over frames 0–20 and rising 16px→0 over 0–24 on
+  `Easing.bezier(0.16, 1, 0.3, 1)`.
 
 **The scene**
-- 1920×1080, 30fps, **180 frames**. Background `#0d0f14` with
-  `radial-gradient(ellipse at 30% 22%, #191d27 0%, #0a0c11 68%)`.
+- 1920×1080, 30fps, **180 frames**. Background `theme.bg`. On a dark scheme overlay
+  `radial-gradient(ellipse at 30% 22%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 68%)`; on
+  `theme.scheme === "light"` use `rgba(255,255,255,0.5) 0%` → `rgba(0,0,0,0.05) 68%`, because a 42%
+  black vignette turns paper grey.
 - Load Inter: `loadFont('normal', {weights: ['400', '600', '800'], subsets: ['latin']})`.
 
 **Requirements**
@@ -94,4 +105,5 @@ A 62px `<svg viewBox="0 0 24 24">`, `flex-shrink: 0`, holding the rect and the p
   `'Every animation reads useCurrentFrame()'`, `'Fonts loaded, not just named'`,
   `'No Math.random() anywhere'`, `'Assets in public/, via staticFile()'`,
   `'Checked a frame mid-motion, not the last one'`), `stagger` (22), `startAt` (20), `drawFrames`
-  (13), `accentColor` (`#20e3b2`), `backgroundColor` (`#0d0f14`), `textColor` (`#eef1f7`).
+  (13), `accentColor` (`theme.series[2]`, `#c6ff3d` in the house theme), `backgroundColor`
+  (`theme.bg`, `#0a0b10`), `textColor` (`theme.body`, `#eef1f7`), `displayFamily` (`theme.display`).

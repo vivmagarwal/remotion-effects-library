@@ -28,19 +28,31 @@ type Face = {
  * structural, so the library's full theme object is assignable to it.
  */
 type Theme = {
+  readonly bg: string;
   readonly body: string;
+  readonly accent: string;
+  readonly accentInk: string;
+  readonly display: string;
   readonly text: string;
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  bg: '#0a0b10',
   body: '#eef1f7',
+  accent: '#ff5c39',
+  accentInk: '#04050a',
+  display: fontFamily,
   text: fontFamily,
+  radius: 18,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the card titles. Defaults to the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly front?: Face;
@@ -48,14 +60,42 @@ type Props = {
   /** [frame, degrees] pairs. Multiples of 180 land on a face. */
   readonly flips?: readonly (readonly [number, number])[];
   readonly backgroundColor?: string;
+  /** Card corner radius. Defaults to `theme.radius × 1.56` — 28 at the house 18. */
+  readonly cornerRadius?: number;
 };
 
-const CardFace: React.FC<{face: Face; flipped?: boolean}> = ({face, flipped}) => (
+const channels = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+
+/** The authored back face runs #ff5c39 -> #b8322a. As a per-channel multiply, that same shade applies to any accent. */
+const SHADE = [184 / 255, 50 / 92, 42 / 57];
+
+const shade = (hex: string) =>
+  '#' +
+  channels(hex)
+    .map((c, i) => Math.round(Math.min(255, c * SHADE[i])).toString(16).padStart(2, '0'))
+    .join('');
+
+/** WCAG relative luminance. */
+const luminance = (hex: string) => {
+  const [r, g, b] = channels(hex).map((c) => {
+    const s = c / 255;
+    return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+
+const CardFace: React.FC<{
+  face: Face;
+  flipped?: boolean;
+  radius: number;
+  /** Threaded: at module scope a bare `theme` is not in lexical reach. */
+  displayFamily: string;
+}> = ({face, flipped, radius, displayFamily}) => (
   <div
     style={{
       position: 'absolute',
       inset: 0,
-      borderRadius: 28,
+      borderRadius: radius,
       padding: '58px 62px',
       display: 'flex',
       flexDirection: 'column',
@@ -82,7 +122,16 @@ const CardFace: React.FC<{face: Face; flipped?: boolean}> = ({face, flipped}) =>
     >
       {face.eyebrow}
     </div>
-    <div style={{fontSize: 92, fontWeight: 800, letterSpacing: '-0.035em', marginTop: 16, lineHeight: 1.05}}>
+    <div
+      style={{
+        fontFamily: displayFamily,
+        fontSize: 92,
+        fontWeight: 800,
+        letterSpacing: '-0.035em',
+        marginTop: 16,
+        lineHeight: 1.05,
+      }}
+    >
       {face.title}
     </div>
     <div style={{fontSize: 32, fontWeight: 500, marginTop: 20, opacity: 0.78, lineHeight: 1.45}}>
@@ -94,6 +143,7 @@ const CardFace: React.FC<{face: Face; flipped?: boolean}> = ({face, flipped}) =>
 export const CssCardFlip: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   front = {
     eyebrow: 'Before',
     title: 'A flat rectangle',
@@ -106,9 +156,9 @@ export const CssCardFlip: React.FC<Props> = ({
     eyebrow: 'After',
     title: 'A card in space',
     body: 'perspective + preserve-3d + backface-visibility. Three properties, no library.',
-    background: 'linear-gradient(150deg, #ff5c39, #b8322a)',
-    color: '#fff5f1',
-    accent: '#ffd8cc',
+    background: `linear-gradient(150deg, ${theme.accent}, ${shade(theme.accent)})`,
+    color: luminance(theme.accent) > 0.4 ? theme.accentInk : '#fff5f1',
+    accent: luminance(theme.accent) > 0.4 ? `${theme.accentInk}b3` : '#ffd8cc',
   },
   flips = [
     [0, 0],
@@ -116,7 +166,8 @@ export const CssCardFlip: React.FC<Props> = ({
     [95, 360],
     [140, 540],
   ],
-  backgroundColor = '#08090f',
+  backgroundColor = theme.bg,
+  cornerRadius = Math.round(theme.radius * 1.56),
 }) => {
   const frame = useCurrentFrame();
 
@@ -162,8 +213,8 @@ export const CssCardFlip: React.FC<Props> = ({
         }}
       >
         {/* 3. backfaceVisibility: hidden on each face. */}
-        <CardFace face={front} />
-        <CardFace face={back} flipped />
+        <CardFace face={front} radius={cornerRadius} displayFamily={displayFamily} />
+        <CardFace face={back} flipped radius={cornerRadius} displayFamily={displayFamily} />
       </Interactive.Div>
     </AbsoluteFill>
   );

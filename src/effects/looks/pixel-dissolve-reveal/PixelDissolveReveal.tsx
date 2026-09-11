@@ -22,6 +22,7 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '700'], subsets: ['lat
 type Theme = {
   readonly muted: string;
   readonly mono: string;
+  readonly bgDeep: string;
   readonly series: readonly string[];
 };
 
@@ -29,6 +30,7 @@ type Theme = {
 const THEME: Theme = {
   muted: '#8d93a5',
   mono: fontFamily,
+  bgDeep: '#04050a',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
 };
 
@@ -48,6 +50,8 @@ type Props = {
   readonly gridColumns?: number;
   readonly gridRows?: number;
   readonly accentColor?: string;
+  /** The ground the plate materialises out of. Defaults to the theme's deep ground. */
+  readonly backgroundColor?: string;
 };
 
 export const PixelDissolveReveal: React.FC<Props> = ({
@@ -62,6 +66,7 @@ export const PixelDissolveReveal: React.FC<Props> = ({
   gridColumns = 44,
   gridRows = 26,
   accentColor = theme.series[2],
+  backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
 
@@ -88,7 +93,7 @@ export const PixelDissolveReveal: React.FC<Props> = ({
   const dissolve = 1 - progress;
 
   return (
-    <AbsoluteFill name="Scene" style={{backgroundColor: '#04050a', overflow: 'hidden', fontFamily}}>
+    <AbsoluteFill name="Scene" style={{backgroundColor, overflow: 'hidden', fontFamily}}>
       <CanvasImage
         src={src ?? staticFile('plate-1.svg')}
         style={{width: '100%', height: '100%', objectFit: 'cover'}}

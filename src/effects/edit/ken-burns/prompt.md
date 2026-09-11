@@ -3,10 +3,14 @@ with documentary-style captions.
 
 **The look**
 - 1920×1080, 30fps, 180 frames — two 90-frame shots played with `<Series>`.
+- Under the Series, a full-frame ground in `theme.bgDeep` (`#04050a`) for each shot to fade through.
+  Put it on the shot instead and it fades out with the picture, and the composition flashes
+  transparent between plates.
 - Each shot: a full-bleed image (`objectFit: 'cover'`) with a bottom scrim
   `linear-gradient(transparent 44%, rgba(6,6,10,0.55) 72%, rgba(6,6,10,0.92) 100%)`, a serif caption
-  (DM Serif Display, 78px, `#f7f4ee`, max-width 1300) bottom-left with 110px side padding, and a small
-  uppercase credit at 26px with `letter-spacing: 0.2em` in `#9b968c`.
+  (DM Serif Display via `theme.display`, 78px, `theme.ink` (`#ffffff`), max-width 1300) bottom-left
+  with 110px side padding, and a small uppercase credit at 26px with `letter-spacing: 0.2em` in
+  `theme.muted` (`#8d93a5`), Inter via `theme.text`.
 - Caption rises `'0px 26px'` → `'0px 0px'` and fades in over frames 6–34; credit follows.
 - Each shot fades at both ends: `interpolate(frame, [0, 12, frames - 12, frames], [0, 1, 1, 0])`.
 

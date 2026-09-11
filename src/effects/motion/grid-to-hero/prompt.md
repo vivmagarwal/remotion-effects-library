@@ -64,12 +64,14 @@ forever with no state.
   tile is still thumbnail-sized and the text overflows its own box.
 
 **The look**
-- 1920×1080, 30fps, 620 frames. Background `#111219`, accent `#ff5c39`. Six items, 3 columns, 26px gap,
-  70px padding, 168px header.
-- Tiles: radius 18, `overflow: hidden`, `2px solid #262833` — and the accent colour when open.
-- Heading top-left at 44px weight 800 `letter-spacing: 0.24em`; a monospace `01 / 06` counter top-right.
+- 1920×1080, 30fps, 620 frames. Background `theme.bg` (`#0a0b10`), accent `theme.accent` (`#ff5c39`).
+  Six items, 3 columns, 26px gap, 70px padding, 168px header.
+- Tiles: radius `theme.radius` (18 in the house theme), `overflow: hidden`, a
+  `` `${(2 * theme.stroke) / 3}px` `` border in `rgba(255,255,255,0.12)`, and the accent when open.
+- Heading top-left at 44px weight 800 `letter-spacing: 0.24em`, in the display face
+  (`displayFamily = theme.display`, Inter by default); a monospace `01 / 06` counter top-right.
 - The open tile's caption sits on a `linear-gradient(transparent, rgba(6,6,10,0.86))` scrim: a meta line
-  at 24px in the accent, then the title at 76px weight 800.
+  at 24px in the accent, then the title at 76px weight 800, in `theme.ink` and the display face.
 - Stagger the initial grid build with `interpolate(frame, [i * 4, i * 4 + 22], [0, 1], …)`.
 
 **Requirements**

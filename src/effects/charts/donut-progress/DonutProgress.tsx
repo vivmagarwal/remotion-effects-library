@@ -22,7 +22,10 @@ type Theme = {
   readonly body: string;
   readonly ink: string;
   readonly text: string;
+  readonly display: string;
   readonly bg: string;
+  readonly series: readonly string[];
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -30,12 +33,17 @@ const THEME: Theme = {
   body: '#eef1f7',
   ink: '#ffffff',
   text: fontFamily,
+  display: fontFamily,
   bg: '#0a0b10',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  radius: 18,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title and the centre label. Defaults to the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly rings?: readonly Ring[];
@@ -48,10 +56,11 @@ type Props = {
 export const DonutProgress: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   rings = [
-    {label: 'Render', value: 0.92, color: '#4cc9f0'},
-    {label: 'Encode', value: 0.74, color: '#c6ff3d'},
-    {label: 'Upload', value: 0.48, color: '#ff5c39'},
+    {label: 'Render', value: 0.92, color: theme.series[1]},
+    {label: 'Encode', value: 0.74, color: theme.series[2]},
+    {label: 'Upload', value: 0.48, color: theme.series[0]},
   ],
   title = 'Pipeline health',
   centerLabel = 'OK',
@@ -132,6 +141,7 @@ export const DonutProgress: React.FC<Props> = ({
             style={{
               fontSize: 96,
               fontWeight: 800,
+              fontFamily: displayFamily,
               color: theme.ink,
               letterSpacing: '-0.03em',
               scale: interpolate(frame, [10, 32], [0.7, 1], {
@@ -154,7 +164,14 @@ export const DonutProgress: React.FC<Props> = ({
       <div>
         <Interactive.Div
           name="Title"
-          style={{fontSize: 54, fontWeight: 800, color: theme.ink, marginBottom: 40, letterSpacing: '-0.02em'}}
+          style={{
+            fontSize: 54,
+            fontWeight: 800,
+            fontFamily: displayFamily,
+            color: theme.ink,
+            marginBottom: 40,
+            letterSpacing: '-0.02em',
+          }}
         >
           {title}
         </Interactive.Div>
@@ -184,7 +201,9 @@ export const DonutProgress: React.FC<Props> = ({
                 }),
               }}
             >
-              <span style={{width: 22, height: 22, borderRadius: 6, backgroundColor: ring.color}} />
+              <span
+                style={{width: 22, height: 22, borderRadius: theme.radius / 3, backgroundColor: ring.color}}
+              />
               <span style={{fontSize: 38, fontWeight: 600, color: theme.body, width: 220}}>
                 {ring.label}
               </span>

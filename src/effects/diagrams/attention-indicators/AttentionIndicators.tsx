@@ -1,3 +1,4 @@
+import {useId} from 'react';
 import {AbsoluteFill, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import {loadFont} from '@remotion/google-fonts/Inter';
 
@@ -29,18 +30,24 @@ const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 type Theme = {
   readonly mono: string;
   readonly muted: string;
+  readonly body: string;
   readonly text: string;
   readonly bg: string;
   readonly series: readonly string[];
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
   mono: MONO,
   muted: '#8d93a5',
+  body: '#eef1f7',
   text: fontFamily,
   bg: '#0a0b10',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
@@ -85,6 +92,11 @@ export const AttentionIndicators: React.FC<Props> = ({
   accentColor = theme.series[3],
   backgroundColor = theme.bg,
 }) => {
+  // One SVG id per INSTANCE. A literal id is global to the page: with two copies
+  // mounted (a gallery card and its detail player), every url(#…) resolves to
+  // whichever copy came first in the DOM, and its clip or mask follows the other
+  // copy's frame.
+  const svgId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const frame = useCurrentFrame();
   const {width, height} = useVideoConfig();
 
@@ -137,7 +149,7 @@ export const AttentionIndicators: React.FC<Props> = ({
           top: PANEL.y,
           width: PANEL.w,
           height: PANEL.h,
-          borderRadius: 22,
+          borderRadius: 22 * (theme.radius / 18),
           backgroundColor: 'rgba(255,255,255,0.05)',
           border: '1px solid rgba(255,255,255,0.12)',
         }}
@@ -166,7 +178,7 @@ export const AttentionIndicators: React.FC<Props> = ({
               padding: '0 30px',
               fontSize: 42,
               fontWeight: 700,
-              color: indicate > 0.02 ? accentColor : '#eef1f7',
+              color: indicate > 0.02 ? accentColor : theme.body,
               // Indicate scales about the element's own centre, so it swells in
               // place rather than shifting the row.
               scale: 1 + indicate * 0.13,
@@ -181,7 +193,7 @@ export const AttentionIndicators: React.FC<Props> = ({
       <svg width={width} height={height} style={{position: 'absolute', inset: 0}}>
         <defs>
           {/* FocusOn's mask: everything dimmed except a shrinking hole. */}
-          <mask id="ai-focus">
+          <mask id={`ai-focus-${svgId}`}>
             <rect width={width} height={height} fill="#fff" />
             {focusRun !== null ? (
               <ellipse
@@ -211,10 +223,10 @@ export const AttentionIndicators: React.FC<Props> = ({
               y={r.y}
               width={r.w}
               height={r.h}
-              rx={14}
+              rx={14 * (theme.radius / 18)}
               fill="none"
               stroke={accentColor}
-              strokeWidth={5}
+              strokeWidth={theme.stroke * (5 / 3)}
               strokeDasharray={perimeter}
               strokeDashoffset={perimeter * (1 - draw)}
               opacity={interpolate(run, [0, 0.6, 0.85, 1], [1, 1, 1, 0], {
@@ -247,7 +259,7 @@ export const AttentionIndicators: React.FC<Props> = ({
                     x2={cx + Math.cos(a) * outer}
                     y2={cy + Math.sin(a) * outer * 0.55}
                     stroke={accentColor}
-                    strokeWidth={5}
+                    strokeWidth={theme.stroke * (5 / 3)}
                     strokeLinecap="round"
                   />
                 );
@@ -263,7 +275,7 @@ export const AttentionIndicators: React.FC<Props> = ({
             height={height}
             fill="#04050a"
             opacity={0.82 * thereAndBack(focusRun)}
-            mask="url(#ai-focus)"
+            mask={`url(#ai-focus-${svgId})`}
           />
         ) : null}
       </svg>

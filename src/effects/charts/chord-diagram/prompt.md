@@ -63,8 +63,9 @@ const flip = mid > Math.PI / 2 || mid < -Math.PI / 2;
 ```
 
 **The scene**
-- 1920×1080, 30fps, 180 frames. Background `#0a0c14` with
-  `radial-gradient(ellipse at 50% 52%, #161a28 0%, #070810 70%)`.
+- 1920×1080, 30fps, 180 frames. Background `theme.bg` under a scrim picked by `theme.scheme`: dark
+  `rgba(255,255,255,0.055) -> rgba(0,0,0,0.42) at 70%`, light
+  `rgba(255,255,255,0.5) -> rgba(0,0,0,0.06) at 70%`.
 - `SIZE = Math.min(width - 760, height - 500)`, `outer = SIZE / 2`, `inner = outer - 24`. Labels run
   RADIALLY outward, so the frame must hold the ring PLUS the longest label at top and bottom.
 - Draw everything in **centred coordinates** inside
@@ -72,12 +73,13 @@ const flip = mid > Math.PI / 2 || mid < -Math.PI / 2;
   the origin is a scale about the middle of the ring, and the whole assembly can be spun as a unit.
 - The ring turns in from `-0.42 rad` over 46 frames and then creeps at `frame * 0.0012`; it blooms
   `0.82 → 1` over the same window.
-- Title (Inter 56px/800) and monospace subtitle centred at the top.
+- Title (56px/800 in `displayFamily`, default `theme.display`) and monospace subtitle centred at the top.
 
 **Data**
 Six platforms — YouTube, TikTok, Instagram, X, LinkedIn, Reddit — and a matrix of audience overlap.
-Colours `['#ff5c39', '#20e3b2', '#c77dff', '#4cc9f0', '#ffd166', '#ff7bd5']`; ribbons take their
-source group's colour at `fillOpacity: 0.42 * p`.
+Colours `[theme.series[0], theme.series[2], theme.series[4], theme.series[1], theme.series[3],
+theme.accentOnPaper]` as the `colors` default; ribbons take their source group's colour at
+`fillOpacity: 0.42 * p`.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `ChordDiagram`.

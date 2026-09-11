@@ -46,12 +46,19 @@ const NODE_R = 46;
 const x      = MARGIN + i * gap;
 ```
 
+**Everything not yet reached is a hairline, and the hairline comes from the scheme.** A white wash
+disappears on paper and a black one on the dark ground, so pick the channel once and reuse it:
+
+```tsx
+const hair = theme.scheme === 'light' ? '0,0,0' : '255,255,255';
+```
+
 **The rail** — two bars, same box, the fill driven by the playhead:
 
 ```tsx
 // track
 <div style={{position:'absolute', left: MARGIN, top: railY - 3, width: railW,
-             height: 6, borderRadius: 3, backgroundColor: '#232936'}} />
+             height: 6, borderRadius: 3, backgroundColor: `rgba(${hair},0.08)`}} />
 // fill
 <div style={{position:'absolute', left: MARGIN, top: railY - 3, width: gap * playhead,
              height: 6, borderRadius: 3, backgroundColor: accentColor,
@@ -60,9 +67,10 @@ const x      = MARGIN + i * gap;
 
 **The node** — a 92px circle (`NODE_R * 2`) at `left: x - NODE_R, top: railY - NODE_R`:
 
-- `background`: `arrived > 0.5 ? accentColor : '#151a24'`
-- `border`: `4px solid ${arrived > 0.5 ? accentColor : '#2b3242'}`
-- the number, Inter 34px weight 800, colour `arrived > 0.5 ? '#08090e' : '#79808f'`
+- `background`: ``arrived > 0.5 ? accentColor : `rgba(${hair},0.05)` ``
+- `border`: ``${theme.stroke * 4 / 3}px solid ${arrived > 0.5 ? accentColor : `rgba(${hair},0.12)`}`` —
+  4px at the house stroke 3
+- the number, Inter 34px weight 800, colour `arrived > 0.5 ? theme.accentInk : theme.muted`
 - `scale: 1 + (isCurrent ? Math.max(0, pop) * 0.12 : 0)` — clamp the spring's undershoot at 0
 - `boxShadow: isCurrent ? \`0 0 40px ${accentColor}77\` : 'none'`
 - centre it with flex
@@ -73,13 +81,15 @@ const x      = MARGIN + i * gap;
   whole process is legible from frame one and only the *current* step is emphasised
 - `translate: 0px ${(1 - Math.max(0, Math.min(1, pop))) * 12}px`
 - label: Inter 38px weight 700, `textColor`
-- detail: Inter 25px weight 500, `#79808f`, `margin-top: 8`
+- detail: Inter 25px weight 500, `theme.muted`, `margin-top: 8`
 
 **The scene**
-- 1920×1080, 30fps, **180 frames**. Background `#0b0d13` with
-  `radial-gradient(ellipse at 50% 46%, #171b26 0%, #08090e 70%)`.
-- Title centred at `top: 138`, Inter 56px weight 800, `letter-spacing: -0.025em`, `textColor`,
-  fading in over frames 0–20.
+- 1920×1080, 30fps, **180 frames**. Background `theme.bg`. On a dark scheme overlay
+  `radial-gradient(ellipse at 50% 46%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 70%)`; on
+  `theme.scheme === "light"` use `rgba(255,255,255,0.5) 0%` → `rgba(0,0,0,0.05) 70%`, because a 42%
+  black vignette turns paper grey.
+- Title centred at `top: 138`, `displayFamily` (defaults to `theme.display`) 56px weight 800,
+  `letter-spacing: -0.025em`, `textColor`, fading in over frames 0–20.
 - Load Inter: `loadFont('normal', {weights: ['500', '700', '800'], subsets: ['latin']})`.
 
 **Requirements**
@@ -87,5 +97,6 @@ const x      = MARGIN + i * gap;
 - Props, with defaults: `title` (`'How a Remotion video gets made'`), `steps` (four
   `{label, detail}` pairs — `Write` / `One .tsx per composition`, `Preview` /
   `npx remotion studio`, `Check` / `A still, mid-motion`, `Render` / `npx remotion render`),
-  `travelFrames` (26), `holdFrames` (16), `startAt` (18), `accentColor` (`#4cc9f0`),
-  `backgroundColor` (`#0b0d13`), `textColor` (`#eef1f7`).
+  `travelFrames` (26), `holdFrames` (16), `startAt` (18), `accentColor` (`theme.pair`, `#4cc9f0`),
+  `backgroundColor` (`theme.bg`, `#0a0b10`), `textColor` (`theme.body`, `#eef1f7`),
+  `displayFamily` (`theme.display`).

@@ -31,15 +31,15 @@ frame 0 (dimmed to `opacity: 0.35` for lines not yet reached). Without this the 
 and the centred editor visibly creeps up the frame the whole time.
 
 **The look**
-- 1920×1080, 30fps, 300 frames. Page `#080a10` with
-  `radial-gradient(ellipse at 50% 30%, #1b2033 0%, #080a10 66%)`.
-- Editor 1440px wide, `#12141c`, radius 16, `1px solid #232838`,
-  `boxShadow: '0 40px 100px rgba(0,0,0,0.6)'`, `overflow: hidden`.
+- 1920×1080, 30fps, 300 frames. Page `backgroundColor` = `theme.bgDeep` (`#04050a`) with
+  `radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 66%)`.
+- Editor 1440px wide on `syntax.bg` = `theme.surface` (`#101218`), radius `radius` (`theme.radius`,
+  18), `1px solid #232838`, `boxShadow: '0 40px 100px rgba(0,0,0,0.6)'`, `overflow: hidden`.
 - Title bar: three 13px traffic lights and the filename at 20px in `#7a8299`, with a `1px solid #232838`
   bottom border.
 - Gutter 88px wide, right-aligned, `#3a4055`. Code at 30px, `line-height: 1.6`, `whiteSpace: 'pre'`.
-- Theme: text `#d6dae6`, keyword `#ff7b72`, string `#a5d6a3`, comment `#6b7285` italic, number
-  `#f2cc7f`, function `#7fb5ff`.
+- Syntax palette (the `syntax` prop): text `#d6dae6`, keyword `#ff7b72`, string `#a5d6a3`, comment
+  `#6b7285` italic, number `#f2cc7f`, function `#7fb5ff`.
 - Caret: a 3px `inline-block` at `1.05em` in `#7fb5ff` on the last visible line, blinking with
   `Math.floor(frame / blinkFrames) % 2 === 0` **only once typing has finished** — a real caret goes
   solid under keystrokes.
@@ -51,7 +51,8 @@ and the centred editor visibly creeps up the frame the whole time.
 **Requirements**
 - One self-contained `.tsx` file exporting `CodeEditorTyping`.
 - Props: `code`, `filename`, `charsPerSecond`, `typeFrom`, `enterFrames`, `exitFrames`, `blinkFrames`,
-  `theme` (an object of eight colours), `fontSize`.
+  `syntax` (an object of eight colours: bg, gutter, text, keyword, string, comment, number, fn),
+  `fontSize`, `backgroundColor`, `radius`, and the shared `theme`.
 - Load JetBrains Mono via `@remotion/google-fonts/JetBrainsMono` — a monospace face is not optional
   here; a proportional font makes the gutter and the code disagree line by line.
 - No timers and no CSS animation; everything derives from `useCurrentFrame()`.

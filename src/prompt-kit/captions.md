@@ -187,9 +187,20 @@ const gaps = captions.slice(0, -1).map((a, i) => {
 **Thresholds when you are cutting rather than classifying** (these are the numbers, not a starting
 point): silence threshold **4 % of peak RMS over a 20 ms window**; minimum silence to cut **350 ms**;
 keep margin **180–220 ms each side** so the cut never clips a consonant onset; minimum kept segment
-**250 ms**; after removing filler words (`um, uh, like, you know, so, basically, actually, I mean,
-right` — `interview-raw` contains four real `um`s), merge adjacent kept ranges whose gap is now
-**< 120 ms**.
+**250 ms**; after removing **disfluencies** (`um, uh, umm, uhh, uhm, hmm, er, ah` — `interview-raw`
+contains four real `um`s), merge adjacent kept ranges whose gap is now **< 120 ms**. Discourse markers
+— `like, you know, so, basically, actually, I mean, right` — change the meaning of a sentence when
+they go, so they are **review-only**: list them, never auto-cut them.
+
+A filler is cut as its **own interval, ±50 ms**, independent of the silence gate. Dropping it from the
+word list alone is not a cut: whenever its neighbours sit closer than the silence threshold the run is
+kept whole and the "um" stays in the picture, which is exactly what the four in `interview-raw` did
+until this was measured.
+
+**Two gap regimes.** The table above is the **short-form** regime — every gap tightened, ~40 % of a
+talking head removed. Long-form conversation and reflective teaching use the **conservative** one the
+studio validated on an 88-minute cut: only gaps **> 0.9 s** are touched, and only down to **0.8 s**;
+thinking pauses under 1.1 s are left alone. Pick by format, and say which in the brief.
 
 Two rules that override the table: **never cut a sentence-final gap below 250 ms** (it makes the read
 sound panicked), and **never cut the gap immediately before an emphasis word** — that pause *is* the
@@ -200,8 +211,12 @@ emphasis. And never cut *on* a word: a cut frame must land inside a gap, and if 
 
 - The last spoken word's page stays on screen for **12 frames** after the word ends, then clears. A
   static caption sitting through a two-second silence is the caption equivalent of dead air.
-- The next page appears **exactly on the frame its first word starts** — never earlier. **Captions
-  must not J-cut**; a caption that precedes its audio is read as a spoiler.
+- A **karaoke or word-highlight page** appears exactly on the frame its first word starts, and each
+  word lights on its own onset — never earlier. A highlighted word that precedes its audio is read as a
+  spoiler.
+- A **subtitle line or designed on-screen text** may **lead** its audio by **0.2–0.5 s** (subtitle-band
+  enters 0.25 s early for exactly this reason) and must never arrive late. The two rules are not in
+  tension: the highlight is the sync signal, the line is the context.
 - If the hold is longer than ~45 frames, put something designed there — a chapter card, a still, a
   breath of b-roll — not an empty caption slot.
 
@@ -243,11 +258,23 @@ position — derived emphasis lands on "the".
 | TikTok | 130 | 484 | 44 | 140 |
 | Instagram Reels | 210 | 310 | 42 | 84 |
 | YouTube Shorts | 120 | 300 | 48 | 96 |
-| **Universal (clears all three)** | **260** | **260** | **90** | **90** |
+| **Universal (clears all three)** | **260** | **484** | **48** | **140** |
 
-For captions specifically, **bottom-anchor between 520 and 620 px** on a 1080×1920 frame: that clears
-TikTok's caption stack and the Reels action rail at once. TikTok's figure is a floor, not a guarantee
-— it grows with the length of the poster's own caption.
+The universal row is the per-column maximum of the three above it — an earlier version said 260 at the
+bottom and 90 on the right, which cleared none of its own table. For captions specifically,
+**bottom-anchor between 520 and 620 px** on a 1080×1920 frame: that clears TikTok's caption stack and
+the Reels action rail at once. TikTok's figure is a floor, not a guarantee — it grows with the length
+of the poster's own caption.
+
+**4:5 delivery.** Shorts ship twice: 1080×1920 for Shorts, Reels and TikTok, and 1080×1350 for the
+LinkedIn and Instagram feeds, the tallest frame the feed does not clip. The 4:5 is a centre crop of the
+9:16 master that drops **285 px top and bottom**, so anything that has to survive both — title, face,
+captions — stays inside **y 300–1440**: the crop band intersected with the platform insets above. A
+caption anchored at 560 from the bottom lands at y 1360 and survives; one at 380 does not.
+
+**16:9.** YouTube's control bar owns the bottom ~9 % of a landscape frame, so a burned caption sits at
+**≥ 108 px** from the bottom of 1920×1080, and a drawing that will carry captions keeps its lowest
+label out of the bottom 20 %.
 
 At 1080×1920 the house `SAFE_TOP` is 240 and `SAFE_BOTTOM` is 380; the numbers above are the
 platform-specific tightening of that, and a caption effect should use them.

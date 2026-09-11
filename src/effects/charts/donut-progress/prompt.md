@@ -2,12 +2,14 @@ Build a Remotion composition called **DonutProgress**: three concentric rings sw
 values, with a legend beside them.
 
 **The look**
-- 1920×1080, 30fps, 120 frames. Background `#0a0c12`. A row: the 620px chart on the left, a legend on
+- 1920×1080, 30fps, 120 frames. Background `theme.bg`. A row: the 620px chart on the left, a legend on
   the right, 110px apart, both vertically centred. Inter throughout.
-- Three rings — Render `#4cc9f0` at 92%, Encode `#c6ff3d` at 74%, Upload `#ff5c39` at 48%. Stroke width
+- Three rings — Render `theme.series[1]` at 92%, Encode `theme.series[2]` at 74%, Upload
+  `theme.series[0]` at 48% — as the `rings` default. Stroke width
   46, 18px gap between rings, so radius `i` is `CENTER - STROKE/2 - i * (STROKE + GAP)`.
-- A big label in the middle of the donut at 96px weight 800, scaling 0.7→1 as it fades in.
-- Legend rows: a 22px colour chip, the label at 38px weight 600 in a fixed 220px column, and the
+- A big label in the middle of the donut at 96px weight 800 in `displayFamily` (default
+  `theme.display`), scaling 0.7→1 as it fades in.
+- Legend rows: a 22px colour chip with radius `theme.radius / 3`, the label at 38px weight 600 in a fixed 220px column, and the
   percentage at 44px weight 800 in the ring's colour with `fontVariantNumeric: 'tabular-nums'`.
 
 **Drawing the arcs**
@@ -15,7 +17,7 @@ Use SVG circles with `strokeDasharray`, not a `conic-gradient`:
 
 ```tsx
 const circumference = 2 * Math.PI * r;
-<circle cx={CENTER} cy={CENTER} r={r} fill="none" stroke="#1a1e2a" strokeWidth={STROKE} />
+<circle cx={CENTER} cy={CENTER} r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={STROKE} />
 <circle cx={CENTER} cy={CENTER} r={r} fill="none" stroke={color} strokeWidth={STROKE}
         strokeLinecap="round"
         strokeDasharray={`${circumference * p} ${circumference}`} />

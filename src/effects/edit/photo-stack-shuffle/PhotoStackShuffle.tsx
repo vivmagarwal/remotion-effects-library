@@ -31,6 +31,9 @@ type Theme = {
   readonly paperMuted: string;
   readonly text: string;
   readonly bg: string;
+  readonly bgDeep: string;
+  readonly paper: string;
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -39,6 +42,9 @@ const THEME: Theme = {
   paperMuted: '#4a4e5a',
   text: fontFamily,
   bg: '#0a0b10',
+  bgDeep: '#04050a',
+  paper: '#f6f5f2',
+  radius: 18,
 };
 
 type Props = {
@@ -127,8 +133,8 @@ export const PhotoStackShuffle: React.FC<Props> = ({
             style={{
               position: 'absolute',
               width: cardWidth,
-              backgroundColor: '#f6f5f2',
-              borderRadius: 10,
+              backgroundColor: theme.paper,
+              borderRadius: (10 * theme.radius) / THEME.radius,
               padding: 20,
               paddingBottom: showCaptions ? 74 : 20,
               boxShadow: `0 ${24 + settle * 6}px ${60 + settle * 16}px rgba(0,0,0,${0.5 - settle * 0.06})`,
@@ -140,7 +146,15 @@ export const PhotoStackShuffle: React.FC<Props> = ({
               zIndex: cards.length - Math.round(depth),
             }}
           >
-            <div style={{width: '100%', height: cardHeight, borderRadius: 4, overflow: 'hidden', backgroundColor: '#04050a'}}>
+            <div
+              style={{
+                width: '100%',
+                height: cardHeight,
+                borderRadius: (4 * theme.radius) / THEME.radius,
+                overflow: 'hidden',
+                backgroundColor: theme.bgDeep,
+              }}
+            >
               <CanvasImage
                 src={staticFile(card.src)}
                 style={{width: '100%', height: '100%', objectFit: 'cover'}}

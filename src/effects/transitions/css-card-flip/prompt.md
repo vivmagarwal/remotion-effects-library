@@ -43,20 +43,27 @@ Every keyframe is a multiple of 180 so the card always comes to rest **on a face
 easing accelerates into each turn and settles out of it, which is what a physical flip does.
 
 **The faces**
-- 1920×1080, 30fps, 165 frames. Background `#08090f` with
-  `radial-gradient(ellipse at 50% 44%, #1a1f33 0%, #08090f 62%)`.
-- Card 940×560, radius 28, padding `58px 62px`, `1px solid rgba(255,255,255,0.14)`,
-  `boxShadow: '0 40px 90px rgba(0,0,0,0.5)'`, content vertically centred.
-- Front: `linear-gradient(150deg, #1c2030, #10131d)`. Back: `linear-gradient(150deg, #ff5c39, #b8322a)`.
+- 1920×1080, 30fps, 165 frames. Background `theme.bg` (`#0a0b10`) with
+  `radial-gradient(ellipse at 50% 44%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 62%)`.
+- Card 940×560, radius `theme.radius × 1.56` (28 at the house 18), padding `58px 62px`,
+  `1px solid rgba(255,255,255,0.14)`, `boxShadow: '0 40px 90px rgba(0,0,0,0.5)'`, content vertically
+  centred.
+- Front: `linear-gradient(150deg, #1c2030, #10131d)`. Back: `linear-gradient(150deg, theme.accent, the
+  accent multiplied per channel by (184/255, 50/92, 42/57))` — `#ff5c39` to `#b8322a` under the house
+  theme. Title and body `#fff5f1` with a `#ffd8cc` eyebrow, or `theme.accentInk` (eyebrow at `b3`
+  alpha) when the accent's relative luminance is above 0.4, because light type on a light accent
+  (console lime) reads at 1.1:1.
 - Each face: an uppercase eyebrow at 26px weight 700 with `letter-spacing: 0.24em` in an accent colour,
-  a title at 92px weight 800 letter-spacing `-0.035em`, and a body line at 32px weight 500 at
-  `opacity: 0.78`.
+  a title at 92px weight 800 letter-spacing `-0.035em` in `theme.display`, and a body line at 32px
+  weight 500 at `opacity: 0.78`. The eyebrow and body ride the scene's `theme.text`.
 - The whole card also scales 0.9→1 over the first 22 frames with `output: 'perceptual-scale'`.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `CssCardFlip`.
-- Props: `front`, `back` (each `{eyebrow, title, body, background, color, accent}`), `flips` (array of
-  `[frame, degrees]` pairs), `backgroundColor`.
+- Props: `theme`, `front`, `back` (each `{eyebrow, title, body, background, color, accent}`), `flips`
+  (array of `[frame, degrees]` pairs), `backgroundColor`, `cornerRadius`, `fontFamily`,
+  `displayFamily`. `theme` is destructured first so the rest can default off it, and any single prop
+  still wins over the theme.
 - Load Inter via `@remotion/google-fonts/Inter`.
 - This is one of the cases the CSS transform shorthands cannot express — an order-sensitive rotation in
   a 3D context — so a `transform` string is correct here. `scale` still goes in as a shorthand alongside

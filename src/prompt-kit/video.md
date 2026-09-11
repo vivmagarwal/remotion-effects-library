@@ -288,7 +288,14 @@ Keep the speaker's audio running under a cutaway by default — that is an L-cut
 Drop it only when the b-roll has diegetic sound worth hearing, and then crossfade 8 frames.
 
 **Ducking, in the dB domain.** Dialogue peaks **−12…−6 dBFS**, music bed **−18…−24 dBFS**, duck
-**9–12 dB** under speech, master **−14 LUFS** with a **−1 dBTP** ceiling.
+**9–12 dB** under speech.
+
+**Master by destination — once, last, outside Remotion** (it does not normalise). **−16 LUFS /
+−1.5 dBTP / LRA 11** for shorts, social and podcast delivery — the target every finished video in the
+sibling studio shipped at — and **−14 LUFS / −1 dBTP** only for YouTube long-form, where the platform
+normalises anyway. Run `loudnorm` **two-pass** (`print_format=json` first, then the `measured_*`
+values with `linear=true`): a single pass undershoots a speech-led mix by 1.5–2.5 LU. Never stack it
+with `dynaudnorm` or a second normaliser.
 
 A smoothed duck is an accumulation, so build the whole curve in **one pass** in a `useMemo` and index
 into it — never derive it from the current frame alone, which would depend on frames the renderer may

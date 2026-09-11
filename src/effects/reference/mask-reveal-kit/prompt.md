@@ -47,12 +47,13 @@ content — image, video, text, a whole scene.
 - 1920×1080, 30fps, 330 frames. Cycle the six patterns, 30 frames of reveal and 22 of hold each:
   `index = Math.floor(elapsed / cycle) % patterns.length`.
 - Put a **visible under-layer** behind the masked one —
-  `repeating-linear-gradient(48deg, #14161f 0 12px, #0d0f16 12px 24px)`. Against a flat background you
-  cannot tell a mask from a fade; against a texture the cut edges are obvious, which is the whole point
-  of a reveal.
-- HUD: a tracked title and an `01 / 06` counter at the top, the current pattern name at 84px weight 800
-  at the bottom, and a progress rail. Give the HUD `pointerEvents: 'none'` and heavy text shadows —
-  it sits over an image that changes completely during the shot.
+  `repeating-linear-gradient(48deg, rgba(255,255,255,0.05) 0 12px, transparent 12px 24px)` over
+  `backgroundColor` (`theme.bg`) — alpha stripes, so the themed ground shows through. Against a flat
+  background you cannot tell a mask from a fade; against a texture the cut edges are obvious, which is
+  the whole point of a reveal.
+- HUD: a tracked title and an `01 / 06` counter at the top, the current pattern name in `theme.display`
+  at 84px weight 800 at the bottom, and a progress rail. Give the HUD `pointerEvents: 'none'` and heavy
+  text shadows — it sits over an image that changes completely during the shot.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `MaskRevealKit`, the `maskFor` helper and a `MaskPattern`

@@ -20,27 +20,39 @@ type Item = {readonly text: string; readonly note?: string};
  * this file runnable on its own.
  */
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly paperInk: string;
   readonly muted: string;
   readonly text: string;
+  readonly display: string;
   readonly accent: string;
   readonly bg: string;
   readonly paper: string;
+  readonly ink: string;
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   paperInk: '#1d1b17',
   muted: '#8d93a5',
   text: fontFamily,
+  display: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
   paper: '#f6f5f2',
+  ink: '#ffffff',
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to this file's own face, or the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly kicker?: string;
@@ -53,6 +65,10 @@ type Props = {
   readonly travel?: number;
   readonly accentColor?: string;
   readonly backgroundColor?: string;
+  /**
+   * Title and item text: `theme.paper` on a dark scheme, `theme.ink` on a light
+   * one (where paper IS the ground).
+   */
   readonly paperColor?: string;
   /** Marker style for each row. */
   readonly marker?: 'dot' | 'number' | 'arrow';
@@ -61,6 +77,7 @@ type Props = {
 export const BulletPopList: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   kicker = 'THE THREE WINDOWS',
   title = 'How to see thinking',
   items = [
@@ -74,7 +91,7 @@ export const BulletPopList: React.FC<Props> = ({
   travel = 64,
   accentColor = theme.accent,
   backgroundColor = theme.bg,
-  paperColor = theme.paper,
+  paperColor = theme.scheme === 'light' ? theme.ink : theme.paper,
   marker = 'dot',
 }) => {
   const frame = useCurrentFrame();
@@ -96,7 +113,12 @@ export const BulletPopList: React.FC<Props> = ({
       name="Scene"
       style={{
         backgroundColor,
-        backgroundImage: 'radial-gradient(ellipse at 26% 30%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 66%)',
+        // A 42% black vignette turns paper grey, so a light scheme gets a much
+        // lighter one rather than the dark ground's.
+        backgroundImage:
+          theme.scheme === 'light'
+            ? 'radial-gradient(ellipse at 26% 30%, rgba(255,255,255,0.5) 0%, rgba(0,0,0,0.05) 66%)'
+            : 'radial-gradient(ellipse at 26% 30%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 66%)',
         justifyContent: 'center',
         padding: '0 150px',
         fontFamily,
@@ -113,7 +135,7 @@ export const BulletPopList: React.FC<Props> = ({
           color: theme.paperInk,
           backgroundColor: accentColor,
           padding: '10px 18px',
-          borderRadius: 7,
+          borderRadius: 7 * (theme.radius / 18),
           marginBottom: 26,
           opacity: head,
           translate: `${(head - 1) * 30}px 0px`,
@@ -125,6 +147,7 @@ export const BulletPopList: React.FC<Props> = ({
       <Interactive.Div
         name="Title"
         style={{
+          fontFamily: displayFamily,
           fontSize: 92,
           fontWeight: 800,
           letterSpacing: '-0.03em',
@@ -144,9 +167,10 @@ export const BulletPopList: React.FC<Props> = ({
         <div
           style={{
             position: 'absolute',
-            left: 27,
+            // Centred on the 58px marker's axis at x = 29, whatever the stroke.
+            left: 28.5 - theme.stroke / 2,
             top: 20,
-            width: 3,
+            width: theme.stroke,
             borderRadius: 2,
             backgroundColor: `${accentColor}44`,
             height: interpolate(
@@ -205,7 +229,7 @@ export const BulletPopList: React.FC<Props> = ({
                   style={{
                     width: 58,
                     height: 58,
-                    borderRadius: marker === 'dot' ? 29 : 14,
+                    borderRadius: marker === 'dot' ? 29 : 14 * (theme.radius / 18),
                     backgroundColor: accentColor,
                     color: theme.paperInk,
                     display: 'flex',

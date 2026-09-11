@@ -52,19 +52,23 @@ drift is invisible and you have paid for nothing — which is fine, `tripod` is 
 feel alive without appearing to move.
 
 **The debug layer** draws both noise curves as `<polyline>` over the last 120 frames, the rotation one
-sampled at `frame - rotationLag`, so the lag is **visible** rather than asserted. A playhead line sits
-at the right edge. Keep it behind `showDebug`, because the useful version of this effect has no
-furniture on it.
+sampled at `frame - rotationLag`, so the lag is **visible** rather than asserted. A playhead line in
+`theme.ink` sits at the right edge. Keep it behind `showDebug`, because the useful version of this
+effect has no furniture on it.
 
 **The look**
 - 1920×1080, 30fps, 240 frames. Ground `#0a0b10`, `overflow: hidden`.
 - Readout pill top-left at `84, 84`, `maxWidth: 720`: preset name at 34px/800 tracking `0.16em` in
   `#ff5c39`; the note at 34px/500 `#eef1f7`; then `±11px · ±0.45° · lag 4f · overscan 1.027×` at
-  34px/500 `#8d93a5`. Pill: `padding: 16px 26px`, radius 12, `rgba(10,11,16,0.72)`,
-  `backdropFilter: 'blur(18px) saturate(1.3)'`, `1px solid rgba(255,255,255,0.14)`.
+  34px/500 `#8d93a5`. Pill: `padding: 16px 26px`, radius `12 × theme.radius / 18` (12 at house),
+  `rgba(10,11,16,0.72)`, `backdropFilter: 'blur(18px) saturate(1.3)'`,
+  `1px solid rgba(255,255,255,0.14)`.
 - Curves at `left/right: 84, bottom: 84`, 120px tall, `viewBox="0 0 1000 120"` with
-  `preserveAspectRatio="none"`, translate in `#ff5c39` and rotate in `#4cc9f0`, 2.5px.
-- Top-right, fading in over frames 0–16: `two octaves · 3:1 · second at 30%` at 34px/500 `#8d93a5`.
+  `preserveAspectRatio="none"`, translate in the accent and rotate in `theme.pair` (house `#4cc9f0`),
+  at `2.5 × theme.stroke / 3`px.
+- Top-right, fading in over frames 0–16: `two octaves · 3:1 · second at 30%` at 34px/500 `#8d93a5`,
+  with `textShadow: '0 2px 14px rgba(10,11,16,0.95), 0 0 34px rgba(10,11,16,0.8)'` so it survives
+  bright footage.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `HandheldDrift`.

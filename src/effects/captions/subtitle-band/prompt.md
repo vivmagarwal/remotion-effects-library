@@ -2,11 +2,14 @@ Build a Remotion composition called **SubtitleBand** (composition id `subtitle-b
 subtitles in a lower band, where the words fill in as they are spoken.
 
 **The look**
-- 1920×1080, 30fps, 180 frames. Background `#171a24`, band anchored to the bottom with 110px padding.
-- The band: `rgba(10,12,18,0.86)`, radius 18, padding `28px 52px`, and a `7px solid #4cc9f0` left
-  border — the accent bar is what makes it read as a broadcast lower third rather than a subtitle.
-- Text at 62px weight 700, `whiteSpace: 'nowrap'`, letter-spacing `-0.01em`. Unspoken `#8e94a6`,
-  spoken white.
+- 1920×1080, 30fps, 180 frames. Background `theme.bg` (`#0a0b10`), band anchored to the bottom with
+  110px padding.
+- The band: `rgba(10,12,18,0.86)`, the theme's `radius` (18 at house), padding `28px 52px`, and a left
+  border `${theme.stroke × 7/3}px solid barColor`, with `barColor` defaulting to the theme's `pair`
+  (`7px solid #4cc9f0` at house) — the accent bar is what makes it read as a broadcast lower third
+  rather than a subtitle.
+- Text at 62px weight 700, `whiteSpace: 'nowrap'`, letter-spacing `-0.01em`. Unspoken in `theme.muted`
+  (`#8d93a5`), spoken in `theme.ink`.
 - The band rises 26px and fades in just before each line starts.
 
 **The fill — draw the line twice**
@@ -59,7 +62,9 @@ Starting the accumulator at 0 means the first line is showing before anything ha
 **Requirements**
 - One self-contained `.tsx` file exporting `SubtitleBand` and a `Word` type
   (`{text, start, end}`, times in **seconds** — the shape `@remotion/captions` produces).
-- Props: `lines` (array of arrays of `Word`), `baseColor`, `fillColor`, `bandColor`,
+- Props: `lines` (array of arrays of `Word`), `baseColor`, `fillColor`, `bandColor`, `barColor`,
   `backgroundColor`, `transparent` — when transparent, render as an alpha overlay with
-  `--codec=vp8` or `--codec=prores --prores-profile=4444`.
+  `--codec=prores --prores-profile=4444`. ProRes 4444 is the alpha that survives an ffmpeg composite
+  or a re-import into Remotion; VP8 WebM alpha comes back as a black box there, so keep
+  `--codec=vp8` for web playback only.
 - Load Inter via `@remotion/google-fonts/Inter`.

@@ -29,6 +29,7 @@ type Theme = {
   readonly display: string;
   readonly bgDeep: string;
   readonly ink: string;
+  readonly series: readonly string[];
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -37,6 +38,7 @@ const THEME: Theme = {
   display: fontFamily,
   bgDeep: '#04050a',
   ink: '#ffffff',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
 };
 
 type Props = {
@@ -122,8 +124,8 @@ export const GlitchText: React.FC<Props> = ({
         }}
       >
         {/* Chromatic aberration: the coloured copies pull apart only during a burst. */}
-        {layer(jitter('cyan-x', 14) - (bursting ? 6 : 0), jitter('cyan-y', 5), '#4cc9f0', 'screen')}
-        {layer(jitter('mag-x', 14) + (bursting ? 6 : 0), jitter('mag-y', 5), '#c77dff', 'screen')}
+        {layer(jitter('cyan-x', 14) - (bursting ? 6 : 0), jitter('cyan-y', 5), theme.series[1], 'screen')}
+        {layer(jitter('mag-x', 14) + (bursting ? 6 : 0), jitter('mag-y', 5), theme.series[4], 'screen')}
         {layer(jitter('white-x', 4), 0, color, 'normal')}
 
         {/* Displaced slices, cut out of a copy of the word with clip-path. */}
@@ -156,7 +158,7 @@ export const GlitchText: React.FC<Props> = ({
           letterSpacing: '0.28em',
           marginRight: '-0.28em',
           textTransform: 'uppercase',
-          color: '#4cc9f0',
+          color: theme.series[1],
           marginTop: 10,
           translate: `${jitter('sub', 8)}px 0px`,
           opacity: interpolate(frame, [12, 30], [0, 1], {

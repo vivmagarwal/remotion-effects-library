@@ -52,16 +52,20 @@ reads as a motor rather than a hand.
 Scale every blur radius by this single `focus` value so both falloffs stay in agreement.
 
 **The furniture**
-- 1920×1080, 30fps, 165 frames. Background `#05060a`, image `objectFit: 'cover'`.
-- A 128px square focus reticle (`3px solid rgba(255,255,255,0.85)`, radius 6, with a dark 1px ring so it survives a light plate) at the focus point, which
+- 1920×1080, 30fps, 165 frames. Background `backgroundColor`, default `theme.bgDeep` (`#04050a`),
+  image `objectFit: 'cover'`.
+- A 128px square focus reticle (`${theme.stroke}px solid` in the theme's `ink` at 0.85, i.e.
+  `3px solid #ffffffd9` at house, radius `theme.radius / 3` (6 at house), with a dark 1px ring so it survives a light plate) at the focus point, which
   **tightens as the shot sharpens** — `scale: 0.72 + focus * 0.5`, `opacity: 0.28 + (1 - focus) * 0.45`.
   It makes the pull legible as a deliberate camera move rather than an accident.
-- Bottom-left: a DM Sans title at 88px weight 700 with `textShadow: '0 10px 40px rgba(0,0,0,0.6)'` and a
-  monospace caption at 26px. **Leave the type sharp** — it lives above the lens, not in front of it.
+- Bottom-left: a DM Sans title (the theme's `display` face) at 88px weight 700 with
+  `textShadow: '0 10px 40px rgba(0,0,0,0.6)'` and a
+  monospace caption at 26px in the theme's `ink` at 0.72. **Leave the type sharp** — it lives above the lens, not in front of it.
   Blurring the overlay with the picture is the giveaway that this is a filter and not a camera.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `ProgressiveBlurFocus`.
-- Props: `src`, `title`, `caption`, `rack` (array of `[frame, radius]` pairs), `focusX`, `focusY`.
+- Props: `src`, `title`, `caption`, `backgroundColor`, `rack` (array of `[frame, radius]` pairs),
+  `focusX`, `focusY`.
 - Load DM Sans via `@remotion/google-fonts/DMSans`.
 - Swap `<CanvasImage>` for `<Video>` from `@remotion/media` to pull focus on real footage.

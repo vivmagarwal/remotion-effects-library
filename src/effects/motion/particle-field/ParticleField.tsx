@@ -21,7 +21,9 @@ type Theme = {
   readonly muted: string;
   readonly ink: string;
   readonly text: string;
+  readonly display: string;
   readonly bgDeep: string;
+  readonly series: readonly string[];
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -29,12 +31,16 @@ const THEME: Theme = {
   muted: '#8d93a5',
   ink: '#ffffff',
   text: fontFamily,
+  display: fontFamily,
   bgDeep: '#04050a',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to this file's Sora, or the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly count?: number;
@@ -50,10 +56,11 @@ type Props = {
 export const ParticleField: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   count = 220,
   title = 'PARTICLES',
   subtitle = 'closed-form, not simulated',
-  colors = ['#4cc9f0', '#c77dff', '#ffd166', '#ffffff'],
+  colors = [theme.series[1], theme.series[4], theme.series[3], theme.ink],
   backgroundColor = theme.bgDeep,
   speed = 0.22,
   connect = true,
@@ -122,7 +129,7 @@ export const ParticleField: React.FC<Props> = ({
               y1={`${l.y1}%`}
               x2={`${l.x2}%`}
               y2={`${l.y2}%`}
-              stroke="#4cc9f0"
+              stroke={theme.series[1]}
               strokeWidth={1}
               opacity={l.o}
             />
@@ -153,11 +160,12 @@ export const ParticleField: React.FC<Props> = ({
         <Interactive.Div
           name="Title"
           style={{
+            fontFamily: displayFamily,
             fontSize: 132,
             fontWeight: 700,
             letterSpacing: '0.16em',
             color: theme.ink,
-            textShadow: '0 0 70px rgba(76,201,240,0.5)',
+            textShadow: `0 0 70px ${theme.series[1]}80`,
             opacity: interpolate(frame, [10, 34], [0, 1], {
               extrapolateLeft: 'clamp',
               extrapolateRight: 'clamp',

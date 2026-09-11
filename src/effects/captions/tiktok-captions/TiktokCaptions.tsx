@@ -284,7 +284,7 @@ export const TiktokCaptions: React.FC<Props> = ({
           fontSize: 34,
           fontWeight: 800,
           letterSpacing: '0.16em',
-          color: 'rgba(255,255,255,0.62)',
+          color: `${theme.ink}9e`,
           textShadow: '0 2px 10px rgba(0,0,0,0.9)',
           opacity: interpolate(frame, [0, 12, 48, 62], [0, 1, 1, 0], {
             extrapolateLeft: 'clamp',

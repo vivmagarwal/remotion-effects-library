@@ -74,12 +74,13 @@ const mixHex = (a: string, b: string, t: number): string => {
 ```
 
 **The scene**
-- 1920×1080, 30fps, 180 frames. Background `#07080f`.
+- 1920×1080, 30fps, 180 frames. Background `theme.bgDeep` (`#04050a`).
 - Behind the shards, the reveal word in Archivo 260px/900, `letter-spacing: -0.045em`, fading in
   over frames `holdFrames + 12 → holdFrames + 52`.
-- 150 shards, `holdFrames: 34`, `shatterFrames: 92`, `push: 1.5`. Plate ramps
-  `#ff5c39 → #7c2bd6`; each shard is stroked `#07080f` at `1.4px` so the intact plate still reads
-  as fractured.
+- 150 shards, `holdFrames: 34`, `shatterFrames: 92`, `push: 1.5`. Plate ramps `theme.accent` to
+  `theme.series[4]` (`#ff5c39` to `#c77dff`); each shard is stroked in the background colour at
+  `theme.stroke × 1.4/3` px (1.4 at the house 3, 0.93 under a 2-stroke theme) so the intact plate
+  still reads as fractured.
 - A monospace caption at the bottom.
 
 **Requirements**

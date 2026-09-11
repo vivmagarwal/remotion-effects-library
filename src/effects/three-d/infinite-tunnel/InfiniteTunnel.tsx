@@ -33,7 +33,7 @@ type Theme = {
   readonly mono: string;
   readonly muted: string;
   readonly ink: string;
-  readonly text: string;
+  readonly display: string;
   readonly bg: string;
   readonly bgDeep: string;
   readonly series: readonly string[];
@@ -44,14 +44,14 @@ const THEME: Theme = {
   mono: MONO,
   muted: '#8d93a5',
   ink: '#ffffff',
-  text: fontFamily,
+  display: fontFamily,
   bg: '#0a0b10',
   bgDeep: '#04050a',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
 };
 
 type Props = {
-  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  /** CSS family for the title. Defaults to this file's own loaded Sora, or the theme's display face. */
   readonly fontFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
@@ -94,7 +94,7 @@ const Flight: React.FC<{curve: THREE.Curve<THREE.Vector3>; t: number; roll: numb
 
 export const InfiniteTunnel: React.FC<Props> = ({
   theme = THEME,
-  fontFamily = theme.text,
+  fontFamily = theme.display,
   title = 'HYPERSPACE',
   subtitle = 'TubeGeometry · BackSide · closed curve',
   loopRadius = 9,

@@ -17,18 +17,22 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '500'], subsets: ['lat
  * this file runnable on its own.
  */
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly display: string;
   readonly accentOnPaper: string;
   readonly paper: string;
   readonly paperInk: string;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   display: fontFamily,
   accentOnPaper: '#c2410c',
   paper: '#f6f5f2',
   paperInk: '#1d1b17',
+  stroke: 3,
 };
 
 type Props = {
@@ -49,8 +53,11 @@ export const CountdownLeader: React.FC<Props> = ({
   fontFamily = theme.display,
   from = 5,
   finalWord = 'ACTION',
-  backgroundColor = theme.paperInk,
-  inkColor = theme.paper,
+  // A leader is ink on stock. On a dark theme the stock is the dark one; on a
+  // light-scheme theme the two swap and it prints dark on paper, the way a real
+  // Academy leader does.
+  backgroundColor = theme.scheme === 'light' ? theme.paper : theme.paperInk,
+  inkColor = theme.scheme === 'light' ? theme.paperInk : theme.paper,
   accentColor = theme.accentOnPaper,
   grain = true,
 }) => {
@@ -73,13 +80,13 @@ export const CountdownLeader: React.FC<Props> = ({
   return (
     <AbsoluteFill name="Scene" style={{backgroundColor, overflow: 'hidden', fontFamily}}>
       {/* Crosshair, drawn edge to edge. */}
-      <div style={{position: 'absolute', left: '50%', top: 0, bottom: 0, width: 3, marginLeft: -1.5, backgroundColor: `${inkColor}44`}} />
-      <div style={{position: 'absolute', top: '50%', left: 0, right: 0, height: 3, marginTop: -1.5, backgroundColor: `${inkColor}44`}} />
+      <div style={{position: 'absolute', left: '50%', top: 0, bottom: 0, width: theme.stroke, marginLeft: -theme.stroke / 2, backgroundColor: `${inkColor}44`}} />
+      <div style={{position: 'absolute', top: '50%', left: 0, right: 0, height: theme.stroke, marginTop: -theme.stroke / 2, backgroundColor: `${inkColor}44`}} />
 
       <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center'}}>
         <svg width={R * 2} height={R * 2} style={{position: 'absolute'}}>
-          <circle cx={R} cy={R} r={R - 6} fill="none" stroke={`${inkColor}55`} strokeWidth={4} />
-          <circle cx={R} cy={R} r={R * 0.62} fill="none" stroke={`${inkColor}33`} strokeWidth={3} />
+          <circle cx={R} cy={R} r={R - 6} fill="none" stroke={`${inkColor}55`} strokeWidth={(theme.stroke * 4) / 3} />
+          <circle cx={R} cy={R} r={R * 0.62} fill="none" stroke={`${inkColor}33`} strokeWidth={theme.stroke} />
           {/* The wiper: a wedge rotating once per second. */}
           <path
             d={`M ${R} ${R} L ${R} 0 A ${R} ${R} 0 0 1 ${R} ${R * 2} Z`}
@@ -92,7 +99,7 @@ export const CountdownLeader: React.FC<Props> = ({
             x2={R}
             y2={0}
             stroke={inkColor}
-            strokeWidth={5}
+            strokeWidth={(theme.stroke * 5) / 3}
             style={{rotate: `${sweep}deg`, transformOrigin: `${R}px ${R}px`}}
           />
         </svg>
@@ -102,6 +109,8 @@ export const CountdownLeader: React.FC<Props> = ({
           style={{
             fontSize: done ? 190 : 460,
             fontWeight: 500,
+            // A serif theme's old-style figures otherwise drop off the crosshair centre.
+            fontVariantNumeric: 'lining-nums',
             color: done ? accentColor : inkColor,
             letterSpacing: done ? '0.14em' : '-0.02em',
             lineHeight: 1,

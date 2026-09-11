@@ -16,11 +16,13 @@ so the name on screen always describes the cut you just watched.
   | 06 | `Iris` | `#f43f5e` | `#1c0409` |
   | 07 | `Flip` | `#0ea5e9` | `#03151f` |
 
-- A root `<AbsoluteFill>` behind the whole `<TransitionSeries>` in `#08070c`. **This matters**: `flip()`
-  rotates both planes in 3D and at the midpoint of the flip the root is roughly two-thirds of the
-  screen. Leave it unset and you get a white flash where a cut should be.
-- Centred stack per card, all in Sora except the call: the two-digit index (`01`, `02`, …) at 300px
-  weight 700, line-height 1; the label at **78px** weight 700, 18px below; and the literal call in
+- A root `<AbsoluteFill>` behind the whole `<TransitionSeries>` in `backdropColor` (`theme.bg`,
+  `#0a0b10`). **This matters**: `flip()` rotates both planes in 3D and at the midpoint of the flip the
+  root is roughly two-thirds of the screen. Leave it unset and you get a white flash where a cut
+  should be.
+- Centred stack per card — the index and label in `displayFamily` (`theme.display`, Sora inline), the
+  call in `monoFamily` (`theme.mono`): the two-digit index (`01`, `02`, …) at 300px weight 700,
+  line-height 1; the label at **78px** weight 700, 18px below; and the literal call in
   **JetBrains Mono** at 26px, `opacity: 0.62`, 22px below that. (58px would read small — the design
   guidance below asks for ≥44px supporting text at 1080px wide, which is ≥78px at 1920.)
 - Card 01's "call" is just `<TransitionSeries>` — nothing brought it in.

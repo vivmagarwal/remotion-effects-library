@@ -33,8 +33,11 @@ type Theme = {
   readonly mono: string;
   readonly muted: string;
   readonly ink: string;
-  readonly text: string;
+  readonly display: string;
   readonly bgDeep: string;
+  readonly pair: string;
+  readonly series: readonly string[];
+  readonly accentOnPaper: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -42,12 +45,15 @@ const THEME: Theme = {
   mono: MONO,
   muted: '#8d93a5',
   ink: '#ffffff',
-  text: fontFamily,
+  display: fontFamily,
   bgDeep: '#04050a',
+  pair: '#4cc9f0',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  accentOnPaper: '#c2410c',
 };
 
 type Props = {
-  /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
+  /** CSS family for the title. Defaults to this file's own loaded Sora, or the theme's display face. */
   readonly fontFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
@@ -102,7 +108,7 @@ const Backdrop: React.FC<{colors: readonly string[]; t: number}> = ({colors, t})
 
 export const GlassRefraction: React.FC<Props> = ({
   theme = THEME,
-  fontFamily = theme.text,
+  fontFamily = theme.display,
   title = 'REFRACT',
   subtitle = 'MeshPhysicalMaterial · transmission + dispersion',
   transmission = 1,
@@ -110,7 +116,7 @@ export const GlassRefraction: React.FC<Props> = ({
   thickness = 2.1,
   dispersion = 7,
   roughness = 0.03,
-  backdropColors = ['#ff5c39', '#4cc9f0', '#c77dff', '#ffd166', '#c6ff3d', '#c2410c'],
+  backdropColors = [theme.series[0], theme.series[1], theme.series[4], theme.series[3], theme.series[2], theme.accentOnPaper],
   backgroundColor = theme.bgDeep,
 }) => {
   const frame = useCurrentFrame();
@@ -135,7 +141,7 @@ export const GlassRefraction: React.FC<Props> = ({
       >
         <ambientLight intensity={0.22} />
         <directionalLight position={[5, 6, 8]} intensity={0.7} />
-        <pointLight position={[-6, 3, 4]} intensity={40} color="#4cc9f0" distance={22} />
+        <pointLight position={[-6, 3, 4]} intensity={40} color={theme.pair} distance={22} />
 
         <Backdrop colors={backdropColors} t={t} />
 
@@ -177,7 +183,7 @@ export const GlassRefraction: React.FC<Props> = ({
             letterSpacing: '0.3em',
             marginRight: '-0.3em',
             color: theme.ink,
-            textShadow: '0 0 60px rgba(140,180,255,0.5)',
+            textShadow: `0 0 60px ${theme.pair}80`,
             opacity: interpolate(frame, [24, 50], [0, 1], {
               extrapolateLeft: 'clamp',
               extrapolateRight: 'clamp',

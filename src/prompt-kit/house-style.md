@@ -88,12 +88,17 @@ so damping 200 only means "shaped like a spring, never overshoots".
 
 micro **6–10 f** (a tick, a digit flip, a chip) · standard **15–20 f** (a card entering, a bar
 growing) · hero **30–45 f** (a title lock-up, a camera push) · ambient **≥90 f, looping** (grids,
-auroras, drift). Pick a band and stay in it; a 23-frame entrance reads as neither.
+auroras, drift). Pick a band and stay in it; a 23-frame entrance reads as neither. The hero band is
+for lock-ups and camera moves only: a routine element move over **~20 f (700 ms)**, or a fade near a
+second, is a tell.
 
 ### Safe area
 
 `const SAFE = 84;` at 1920×1080. Vertical 1080×1920: `SAFE_X 84`, `SAFE_TOP 240`,
 `SAFE_BOTTOM 380` (platform UI). Only full-bleed grounds, wipes and letterbox bars cross it.
+`SAFE_BOTTOM 380` clears Shorts and Reels; a caption or CTA that must also clear TikTok's caption
+stack sits at **≥ 484**, and anything that has to survive the 4:5 feed crop stays inside **y 300–1440**
+(captions.md §7). On 16:9, burned captions sit ≥ 108 px up, above YouTube's control bar.
 
 ### Light and dark ground
 
@@ -124,7 +129,10 @@ studio look and declare `ground: 'dark'` in their metadata instead of faking it.
 3. **Nothing scales from 0.** Entrances start at 0.92–1.08 — 0.92–0.97 rising, or 1.04–1.08 settling
    down. Nothing in the real world appears from nothing.
 4. Overshoot is 0 or ≤ 7 %, and at most one element in the frame overshoots.
-5. Stagger 2–3 frames, total span ≤ 12 frames.
+5. Stagger by tier. Glyphs and particles: **2–3 f**, total span ≤ 12 f. Siblings the viewer reads
+   one by one (cards, list items): **4–8 f**, `min(5, 18 / n)` for n items. Two *ideas* landing in the
+   same shot: **≥ 24 f (0.8 s)** apart, and a payoff line gets ~36 f alone. A list that lands every
+   13 f is in none of the tiers.
 6. In any 10-frame window, **one property carries the motion**; everything else is ≤ 10 % secondary.
 7. Anything travelling > 25 % of frame width in < 8 frames gets `<CameraMotionBlur>` or `<Trail>`
    from `@remotion/motion-blur`.

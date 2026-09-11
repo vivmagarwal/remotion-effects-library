@@ -44,10 +44,12 @@ const x = interpolate(frame, [0, 45, 80, 120, 150], [8, 82, 30, 62, 50],
 That reads as someone dragging it back and forth to compare, which is the point of the format.
 
 **The handle and labels**
-- A 5px full-height bar at `left: ${x}%` with `marginLeft: -2.5` and
-  `boxShadow: '0 0 26px rgba(0,0,0,0.6)'`, plus a 96px white circle at mid-height containing `◀ ▶`.
+- A `5 × theme.stroke / 3`px (5 at house) full-height bar at `left: ${x}%`, centred with a negative
+  margin of half its width, and `boxShadow: '0 0 26px rgba(0,0,0,0.6)'`, plus a 96px white circle at
+  mid-height containing `◀ ▶`.
 - `BEFORE` top-left and `AFTER` top-right, 32px weight 600, `letter-spacing: 0.2em`, on
-  `rgba(12,13,18,0.72)` pills.
+  `rgba(12,13,18,0.72)` pills with corner radius `10 × theme.radius / 18` (10 at house), type in
+  `theme.ink`.
 - **Drive each label's opacity from `x`, not from `frame`**: the before label fades in over
   `x` 12→26 and the after label fades out over `x` 74→88. Tied to position rather than time, a label
   gets out of the way exactly when the handle would cover it — however the sweep is later retimed.

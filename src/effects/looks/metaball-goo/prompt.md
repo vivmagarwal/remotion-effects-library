@@ -10,7 +10,7 @@ npx remotion add @remotion/google-fonts
 **The whole effect is three lines of filter**
 
 ```tsx
-<filter id="goo" x="-30%" y="-30%" width="160%" height="160%">
+<filter id={`goo-${svgId}`} x="-30%" y="-30%" width="160%" height="160%">
   {/* 1. Bleed neighbouring shapes into each other. */}
   <feGaussianBlur in="SourceGraphic" stdDeviation={blur} result="blurred" />
 
@@ -40,7 +40,7 @@ Three things will bite you:
   inflates, too high and they shrink and stop touching.
 - **`stdDeviation` sets how far apart necks form.** Bigger blur, longer reach.
 
-Apply it with `<g filter="url(#goo)">` around the circles — nothing else.
+Apply it with ``<g filter={`url(#goo-${svgId})`}>`` around the circles — nothing else. `svgId` is `useId().replace(/[^a-zA-Z0-9_-]/g, '')`: a literal `id="goo"` is global to the page, and a second copy of this composition would filter through the first one's blobs.
 
 **The blobs**
 Every one needs its own orbit, or they move as a rigid ring and never merge:
@@ -66,20 +66,21 @@ never repeat the same pass. Add one **fixed** `<circle cx={cx} cy={cy} r={72} />
 mass always has something to merge back into and never fully disperses.
 
 **The scene**
-- 1920×1080, 30fps, **180 frames**. Background `#080a10` plus
+- 1920×1080, 30fps, **180 frames**. Background `theme.bg` (`#0a0b10`) plus
   `radial-gradient(ellipse at 50% 50%, <gooColor>14 0%, transparent 64%)`.
 - `cx = width / 2`, `cy = height / 2 + 24`.
 - Overlay `<AbsoluteFill>` with `justify-content: space-between`, `align-items: center`,
   `padding: '104px 0 96px'`, `pointer-events: none`:
-  - title — Inter 62px weight 800, `letter-spacing: -0.025em`, `#f1f4fa`,
-    `text-shadow: 0 4px 30px rgba(0,0,0,0.8)`, fades in over frames 0–22 on
-    `Easing.bezier(0.16, 1, 0.3, 1)`
-  - caption — monospace 25px, `accentColor`, `text-shadow: 0 2px 20px rgba(0,0,0,0.9)`, fades in
-    over frames 12–34
+  - title — display face (`displayFamily = theme.display`, Inter by default) 62px weight 800,
+    `letter-spacing: -0.025em`, `theme.ink`, `text-shadow: 0 4px 30px rgba(0,0,0,0.8)`, fades in over
+    frames 0–22 on `Easing.bezier(0.16, 1, 0.3, 1)`
+  - caption — `theme.mono`, 34px, `accentColor`, `text-shadow: 0 2px 20px rgba(0,0,0,0.9)`, fades in
+    over frames 12–34. 34px, not 25: at the 0.17× a gallery card renders, 25px type is unreadable
 
 **Requirements**
 - One self-contained `.tsx` file exporting `MetaballGoo`.
 - Props, with defaults: `title` (`'Metaballs'`), `caption`
   (`'feGaussianBlur + feColorMatrix · no WebGL'`), `count` (7), `blur` (26), `contrast` (34),
-  `cutoff` (13), `gooColor` (`#20e3b2`), `accentColor` (`#ff5c39`), `backgroundColor` (`#080a10`).
+  `cutoff` (13), `gooColor` (`theme.series[2]`, `#c6ff3d` in the house theme), `accentColor`
+  (`theme.accent`, `#ff5c39`), `backgroundColor` (`theme.bg`, `#0a0b10`).
 - Load Inter via `@remotion/google-fonts/Inter`, weights `['500', '700', '800']`.

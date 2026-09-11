@@ -61,18 +61,20 @@ row[k] = bump * (34 + random(`h-${k}`) * 70) * texture + 1.4;
 
 **The reveal**
 An SVG `clipPath` whose rect grows to `plotW * p` over 96 frames on `Easing.bezier(0.32, 0, 0.16, 1)`,
-plus a 2px white leading edge at `x = plotW * p` (hidden at both ends). The edge is what makes it
+plus a `theme.stroke * 2 / 3` leading edge in `paperColor` at `x = plotW * p` (hidden at both ends). The edge is what makes it
 read as a playhead rather than a wipe. Give the clip rect y=-40 and height+80 so the wiggling
 baseline is never clipped horizontally.
 
 **The scene**
-- 1920×1080, 30fps, 180 frames. Background `#0a0c14` with
-  `radial-gradient(ellipse at 50% 58%, #151a27 0%, #070810 74%)`.
+- 1920×1080, 30fps, 180 frames. Background `theme.bg` under a scrim picked by `theme.scheme`: dark
+  `rgba(255,255,255,0.055) -> rgba(0,0,0,0.42) at 74%`, light
+  `rgba(255,255,255,0.5) -> rgba(0,0,0,0.06) at 74%`.
 - Padding `{left: 92, right: 92, top: 214, bottom: 128}`.
 - 7 series — shorts, tutorials, launches, demos, devlogs, talks, ads — 48 samples, colours
-  `['#ff5c39', '#4cc9f0', '#c77dff', '#ffd166', '#20e3b2', '#ff7bd5', '#8ac926']`,
+  `[theme.series[0], theme.series[1], theme.series[4], theme.series[3], theme.series[2],
+  theme.accentOnPaper, theme.series[5]]` as the `colors` default,
   `fillOpacity: 0.88`.
-- Left-aligned title (Inter 58px/800) and monospace subtitle.
+- Left-aligned title (58px/800 in `displayFamily`) and monospace subtitle.
 - A flex-wrap legend along the bottom, keyed off the same `keys`/`colors` arrays that drew the
   bands so it can never drift from the chart; each entry fades in staggered by 5 frames.
 

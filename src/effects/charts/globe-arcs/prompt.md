@@ -84,7 +84,8 @@ if (coords.length < 2) return null;   // a 1-point LineString yields d=""
 // Handing it back as a LineString gives the CLIPPING to the projection, so the
 // part of the arc behind the globe disappears on its own.
 <path d={path({type: 'LineString', coordinates: coords}) ?? undefined}
-      fill="none" stroke={arcColor} strokeWidth={2.6} strokeLinecap="round" opacity={0.9} />
+      fill="none" stroke={arcColor} strokeWidth={theme.stroke * 2.6 / 3} strokeLinecap="round"
+      opacity={0.9} />
 ```
 Growing `coords` with `p` is what draws the arc on. Each route starts at `startAt + i * stagger`
 and takes `drawFrames`, on `Easing.bezier(0.4, 0, 0.2, 1)`.
@@ -103,7 +104,7 @@ const isVisible = (lon: number, lat: number) => {
 };
 ```
 Each visible city: a dot of **radius** 4.5 in `paperColor`, a **radius** 9 ring stroked in `arcColor`
-at 1.4, and the name in `paperColor` (Inter 19px weight 600, opacity 0.88).
+at `theme.stroke * 1.4 / 3`, and the name in `paperColor` (Inter 19px weight 600, opacity 0.88).
 
 **Labels need per-city placement.** With one fixed offset, London (−0.13, 51.5) and Berlin
 (13.4, 52.5) sit ~35px apart at this radius and their labels overlap in *every frame*. Give `City`
@@ -117,16 +118,17 @@ textAnchor={c.anchor ?? 'start'}
 
 **The scene**
 - 1920×1080, 30fps, **240 frames** — long enough for a visible portion of a rotation.
-- Background `#070a12` plus `radial-gradient(ellipse at 50% 52%, <arcColor>12 0%, transparent 62%)`.
+- Background `theme.bgDeep` plus `radial-gradient(ellipse at 50% 52%, <arcColor>12 0%, transparent 62%)`.
 - **Draw order matters:** ocean disc → graticule → land → **rim last**. Painted before the land, a
   coastline that reaches the limb erases the edge of the globe.
-- Ocean `#111a2e`; graticule `#ffffff10` at 1px; land `#2c3d63` filled and stroked in the same colour
-  at 0.4; rim `<arcColor>55` at **1.6**.
+- Ocean `theme.bg`; graticule `${theme.ink}10` at 1px; land `theme.paperMuted` on a dark scheme and
+  `${theme.paperMuted}40` on a light one, filled and stroked in the same colour at 0.4; rim
+  `<arcColor>55` at **`theme.stroke * 1.6 / 3`**.
 - The whole `<svg>` scales `0.82 → 1` over frames 0–34 on `Easing.bezier(0.16, 1, 0.3, 1)` with
   `output: 'perceptual-scale'`, and `transform-origin: ${cx}px ${cy}px`. The HTML title and subtitle
   sit outside the `<svg>` and do not scale.
-- Centred title at `top: 84` (Inter 56px/800, `letter-spacing: -0.025em`, `paperColor`) and
-  monospace subtitle at `top: 154` (24px, `#7b849b`), fading in over 0–20 and 8–28.
+- Centred title at `top: 84` (56px/800 in `displayFamily`, `letter-spacing: -0.025em`, `paperColor`)
+  and monospace subtitle at `top: 154` (24px, `theme.muted`), fading in over 0–20 and 8–28.
 
 **Data — use these exact coordinates**
 Guessed coordinates give a visibly different video, so they are pinned here:
@@ -164,8 +166,9 @@ const DEFAULT_ROUTES: Route[] = [
 - One self-contained `.tsx` file exporting `GlobeArcs`.
 - Props, with defaults: `title` (`'Rendering, everywhere'`), `subtitle`
   (`'orthographic globe · d3-geo + geoInterpolate'`), `cities`, `routes`, `spin` (0.75 degrees per
-  frame), `stagger` (9), `drawFrames` (34), `startAt` (16), `oceanColor` (`#111a2e`), `landColor`
-  (`#2c3d63`), `arcColor` (`#4cc9f0`), `backgroundColor` (`#070a12`), `paperColor` (`#eef1f7`).
+  frame), `stagger` (9), `drawFrames` (34), `startAt` (16), `oceanColor` (`theme.bg`), `landColor`
+  (as above), `arcColor` (`theme.pair`), `backgroundColor` (`theme.bgDeep`), `paperColor`
+  (`theme.body`).
 - Load Inter via `@remotion/google-fonts/Inter`, weights **`['600', '800']`** — exactly the two the
   design uses (800 title, 600 city labels). Loading 500/700 instead means weight 600 silently falls
   back to a synthesised face.

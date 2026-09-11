@@ -21,6 +21,8 @@ type Theme = {
   readonly accent: string;
   readonly bgDeep: string;
   readonly ink: string;
+  readonly stroke: number;
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -29,6 +31,8 @@ const THEME: Theme = {
   accent: '#ff5c39',
   bgDeep: '#04050a',
   ink: '#ffffff',
+  stroke: 3,
+  radius: 18,
 };
 
 type Props = {
@@ -105,9 +109,12 @@ export const KineticWordReveal: React.FC<Props> = ({
       <Interactive.Div
         name="Underline"
         style={{
-          height: 4,
+          // 4px at the house stroke of 3, and it thins or thickens with a theme.
+          height: theme.stroke * (4 / 3),
           marginTop: 44,
-          borderRadius: 2,
+          // 2px at the house radius. The browser clamps a radius to half the
+          // height, so a large-radius theme just rounds the rule into a pill.
+          borderRadius: theme.radius * (2 / 18),
           backgroundColor: accentColor,
           // Starts the moment the LAST word starts moving, so the rule grows
           // alongside the final arrival rather than waiting for silence.

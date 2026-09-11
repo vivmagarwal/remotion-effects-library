@@ -159,16 +159,22 @@ export const HypeCaptions: React.FC<Props> = ({
             <span
               key={i}
               style={{
-                fontSize: w.hit ? 132 : 104,
+                // The emphasis word is laid out at its FULL popped size and
+                // scaled UP TO it, so it never grows past the box the flex row
+                // reserved for it — a scale above 1 spills into the next word
+                // whenever a narrower typeface packs two words onto one line.
+                fontSize: w.hit ? 150 : 104,
                 fontWeight: 900,
                 lineHeight: 1.06,
                 letterSpacing: '-0.02em',
                 color: w.hit ? hitColor : color,
                 // A hard stroke, painted behind the glyph, survives any footage.
-                WebkitTextStroke: `${w.hit ? 13 : 11}px ${strokeColor}`,
+                WebkitTextStroke: `${w.hit ? 15 : 11}px ${strokeColor}`,
                 paintOrder: 'stroke fill',
-                textShadow: `0 9px 0 ${strokeColor}`,
-                scale: w.hit ? 1 + Math.min(0.14, pop * 0.14) : 1,
+                textShadow: `0 ${w.hit ? 10 : 9}px 0 ${strokeColor}`,
+                // 150 × 0.88 = 132, so the pop still runs 132 → 150 exactly as
+                // before, but inside its own box.
+                scale: w.hit ? 0.88 + Math.min(0.12, pop * 0.12) : 1,
                 opacity: spoken ? 1 : 0.3,
                 display: 'inline-block',
               }}

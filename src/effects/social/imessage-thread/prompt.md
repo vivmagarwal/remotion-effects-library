@@ -2,10 +2,12 @@ Build a Remotion composition called **ImessageThread** (composition id `imessage
 iMessage-style thread that types itself out.
 
 **The look**
-- **1080×1920 (vertical)**, 30fps, 200 frames. Background `#101218`, a 980px column, Inter throughout.
+- **1080×1920 (vertical)**, 30fps, 200 frames. Background `backgroundColor` (`theme.surface`,
+  `#101218`), a 980px column, Inter throughout.
   Centre the column **vertically**, not top-aligned: the thread then re-centres as it grows, which keeps
   the frame balanced instead of leaving the bottom half of a tall composition empty.
-- A centred contact name at 34px weight 600 in `#8d93a5`, with a `1px solid #23262f` rule under it.
+- A centred contact name at 34px weight 600 in `theme.muted` (`#8d93a5`), with a `1px solid #23262f`
+  rule under it.
 - Bubbles in a 20px-gap column. Incoming: `#2a2d38` with `#e7e9ef` text, `align-self: flex-start`.
   Outgoing: `#2f6bff` with white text, `align-self: flex-end`. Both 38px, line-height 1.35, padding
   `24px 32px`, `maxWidth: 76%`.

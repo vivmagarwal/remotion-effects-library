@@ -110,7 +110,7 @@ const PerspectiveRig: React.FC<{elevation: number; dolly: number}> = ({elevation
 `<group rotation={[0, frame * 0.005, 0]}>` — rotating the scene is equivalent and stays declarative.
 
 **The scene**
-- 1920×1080, 30fps, 180 frames. Background `#04060f`. Pass the canvas `camera={{fov: 46}}` **only** —
+- 1920×1080, 30fps, 180 frames. Background `backgroundColor` (`theme.bgDeep`, `#04050a`). Pass the canvas `camera={{fov: 46}}` **only** —
   `PerspectiveRig` overwrites the position on every frame, so giving a position here is dead config
   that never appears on screen.
 - `<ThreeCanvas>` needs explicit `width`/`height` from `useVideoConfig()`.
@@ -124,8 +124,8 @@ Top-left, `padding: '100px 96px'`, `pointerEvents: 'none'`.
 
 | | |
 |---|---|
-| title | Sora 86px, weight 700, `letter-spacing: -0.02em`, colour `#eefaf6`, `textShadow: '0 0 60px <highColor>66'` |
-| subtitle | monospace 30px, `letter-spacing: 0.14em` with a matching negative `margin-right`, colour `highColor`, `margin-top: 18` |
+| title | `fontFamily` (default `theme.display`, whose inline value is this file's Sora) 86px, weight 700, `letter-spacing: -0.02em`, colour `theme.ink`, `textShadow: '0 0 60px <highColor>66'` |
+| subtitle | `theme.mono` 30px, `letter-spacing: 0.14em` with a matching negative `margin-right`, colour `highColor`, `margin-top: 18` |
 
 Both fade **in** only and stay up: the title over frames 10→34, the subtitle over 24→48, no easing
 (linear is right for a plain opacity fade). Note `textShadow` concatenates a hex alpha onto
@@ -133,8 +133,9 @@ Both fade **in** only and stay up: the title over frames 10→34, the subtitle o
 
 **Requirements**
 - One self-contained `.tsx` file exporting `InstancedCubeWave`.
-- Props, with defaults: `title` (`'FOUR THOUSAND'`), `subtitle`
-  (`'one draw call · instancedMesh'`), `grid` (64), `spacing` (0.42), `speed` (2.7), `lowColor`
-  (`#12204a`), `highColor` (`#63f5d0`), `backgroundColor` (`#04060f`).
+- Props, with defaults: `theme` (destructured FIRST), `fontFamily` (`theme.display`), `title`
+  (`'FOUR THOUSAND'`), `subtitle` (`'one draw call · instancedMesh'`), `grid` (64), `spacing`
+  (0.42), `speed` (2.7), `lowColor` (`theme.bg`, house `#0a0b10`), `highColor` (`theme.pair`,
+  house `#4cc9f0`), `backgroundColor` (`theme.bgDeep`, house `#04050a`).
 - Load Sora via `@remotion/google-fonts/Sora`.
 - Set `Config.setChromiumOpenGlRenderer('angle')` in `remotion.config.ts`, or pass `--gl=angle`.

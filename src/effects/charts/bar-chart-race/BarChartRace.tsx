@@ -23,7 +23,13 @@ type Theme = {
   readonly muted: string;
   readonly ink: string;
   readonly text: string;
+  readonly display: string;
   readonly bg: string;
+  readonly series: readonly string[];
+  readonly accentInk: string;
+  readonly accentOnPaper: string;
+  readonly pair: string;
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -31,12 +37,20 @@ const THEME: Theme = {
   muted: '#8d93a5',
   ink: '#ffffff',
   text: fontFamily,
+  display: fontFamily,
   bg: '#0a0b10',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  accentInk: '#04050a',
+  accentOnPaper: '#c2410c',
+  pair: '#4cc9f0',
+  radius: 18,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly title?: string;
@@ -50,13 +64,14 @@ type Props = {
 export const BarChartRace: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   title = 'Monthly active projects',
   series = [
-    {label: 'Remotion', color: '#4cc9f0', values: [12, 26, 44, 68, 96, 128]},
-    {label: 'After Effects', color: '#c77dff', values: [58, 62, 70, 76, 82, 88]},
-    {label: 'Blender', color: '#ffd166', values: [30, 41, 55, 61, 70, 79]},
-    {label: 'Figma', color: '#c6ff3d', values: [44, 48, 52, 57, 60, 64]},
-    {label: 'Canva', color: '#c2410c', values: [22, 30, 33, 38, 44, 47]},
+    {label: 'Remotion', color: theme.series[1], values: [12, 26, 44, 68, 96, 128]},
+    {label: 'After Effects', color: theme.series[4], values: [58, 62, 70, 76, 82, 88]},
+    {label: 'Blender', color: theme.series[3], values: [30, 41, 55, 61, 70, 79]},
+    {label: 'Figma', color: theme.series[2], values: [44, 48, 52, 57, 60, 64]},
+    {label: 'Canva', color: theme.accentOnPaper, values: [22, 30, 33, 38, 44, 47]},
   ],
   ticks = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
   framesPerStep = 34,
@@ -89,7 +104,13 @@ export const BarChartRace: React.FC<Props> = ({
     <AbsoluteFill name="Scene" style={{backgroundColor, padding: '80px 96px', fontFamily}}>
       <Interactive.Div
         name="Title"
-        style={{fontSize: 52, fontWeight: 800, color: theme.ink, letterSpacing: '-0.02em'}}
+        style={{
+          fontSize: 52,
+          fontWeight: 800,
+          color: theme.ink,
+          letterSpacing: '-0.02em',
+          fontFamily: displayFamily,
+        }}
       >
         {title}
       </Interactive.Div>
@@ -130,7 +151,7 @@ export const BarChartRace: React.FC<Props> = ({
                 <div
                   style={{
                     height: '100%',
-                    borderRadius: 10,
+                    borderRadius: (theme.radius * 10) / 18,
                     backgroundColor: s.color,
                     width: `${(s.value / max) * 100}%`,
                     display: 'flex',
@@ -144,7 +165,7 @@ export const BarChartRace: React.FC<Props> = ({
                     style={{
                       fontSize: 34,
                       fontWeight: 800,
-                      color: '#0a0b10',
+                      color: theme.accentInk,
                       fontVariantNumeric: 'tabular-nums',
                     }}
                   >
@@ -178,7 +199,7 @@ export const BarChartRace: React.FC<Props> = ({
           style={{
             height: '100%',
             borderRadius: 3,
-            backgroundColor: '#4cc9f0',
+            backgroundColor: theme.pair,
             width: `${interpolate(frame, [0, (steps - 1) * framesPerStep], [0, 100], {
               extrapolateLeft: 'clamp',
               extrapolateRight: 'clamp',

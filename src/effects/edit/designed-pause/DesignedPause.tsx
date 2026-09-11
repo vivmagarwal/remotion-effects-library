@@ -65,9 +65,15 @@ type Theme = {
   readonly ink: string;
   readonly muted: string;
   readonly body: string;
+  readonly display: string;
   readonly text: string;
   readonly accent: string;
+  readonly accentInk: string;
+  readonly series: readonly string[];
   readonly bgDeep: string;
+  readonly paper: string;
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -75,14 +81,22 @@ const THEME: Theme = {
   ink: '#ffffff',
   muted: '#8d93a5',
   body: '#eef1f7',
+  display: fontFamily,
   text: fontFamily,
   accent: '#ff5c39',
+  accentInk: '#04050a',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
   bgDeep: '#04050a',
+  paper: '#f6f5f2',
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the chapter title. Defaults to this file's own face, or the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly src?: string;
@@ -144,19 +158,12 @@ const WORDS: Word[] = [
 const classify = (ms: number): GapKind =>
   ms < 120 ? 'micro' : ms < 300 ? 'breath' : ms < 700 ? 'beat' : ms < 1500 ? 'sentence' : 'scene';
 
-const GAP_COLOR: Record<GapKind, string> = {
-  micro: '#4a4e5a',
-  breath: '#4cc9f0',
-  beat: '#c6ff3d',
-  sentence: '#ffd166',
-  scene: '#ff5c39',
-};
-
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
 export const DesignedPause: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   src = staticFile('footage/interview-raw.mp4'),
   beatSrc = staticFile('footage/broll-earth.mp4'),
   words = WORDS,
@@ -218,6 +225,18 @@ export const DesignedPause: React.FC<Props> = ({
   // The source strip maps [inS, outS] across the full width.
   const sourceX = (s: number) => ((s - inS) / (outS - inS)) * 100;
 
+  // A gap's tint comes from the categorical palette, so a theme moves all of
+  // them together. `micro` stays neutral — it is co-articulation, not a class
+  // worth a brand colour — and `scene` is the accent, the same colour the hold
+  // gets on the OUTPUT strip, because it is the same pause.
+  const gapColor: Record<GapKind, string> = {
+    micro: '#4a4e5a',
+    breath: theme.series[1],
+    beat: theme.series[2],
+    sentence: theme.series[3],
+    scene: accentColor,
+  };
+
   return (
     <AbsoluteFill name="Scene" style={{backgroundColor, fontFamily, overflow: 'hidden'}}>
       <Series>
@@ -241,6 +260,7 @@ export const DesignedPause: React.FC<Props> = ({
                 title={chapterTitle}
                 accentColor={accentColor}
                 ink={theme.ink}
+                displayFamily={displayFamily}
               />
             )}
           </Series.Sequence>
@@ -268,7 +288,7 @@ export const DesignedPause: React.FC<Props> = ({
               left: 84,
               top: 84,
               padding: '18px 28px',
-              borderRadius: 12,
+              borderRadius: (12 * theme.radius) / THEME.radius,
               backgroundColor: 'rgba(10, 11, 16, 0.72)',
               backdropFilter: 'blur(18px) saturate(1.3)',
               border: '1px solid rgba(255, 255, 255, 0.14)',
@@ -280,7 +300,7 @@ export const DesignedPause: React.FC<Props> = ({
             </div>
             <div style={{fontSize: 34, fontWeight: 500, color: theme.body, marginTop: 8}}>
               {scene
-                ? `held for ${(holdMs / 1000).toFixed(2)}s — ${Math.round(holdRatio * 100)}% of it, clamped to ${minHoldMs / 1000}–${maxHoldMs / 1000}s`
+                ? `held for ${(holdMs / 1000).toFixed(2)}s — ${Math.round(holdRatio * 100)}% of it, clamped to ${minHoldMs / 1000}⁠–⁠${maxHoldMs / 1000}s`
                 : 'nothing to design; the window plays straight'}
             </div>
             <div style={{fontSize: 34, fontWeight: 500, color: theme.muted, marginTop: 8}}>
@@ -295,7 +315,7 @@ export const DesignedPause: React.FC<Props> = ({
               style={{
                 position: 'relative',
                 height: 46,
-                borderRadius: 6,
+                borderRadius: (6 * theme.radius) / THEME.radius,
                 backgroundColor: 'rgba(255,255,255,0.07)',
                 overflow: 'hidden',
               }}
@@ -325,15 +345,15 @@ export const DesignedPause: React.FC<Props> = ({
                     bottom: 0,
                     // The scene gap is the only one that gets solid ink; the rest
                     // are shown so you can see it is the outlier, not the pick.
-                    backgroundColor: GAP_COLOR[g.kind],
+                    backgroundColor: gapColor[g.kind],
                     opacity: g.kind === 'scene' ? 0.92 : 0.34,
                   }}
                 />
               ))}
               {scene ? (
                 <>
-                  <Marker x={sourceX(cutOutS)} color="#f6f5f2" />
-                  <Marker x={sourceX(cutInS)} color="#f6f5f2" />
+                  <Marker x={sourceX(cutOutS)} color={theme.paper} width={(3 * theme.stroke) / THEME.stroke} />
+                  <Marker x={sourceX(cutInS)} color={theme.paper} width={(3 * theme.stroke) / THEME.stroke} />
                 </>
               ) : null}
             </div>
@@ -342,7 +362,15 @@ export const DesignedPause: React.FC<Props> = ({
           {/* ── the output, with the designed hold in it ── */}
           <div style={{position: 'absolute', left: 84, right: 84, bottom: 92}}>
             <Label color={theme.muted}>OUTPUT · A · designed hold · B</Label>
-            <div style={{display: 'flex', gap: 4, height: 46, borderRadius: 6, overflow: 'hidden'}}>
+            <div
+              style={{
+                display: 'flex',
+                gap: 4,
+                height: 46,
+                borderRadius: (6 * theme.radius) / THEME.radius,
+                overflow: 'hidden',
+              }}
+            >
               {sections.map((sec) => (
                 <div
                   key={sec.name}
@@ -356,7 +384,7 @@ export const DesignedPause: React.FC<Props> = ({
                     fontSize: 26,
                     fontWeight: 800,
                     letterSpacing: '0.14em',
-                    color: sec.name === 'BEAT' ? '#04050a' : '#eef1f7',
+                    color: sec.name === 'BEAT' ? theme.accentInk : theme.body,
                   }}
                 >
                   {sec.name === 'BEAT' ? `${(holdMs / 1000).toFixed(2)}s` : sec.name}
@@ -371,9 +399,9 @@ export const DesignedPause: React.FC<Props> = ({
                 position: 'absolute',
                 left: `${outputProgress * 100}%`,
                 top: 44,
-                width: 3,
+                width: (3 * theme.stroke) / THEME.stroke,
                 height: 46,
-                backgroundColor: '#f6f5f2',
+                backgroundColor: theme.paper,
                 boxShadow: '0 0 18px rgba(246,245,242,0.7)',
               }}
             />
@@ -398,14 +426,14 @@ const Label: React.FC<{children: string; color: string}> = ({children, color}) =
   </div>
 );
 
-const Marker: React.FC<{x: number; color: string}> = ({x, color}) => (
+const Marker: React.FC<{x: number; color: string; width: number}> = ({x, color, width}) => (
   <div
     style={{
       position: 'absolute',
       left: `${x}%`,
       top: -6,
       bottom: -6,
-      width: 3,
+      width,
       backgroundColor: color,
     }}
   />
@@ -422,7 +450,8 @@ const BeatCard: React.FC<{
   title: string;
   accentColor: string;
   ink: string;
-}> = ({src, kicker, title, accentColor, ink}) => {
+  displayFamily: string;
+}> = ({src, kicker, title, accentColor, ink, displayFamily}) => {
   const frame = useCurrentFrame();
   const {fps, durationInFrames} = useVideoConfig();
   const inSpring = spring({frame, fps, config: {damping: 18, stiffness: 140, mass: 0.7}});
@@ -438,7 +467,7 @@ const BeatCard: React.FC<{
           justifyContent: 'center',
           alignItems: 'center',
           textAlign: 'center',
-          padding: '0 200px 180px',
+          padding: '80px 200px 180px',
           // A slow push across the whole hold. Without it a 50-frame card reads
           // as a freeze, which is the exact impression a designed pause exists
           // to avoid.
@@ -463,6 +492,7 @@ const BeatCard: React.FC<{
         </div>
         <div
           style={{
+            fontFamily: displayFamily,
             fontSize: 116,
             fontWeight: 800,
             letterSpacing: '-0.03em',

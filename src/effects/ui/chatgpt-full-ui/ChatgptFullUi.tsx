@@ -29,13 +29,13 @@ type Turn = {readonly user: string; readonly assistant: string};
  */
 type Theme = {
   readonly text: string;
-  readonly ink: string;
+  readonly bg: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
   text: fontFamily,
-  ink: '#ffffff',
+  bg: '#0a0b10',
 };
 
 type Props = {
@@ -60,7 +60,11 @@ type Props = {
   readonly composerOnly?: boolean;
   /** composerOnly: width of the centred prompt box, in px. */
   readonly composerWidth?: number;
-  /** composerOnly: the ground behind the box. */
+  /**
+   * composerOnly: the ground behind the box. Defaults to ChatGPT's own page
+   * white — the composer is a recreation of their surface, and the box only
+   * reads as theirs when it is standing on it, so no theme reaches this one.
+   */
   readonly backgroundColor?: string;
   /** The small print under the composer. */
   readonly caption?: string;
@@ -127,7 +131,7 @@ export const ChatgptFullUi: React.FC<Props> = ({
   zoomWhileTyping = 1.03,
   composerOnly = false,
   composerWidth = 1300,
-  backgroundColor = theme.ink,
+  backgroundColor = '#ffffff',
   caption = 'ChatGPT is AI and can make mistakes.',
   placeholder = 'Ask anything',
 }) => {
@@ -292,7 +296,7 @@ export const ChatgptFullUi: React.FC<Props> = ({
   }
 
   return (
-    <AbsoluteFill name="Scene" style={{backgroundColor: '#0e1116', fontFamily, overflow: 'hidden'}}>
+    <AbsoluteFill name="Scene" style={{backgroundColor: theme.bg, fontFamily, overflow: 'hidden'}}>
       <Interactive.Div
         name="Window"
         style={{

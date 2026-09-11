@@ -2,12 +2,17 @@ Build a Remotion composition called **SplitFlapBoard**: an airport departure boa
 through the alphabet until each lands on its letter.
 
 **The look**
-- 1920×1080, 30fps, 150 frames. Very dark background `#0a0c10`, everything centred, DM Mono throughout.
-- A title `DEPARTURES` at 42px with `letter-spacing: 0.5em` in muted `#5a6172`, 46px above the board.
-- Three rows. Each row is a time label (62px, `#5a6172`, fixed 220px width) followed by one tile per
-  character of the word.
-- A tile is a 88×118 inline-flex box, radius 7, fill `#181c25`, 8px right margin, character at 70px.
-  Unsettled tiles are pale grey `#cfd3dc`; a settled tile turns amber `#ffd166`.
+- 1920×1080, 30fps, 150 frames. Background `theme.bg` (house `#0a0b10`), everything centred, DM Mono
+  throughout, tiles included: if the tile is its own component, pass it the `fontFamily` prop (default
+  `theme.mono`) rather than reading the module-level `loadFont` result, or no theme reaches the letters.
+- A title `DEPARTURES` at 42px with `letter-spacing: 0.5em` in `theme.muted` (house `#8d93a5`), 46px
+  above the board.
+- Three rows. Each row is a time label (62px, `theme.muted` (house `#8d93a5`), fixed 220px width)
+  followed by one tile per character of the word.
+- A tile is a 88×118 inline-flex box, radius `theme.radius * 7 / 18` (7 at house), fill `tileColor`
+  (`rgba(255,255,255,0.07)`), 8px right margin, character at 70px.
+  Unsettled glyphs are `theme.body` (house `#eef1f7`); a settled glyph turns `accentColor` =
+  `theme.series[3]` (house amber `#ffd166`).
 - Each tile carries a hairline across its middle —
   `linear-gradient(#0000 calc(50% - 1px), #00000090 50%, #0000 calc(50% + 1px))` — plus
   `inset 0 1px 0 rgba(255,255,255,0.07)`. That seam is what makes it read as a flap rather than a box.

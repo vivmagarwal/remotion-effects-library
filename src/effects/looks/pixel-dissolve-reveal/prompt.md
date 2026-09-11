@@ -43,7 +43,9 @@ last frames at full detail rather than flickering back to the unprocessed source
 pattern re-rolls and the reveal is different on every render.
 
 **The HUD**
-- 1920×1080, 30fps, 150 frames. Background `#07080d`, accent `#c6ff3d`, JetBrains Mono.
+- 1920×1080, 30fps, 150 frames. Background `backgroundColor = theme.bgDeep` (`#04050a`), accent
+  `accentColor = theme.series[2]` (`#c6ff3d` in the house theme),
+  `fontFamily = theme.mono` (JetBrains Mono by default).
 - A **scan grid** matched to the dissolve's own cell count —
   `backgroundSize: \`${100 / columns}% ${100 / rows}%\`` from two 1px linear-gradients — fading out as
   `1 - progress`. Matching the grid to the dissolve is what makes the cells look intentional rather
@@ -56,7 +58,7 @@ pattern re-rolls and the reveal is different on every render.
 **Requirements**
 - One self-contained `.tsx` file exporting `PixelDissolveReveal`.
 - Props: `src`, `title`, `readout`, `revealFrames`, `startAt`, `maxBlock`, `gridColumns`, `gridRows`,
-  `accentColor`.
+  `accentColor`, `backgroundColor`.
 - Effects apply to canvas-backed components only — `<CanvasImage>`, `<Video>` from `@remotion/media`,
   `<Solid>`, `<HtmlInCanvas>`. They cannot be applied to a plain `<div>`.
 - Load JetBrains Mono via `@remotion/google-fonts/JetBrainsMono`.

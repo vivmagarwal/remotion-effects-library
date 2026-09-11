@@ -48,20 +48,28 @@ type Preset = {
  * this file runnable on its own.
  */
 type Theme = {
+  readonly ink: string;
   readonly muted: string;
   readonly body: string;
   readonly text: string;
   readonly accent: string;
+  readonly pair: string;
   readonly bg: string;
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  ink: '#ffffff',
   muted: '#8d93a5',
   body: '#eef1f7',
   text: fontFamily,
   accent: '#ff5c39',
+  pair: '#4cc9f0',
   bg: '#0a0b10',
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
@@ -139,7 +147,7 @@ export const HandheldDrift: React.FC<Props> = ({
               left: 84,
               top: 84,
               padding: '16px 26px',
-              borderRadius: 12,
+              borderRadius: (12 * theme.radius) / THEME.radius,
               backgroundColor: 'rgba(10, 11, 16, 0.72)',
               backdropFilter: 'blur(18px) saturate(1.3)',
               border: '1px solid rgba(255, 255, 255, 0.14)',
@@ -178,19 +186,26 @@ export const HandheldDrift: React.FC<Props> = ({
                 <polyline
                   key={seed}
                   fill="none"
-                  stroke={i === 0 ? accentColor : '#4cc9f0'}
-                  strokeWidth={2.5}
+                  stroke={i === 0 ? accentColor : theme.pair}
+                  strokeWidth={(2.5 * theme.stroke) / THEME.stroke}
                   points={Array.from({length: 120}, (_, k) => {
                     const t = frame - 119 + k - (i === 1 ? rotationLag : 0);
                     return `${(k / 119) * 1000},${60 - octaves(seed, t) * 42}`;
                   }).join(' ')}
                 />
               ))}
-              <line x1="1000" y1="0" x2="1000" y2="120" stroke="#ffffff" strokeWidth={2} />
+              <line
+                x1="1000"
+                y1="0"
+                x2="1000"
+                y2="120"
+                stroke={theme.ink}
+                strokeWidth={(2 * theme.stroke) / THEME.stroke}
+              />
             </svg>
             <div style={{fontSize: 34, fontWeight: 500, color: theme.muted, marginTop: -4}}>
               <span style={{color: accentColor}}>translate</span> ·{' '}
-              <span style={{color: '#4cc9f0'}}>rotate, {rotationLag} frames behind</span>
+              <span style={{color: theme.pair}}>rotate, {rotationLag} frames behind</span>
             </div>
           </div>
 
@@ -202,6 +217,10 @@ export const HandheldDrift: React.FC<Props> = ({
               fontSize: 34,
               fontWeight: 500,
               color: theme.muted,
+              // The top right of this frame is the ISS panels, and they are the
+              // brightest thing in the shot. A scrim here would cover the
+              // picture, so the contrast travels with the type instead.
+              textShadow: '0 2px 14px rgba(10,11,16,0.95), 0 0 34px rgba(10,11,16,0.8)',
               opacity: interpolate(frame, [0, 16], [0, 1], {
                 extrapolateLeft: 'clamp',
                 extrapolateRight: 'clamp',

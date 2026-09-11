@@ -28,14 +28,20 @@ const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 type Theme = {
   readonly mono: string;
   readonly ink: string;
-  readonly text: string;
+  readonly display: string;
+  readonly bgDeep: string;
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
   mono: MONO,
   ink: '#ffffff',
-  text: fontFamily,
+  display: fontFamily,
+  bgDeep: '#04050a',
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
@@ -43,6 +49,7 @@ type Props = {
   readonly fontFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
+  readonly backgroundColor?: string;
   readonly src?: string;
   readonly title?: string;
   readonly caption?: string;
@@ -54,7 +61,8 @@ type Props = {
 
 export const ProgressiveBlurFocus: React.FC<Props> = ({
   theme = THEME,
-  fontFamily = theme.text,
+  fontFamily = theme.display,
+  backgroundColor = theme.bgDeep,
   src,
   title = 'Rack focus',
   caption = 'radialProgressiveBlur — sharp at a point, soft outward',
@@ -82,7 +90,7 @@ export const ProgressiveBlurFocus: React.FC<Props> = ({
   );
 
   return (
-    <AbsoluteFill name="Scene" style={{backgroundColor: '#04050a', overflow: 'hidden', fontFamily}}>
+    <AbsoluteFill name="Scene" style={{backgroundColor, overflow: 'hidden', fontFamily}}>
       <CanvasImage
         src={src ?? staticFile('sample-city.svg')}
         style={{width: '100%', height: '100%', objectFit: 'cover'}}
@@ -118,8 +126,8 @@ export const ProgressiveBlurFocus: React.FC<Props> = ({
           height: 128,
           marginLeft: -64,
           marginTop: -64,
-          border: '3px solid rgba(255,255,255,0.85)',
-          borderRadius: 6,
+          border: `${theme.stroke}px solid ${theme.ink}d9`,
+          borderRadius: theme.radius / 3,
           boxShadow: '0 0 0 1px rgba(0,0,0,0.35), 0 6px 20px rgba(0,0,0,0.4)',
           // Tightens as the shot comes into focus.
           scale: 0.72 + focus * 0.5,
@@ -150,7 +158,7 @@ export const ProgressiveBlurFocus: React.FC<Props> = ({
           style={{
             fontFamily: theme.mono,
             fontSize: 26,
-            color: 'rgba(255,255,255,0.72)',
+            color: `${theme.ink}b8`,
             marginTop: 12,
             opacity: interpolate(frame, [22, 46], [0, 1], {
               extrapolateLeft: 'clamp',

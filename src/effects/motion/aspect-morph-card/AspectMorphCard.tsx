@@ -41,8 +41,11 @@ type Theme = {
   readonly paperMuted: string;
   readonly paperInk: string;
   readonly text: string;
+  readonly display: string;
   readonly accent: string;
   readonly paper: string;
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -51,13 +54,18 @@ const THEME: Theme = {
   paperMuted: '#4a4e5a',
   paperInk: '#1d1b17',
   text: fontFamily,
+  display: fontFamily,
   accent: '#ff5c39',
   paper: '#f6f5f2',
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title and beat lines. Defaults to this file's Inter, or the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly src?: string;
@@ -76,6 +84,7 @@ type Props = {
 export const AspectMorphCard: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   src,
   title = 'ASPECT MORPH',
   rest = {x: 44, y: 300, w: 992, h: 1180},
@@ -100,6 +109,11 @@ export const AspectMorphCard: React.FC<Props> = ({
 }) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
+
+  // Corners scale with the theme rather than being set by it: the card and its
+  // chip are deliberately rounder than the house base, and a theme that halves
+  // the radius should halve both, not flatten them to one value.
+  const round = theme.radius / THEME.radius; // 1 under the house theme
 
   // One `shift` value, 0 = at rest, 1 = fully moved. Each beat contributes a
   // spring in and a spring out; taking the max lets beats sit next to each other
@@ -149,6 +163,7 @@ export const AspectMorphCard: React.FC<Props> = ({
           position: 'absolute',
           left: 60,
           top: 108,
+          fontFamily: displayFamily,
           fontSize: 42,
           fontWeight: 800,
           letterSpacing: '0.2em',
@@ -196,7 +211,7 @@ export const AspectMorphCard: React.FC<Props> = ({
             color: paperColor,
             backgroundColor: accentColor,
             padding: '10px 20px',
-            borderRadius: 8,
+            borderRadius: 8 * round,
             marginBottom: 34,
           }}
         >
@@ -206,6 +221,7 @@ export const AspectMorphCard: React.FC<Props> = ({
           <div
             key={i}
             style={{
+              fontFamily: displayFamily,
               fontSize: 92,
               fontWeight: 800,
               lineHeight: 1.16,
@@ -237,11 +253,11 @@ export const AspectMorphCard: React.FC<Props> = ({
           top: card.y,
           width: card.w,
           height: card.h,
-          borderRadius: 28,
+          borderRadius: 28 * round,
           overflow: 'hidden',
-          border: '4px solid #1d1b17',
+          border: `${(4 * theme.stroke) / THEME.stroke}px solid ${theme.paperInk}`,
           boxShadow: '0 26px 70px rgba(29,27,23,0.28)',
-          backgroundColor: '#1d1b17',
+          backgroundColor: theme.paperInk,
         }}
       >
         <CanvasImage
@@ -266,7 +282,10 @@ export const AspectMorphCard: React.FC<Props> = ({
             display: 'flex',
             alignItems: 'center',
             gap: 10,
-            backgroundColor: 'rgba(246,244,239,0.94)',
+            // 0xf0 is the old rgba(…,0.94). The alpha suffix is why `paperColor`
+            // has to be a 6-digit hex — the same caveat orbit-system documents
+            // for `starColor`.
+            backgroundColor: `${paperColor}f0`,
             borderRadius: 999,
             padding: '9px 18px',
             fontSize: 24,

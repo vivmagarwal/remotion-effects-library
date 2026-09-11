@@ -102,6 +102,10 @@ export const ExtrudedText: React.FC<Props> = ({
         justifyContent: 'center',
         alignItems: 'center',
         fontFamily,
+        // No faux bold. Anton ships a single 400 face, so asking for 800 below
+        // must render that face untouched; a theme's display family supplies a
+        // real heavy cut instead.
+        fontSynthesis: 'none',
         // Perspective belongs on the PARENT of the rotated element.
         perspective: 2200,
       }}
@@ -114,6 +118,7 @@ export const ExtrudedText: React.FC<Props> = ({
           transform: `rotateY(${yaw * enter}deg) rotateX(${pitch * enter}deg)`,
           scale: 0.8 + enter * 0.2,
           opacity: enter,
+          fontWeight: 800, // font-weight-check: ignore — theme display faces; Anton ships 400 only and fontSynthesis 'none' keeps it unsynthesised
         }}
       >
         {/* Extrusion: the same word, pushed back one step at a time. Drawn back
@@ -168,6 +173,7 @@ export const ExtrudedText: React.FC<Props> = ({
           top: '50%',
           marginTop: 190,
           fontSize: 300,
+          fontWeight: 800, // font-weight-check: ignore — theme display faces; Anton ships 400 only and fontSynthesis 'none' keeps it unsynthesised
           lineHeight: 1.05,
           letterSpacing: '0.01em',
           color: faceColor,

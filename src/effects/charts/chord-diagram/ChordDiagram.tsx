@@ -30,25 +30,35 @@ const {fontFamily} = loadFont('normal', {weights: ['500', '700', '800'], subsets
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly mono: string;
   readonly muted: string;
   readonly text: string;
+  readonly display: string;
   readonly bg: string;
   readonly body: string;
+  readonly series: readonly string[];
+  readonly accentOnPaper: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   mono: MONO,
   muted: '#8d93a5',
   text: fontFamily,
+  display: fontFamily,
   bg: '#0a0b10',
   body: '#eef1f7',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  accentOnPaper: '#c2410c',
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly title?: string;
@@ -75,16 +85,22 @@ const DEFAULT_MATRIX = [
   [480, 410, 240, 980, 210, 0],
 ];
 
-const DEFAULT_COLORS = ['#ff5c39', '#c6ff3d', '#c77dff', '#4cc9f0', '#ffd166', '#c2410c'];
-
 export const ChordDiagram: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   title = 'Where the audience goes next',
   subtitle = 'chord diagram · d3-chord',
   names = DEFAULT_NAMES,
   matrix = DEFAULT_MATRIX,
-  colors = DEFAULT_COLORS,
+  colors = [
+    theme.series[0],
+    theme.series[2],
+    theme.series[4],
+    theme.series[1],
+    theme.series[3],
+    theme.accentOnPaper,
+  ],
   stagger = 1.6,
   startAt = 20,
   backgroundColor = theme.bg,
@@ -135,7 +151,12 @@ export const ChordDiagram: React.FC<Props> = ({
       name="Scene"
       style={{
         backgroundColor,
-        backgroundImage: 'radial-gradient(ellipse at 50% 52%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 70%)',
+        // A dark scrim reads as depth on a dark ground and as dirt on a light
+        // one, so the scheme picks which way the vignette runs.
+        backgroundImage:
+          theme.scheme === 'light'
+            ? 'radial-gradient(ellipse at 50% 52%, rgba(255,255,255,0.5) 0%, rgba(0,0,0,0.06) 70%)'
+            : 'radial-gradient(ellipse at 50% 52%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 70%)',
         fontFamily,
         overflow: 'hidden',
       }}
@@ -151,6 +172,7 @@ export const ChordDiagram: React.FC<Props> = ({
           fontSize: 56,
           fontWeight: 800,
           letterSpacing: '-0.025em',
+          fontFamily: displayFamily,
           color: paperColor,
           opacity: interpolate(frame, [0, 20], [0, 1], {
             extrapolateLeft: 'clamp',

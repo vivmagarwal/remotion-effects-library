@@ -45,31 +45,41 @@ type Route = {readonly from: string; readonly to: string};
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly mono: string;
   readonly muted: string;
   readonly text: string;
+  readonly display: string;
   readonly bg: string;
   readonly bgDeep: string;
+  readonly ink: string;
   readonly body: string;
   readonly pair: string;
   readonly paperMuted: string;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   mono: MONO,
   muted: '#8d93a5',
   text: fontFamily,
+  display: fontFamily,
   bg: '#0a0b10',
   bgDeep: '#04050a',
+  ink: '#ffffff',
   body: '#eef1f7',
   pair: '#4cc9f0',
   paperMuted: '#4a4e5a',
+  stroke: 3,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly title?: string;
@@ -121,6 +131,7 @@ const DEFAULT_ROUTES: Route[] = [
 export const GlobeArcs: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   title = 'Rendering, everywhere',
   subtitle = 'orthographic globe · d3-geo + geoInterpolate',
   cities = DEFAULT_CITIES,
@@ -130,7 +141,10 @@ export const GlobeArcs: React.FC<Props> = ({
   drawFrames = 34,
   startAt = 16,
   oceanColor = theme.bg,
-  landColor = theme.paperMuted,
+  // On a light scheme the ocean is paper and `paperMuted` is near-black, so a
+  // solid landmass would swallow the arcs and labels crossing it; a 25% wash
+  // keeps the continents readable as shapes under the routes.
+  landColor = theme.scheme === 'light' ? `${theme.paperMuted}40` : theme.paperMuted,
   arcColor = theme.pair,
   backgroundColor = theme.bgDeep,
   paperColor = theme.body,
@@ -217,6 +231,7 @@ export const GlobeArcs: React.FC<Props> = ({
           fontSize: 56,
           fontWeight: 800,
           letterSpacing: '-0.025em',
+          fontFamily: displayFamily,
           color: paperColor,
           opacity: interpolate(frame, [0, 20], [0, 1], {
             extrapolateLeft: 'clamp',
@@ -255,7 +270,7 @@ export const GlobeArcs: React.FC<Props> = ({
             disc of radius = scale. */}
         <circle cx={cx} cy={cy} r={R} fill={oceanColor} />
 
-        <path d={path(graticule) ?? undefined} fill="none" stroke="#ffffff10" strokeWidth={1} />
+        <path d={path(graticule) ?? undefined} fill="none" stroke={`${theme.ink}10`} strokeWidth={1} />
 
         {land.features.map((f, i) => (
           <path
@@ -269,7 +284,14 @@ export const GlobeArcs: React.FC<Props> = ({
 
         {/* The rim is drawn AFTER the land: painted before it, a coastline that
             reaches the limb erases the edge of the globe. */}
-        <circle cx={cx} cy={cy} r={R} fill="none" stroke={`${arcColor}55`} strokeWidth={1.6} />
+        <circle
+          cx={cx}
+          cy={cy}
+          r={R}
+          fill="none"
+          stroke={`${arcColor}55`}
+          strokeWidth={(theme.stroke * 1.6) / 3}
+        />
 
         {routes.map((route, i) => {
           const a = cityByName.get(route.from);
@@ -307,7 +329,7 @@ export const GlobeArcs: React.FC<Props> = ({
               d={path({type: 'LineString', coordinates: coords}) ?? undefined}
               fill="none"
               stroke={arcColor}
-              strokeWidth={2.6}
+              strokeWidth={(theme.stroke * 2.6) / 3}
               strokeLinecap="round"
               opacity={0.9}
             />
@@ -325,7 +347,14 @@ export const GlobeArcs: React.FC<Props> = ({
           return (
             <g key={c.name} opacity={appear}>
               <circle cx={xy[0]} cy={xy[1]} r={4.5} fill={paperColor} />
-              <circle cx={xy[0]} cy={xy[1]} r={9} fill="none" stroke={arcColor} strokeWidth={1.4} />
+              <circle
+                cx={xy[0]}
+                cy={xy[1]}
+                r={9}
+                fill="none"
+                stroke={arcColor}
+                strokeWidth={(theme.stroke * 1.4) / 3}
+              />
               <text
                 x={xy[0] + (c.dx ?? 15)}
                 y={xy[1] + (c.dy ?? 5)}

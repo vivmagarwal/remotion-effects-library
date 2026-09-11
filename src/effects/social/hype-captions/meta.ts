@@ -10,5 +10,5 @@ export const meta: EffectMeta = {
   width: 1080, height: 1920, fps: 30, durationInFrames: 150,
   packages: ['remotion', '@remotion/google-fonts'],
   difficulty: 'intermediate', checkFrame: 62,
-  ground: 'transparent', audience: ['youtuber', 'agency'],
+  ground: 'dark', audience: ['youtuber', 'agency'],
 };

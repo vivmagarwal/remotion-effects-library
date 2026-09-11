@@ -2,14 +2,14 @@ Build a Remotion composition called **LineChartDraw**: an SVG line chart that dr
 value read-out riding the leading edge.
 
 **The look**
-- 1920×1080, 30fps, 120 frames. Background `#0b0d14`, padding `78px 96px`, Inter.
-- A title at 50px weight 800, and under it the **current** value at 92px weight 800 in the line colour
-  `#4cc9f0`, with `fontVariantNumeric: 'tabular-nums'`.
+- 1920×1080, 30fps, 120 frames. Background `theme.bg`, padding `78px 96px`, Inter.
+- A title at 50px weight 800 in `displayFamily`, and under it the **current** value at 92px weight 800
+  in the line colour (`lineColor`, default `theme.pair`), with `fontVariantNumeric: 'tabular-nums'`.
 - A 1560×620 `<svg>` with five horizontal gridlines at `#ffffff10`, a gradient area fill under the
-  line (`stopOpacity` 0.42 → 0), the line itself at `strokeWidth: 6`, round caps and joins, with
-  `filter: drop-shadow(0 0 18px #4cc9f066)`.
-- Month labels below, each `flex: 1` and centred — bright `#8e95a8` once the line has passed them,
-  dim `#3a3f4d` before.
+  line (`stopOpacity` 0.42 → 0), the line itself at `strokeWidth: theme.stroke * 2`, round caps and
+  joins, with `filter: drop-shadow(0 0 18px ${lineColor}66)`.
+- Month labels below, each `flex: 1` and centred — bright `theme.muted` once the line has passed them,
+  dim `theme.paperMuted` before.
 
 **The self-drawing line**
 Build the path from the data (`M x y L x y …`), then measure it by summing the segment lengths:

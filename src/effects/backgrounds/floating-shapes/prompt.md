@@ -2,12 +2,16 @@ Build a Remotion composition called **FloatingShapes** (composition id `floating
 confetti drifting upward through the frame on a seamless loop.
 
 **The look**
-- 1920×1080, 30fps, 240 frames. Background `#0c0e16` with
-  `radial-gradient(ellipse at 50% 120%, #1c2140 0%, #0c0e16 62%)` — a glow rising from below.
-- 46 shapes drawn from five kinds: filled circle, rounded square (`borderRadius: size * 0.22`), ring
-  (`border: size * 0.14 solid`), plus-shaped cross (two bars), and triangle
-  (`clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)'`).
-- Colours: `#ff5c39`, `#4cc9f0`, `#ffd166`, `#12c48b`, `#a78bfa`, `#f43f5e`.
+- 1920×1080, 30fps, 240 frames. Background `theme.bg` with
+  `radial-gradient(ellipse at 50% 120%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 62%)` on a dark
+  scheme, and `rgba(255,255,255,0.55) 0%` to `rgba(20,18,14,0.06) 62%` on a light one — a glow rising
+  from below either way. The dark scrim over paper is a bruise, not a backdrop.
+- 46 shapes drawn from five kinds: filled circle, rounded square
+  (`borderRadius: size × 0.22 × theme.radius / 18`), ring (`border: size * 0.14 solid`), plus-shaped
+  cross whose two bars round at `size × 0.06 × theme.radius / 18`, and triangle
+  (`clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)'`). All three radii are unchanged at the house 18.
+- Colours: the theme's `[series[0], series[1], series[3], series[2], series[4], accentOnPaper]` —
+  `#ff5c39`, `#4cc9f0`, `#ffd166`, `#c6ff3d`, `#c77dff`, `#c2410c`.
 
 **One seeded depth per shape, everything derived from it**
 
@@ -43,7 +47,8 @@ so `Math.random()` re-rolls every shape on every frame and the whole field turns
 
 **Requirements**
 - One self-contained `.tsx` file exporting `FloatingShapes`.
-- Props: `count`, `colors`, `backgroundColor`, `speed`, `maxSize`.
+- Props: `theme` (first, so the rest can default off it), `count`, `colors`, `backgroundColor`,
+  `speed`, `maxSize`.
 - Position each shape with `left`/`top` percentages and negative margins of half its size to centre it.
 - `rotate` needs a unit: `` `${deg}deg` ``.
 - Fade the whole field in over the first 24 frames so it does not pop on at frame 0.

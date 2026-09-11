@@ -68,25 +68,29 @@ Note `dispersion` is a getter/setter on `MeshPhysicalMaterial` (three ≥ r166) 
 your installed version before relying on the fringing.
 
 **The scene**
-- 1920×1080, 30fps, 180 frames. Background `#05060d`.
+- 1920×1080, 30fps, 180 frames. Background `backgroundColor` (`theme.bgDeep`, `#04050a`).
 - `<ThreeCanvas>` from `@remotion/three` needs explicit `width`/`height` from `useVideoConfig()`.
   Camera `{position: [0, 0, 6.2], fov: 46}`.
 - Lights: `<ambientLight intensity={0.22} />`, `<directionalLight position={[5, 6, 8]}
-  intensity={0.7} />`, `<pointLight position={[-6, 3, 4]} intensity={40} color="#8fb2ff"
-  distance={22} />`. Keep these **low** — strong white light drowns the refracted colour. The bars are unlit, so these only shape the glass itself.
+  intensity={0.7} />`, `<pointLight position={[-6, 3, 4]} intensity={40} color={theme.pair}
+  distance={22} />` (house `#4cc9f0`). Keep these **low** — strong white light drowns the refracted colour. The bars are unlit, so these only shape the glass itself.
 - Motion: `spin` interpolates `0 → 1.1π` across the whole composition (`extrapolateRight: 'extend'`),
   applied unevenly on the three axes so the knot never appears to spin about one obvious pole.
   Scale `0.3 → 1` over frames 0–46 on `Easing.bezier(0.16, 1, 0.3, 1)`.
-- Backdrop colours `['#ff5c39', '#4cc9f0', '#c77dff', '#ffd166', '#20e3b2', '#ff7bd5']`.
+- `backdropColors` = `[theme.series[0], theme.series[1], theme.series[4], theme.series[3],
+  theme.series[2], theme.accentOnPaper]` (house `['#ff5c39', '#4cc9f0', '#c77dff', '#ffd166',
+  '#c6ff3d', '#c2410c']`).
 
 **The overlay**
-Bottom-centred, `pointerEvents: 'none'`: Sora 98px weight 700, `letter-spacing: 0.3em` with a
-matching negative `margin-right`, `textShadow: '0 0 60px rgba(140,180,255,0.5)'`; monospace subtitle
-below.
+Bottom-centred, `pointerEvents: 'none'`: `fontFamily` (default `theme.display`, whose inline value
+is this file's Sora) 98px weight 700, colour `theme.ink`, `letter-spacing: 0.3em` with a
+matching negative `margin-right`, ``textShadow: `0 0 60px ${theme.pair}80` ``; subtitle below in
+`theme.mono`, colour `theme.muted`.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `GlassRefraction`.
-- Props: `title`, `subtitle`, `transmission`, `ior`, `thickness`, `dispersion`, `roughness`,
-  `backdropColors`, `backgroundColor`.
+- Props: `theme` (destructured FIRST), `fontFamily` (`theme.display`), `title`, `subtitle`,
+  `transmission`, `ior`, `thickness`, `dispersion`, `roughness`, `backdropColors`,
+  `backgroundColor` (`theme.bgDeep`).
 - Load Sora via `@remotion/google-fonts/Sora`.
 - Set `Config.setChromiumOpenGlRenderer('angle')` in `remotion.config.ts`, or pass `--gl=angle`.

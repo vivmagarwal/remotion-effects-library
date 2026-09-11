@@ -55,8 +55,9 @@ behaviour that makes the technique read as speed. A constant-velocity move produ
 trail that looks like a repeat pattern.
 
 **The look**
-- 1920×1080, 30fps, 180 frames. Background `#0a0a10` with
-  `radial-gradient(ellipse at 50% 50%, #ff5c391a 0%, transparent 62%)`.
+- 1920×1080, 30fps, 180 frames. Background `theme.bg` (`#0a0b10`) with
+  `radial-gradient(ellipse at 50% 50%, ${accentColor}1a 0%, transparent 62%)` — the accent at 10%
+  alpha, so the glow follows the theme.
 - Archivo at 210px weight 900, letter-spacing `-0.04em`, `whiteSpace: 'nowrap'`, in the accent colour.
   Add a small counter-tilt (`-swing * 9deg`) so the trail fans rather than running dead straight.
 - A monospace caption naming the technique.

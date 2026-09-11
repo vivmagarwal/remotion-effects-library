@@ -39,7 +39,7 @@ which is a different lesson; here each tile shows exactly one so the sheet stays
 **The layout and the sweep**
 - 1920×1080, 30fps, 380 frames. Background `#0a0b10`. A 5×3 grid computed from
   `useVideoConfig()` — `cellW = (width - PAD*2 - GAP*(columns-1)) / columns` with `PAD = 64`, `GAP = 16`,
-  a 150px header and 88px reserved at the bottom.
+  a 150px header and 88px reserved at the bottom, tiles at radius `theme.radius * 2/3` (12).
 - Tiles stagger in 4 frames apart, scaling 0.9→1.
 - Once every tile has landed, a **spotlight walks the grid**:
   `spotIndex = Math.floor((frame - sweepStart) / spotFrames) % tiles.length`. The lit tile takes the

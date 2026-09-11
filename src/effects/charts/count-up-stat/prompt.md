@@ -1,13 +1,13 @@
 Build a Remotion composition called **CountUpStat**: one large statistic that counts up from zero and
-lands with a small punch.
+settles.
 
 **The look**
-- 1920×1080, 30fps, 120 frames. Background `#0b0b10` with a warm glow behind the number:
-  `radial-gradient(ellipse at 50% 42%, #ff8a3d26 0%, transparent 58%)`. Everything centred, Inter.
-- The number at 300px, weight 800, line-height 1, letter-spacing `-0.045em`, white. Default value
-  `11772`, `prefix` `''`, `suffix` `'+'`, `decimals` `0`. The **suffix** takes the accent orange
-  `#ff8a3d`; the prefix stays in the main colour.
-- Label 6px below at 46px weight 500 in `#9aa0b0` (fixed — it is not a prop). Default:
+- 1920×1080, 30fps, 120 frames. Background `theme.bg` with a warm glow behind the number:
+  `radial-gradient(ellipse at 50% 42%, ${accentColor}26 0%, transparent 58%)`. Everything centred, Inter.
+- The number at 300px, weight 800, line-height 1, letter-spacing `-0.045em`, in `color` (default
+  `theme.ink`). Default value `11772`, `prefix` `''`, `suffix` `'+'`, `decimals` `0`. The **suffix**
+  takes `accentColor` (default `theme.accent`); the prefix stays in the main colour.
+- Label 6px below at 46px weight 500 in `theme.muted`. Default:
   `'Happy customers'`.
 - A small uppercase caption 30px below that, at 26px, `letter-spacing: 0.28em`, in the accent colour.
   Default: `'and counting'`. It fades in over 16 frames starting at `settleAt`.
@@ -32,9 +32,9 @@ lands with a small punch.
   on every single tick. This one line is the difference between a polished counter and an amateur one.
 
 **The landing**
-- At `settleAt = 8 + countSeconds * fps`, pulse the scale
-  `[settleAt, settleAt + 8, settleAt + 22] → [1, 1.045, 1]` with `Easing.bezier(0.16, 1, 0.3, 1)` and
-  `output: 'perceptual-scale'`. Keep it small — 4.5% is a punctuation mark, 20% is a cartoon.
+- No landing pulse, deliberately. The deceleration IS the effect here: the number arrives because it
+  stopped, not because something hit it. `titles/stat-slam` is the one with the impact stack, and
+  having both do a small punch is what made the two read as the same effect.
 - The label rises `'0px 18px'` → `'0px 0px'` and fades in over frames 12–34; the caption fades in over
   `settleAt → settleAt + 16`.
 

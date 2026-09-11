@@ -13,7 +13,8 @@ const common = {
   dx: (ci - (line.length - 1) / 2) * (fontSize * 0.44),
 };
 
-<text {...common} fill="none" stroke={strokeColor} strokeWidth={2.4} strokeLinejoin="round"
+<text {...common} fill="none" stroke={strokeColor} strokeWidth={(theme.stroke / 3) * 2.4}
+      strokeLinejoin="round"
       strokeDasharray={DASH} strokeDashoffset={DASH * (1 - stroke)} opacity={1 - fill}>{ch}</text>
 <text {...common} fill={inkColor} opacity={fill}>{ch}</text>
 ```
@@ -49,11 +50,17 @@ Smoothstep — zero velocity at both ends, no overshoot. It is what makes the st
 glyph rather than stopping dead.
 
 **The look**
-- 1920×1080, 30fps, 180 frames. Deep navy `#0e1b2b` with
-  `radial-gradient(ellipse at 50% 42%, #17304a 0%, #0a1421 70%)`.
-- Kalam (a handwriting face) at 168px weight 700. Ink `#f4f1e8`, outline `#ffcf3d`.
-- Faint ruled lines behind the text, offset to sit under the baseline — the writing needs something to
-  sit on, or it floats.
+- 1920×1080, 30fps, 180 frames. Ground `theme.bg`. On a dark scheme overlay
+  `radial-gradient(ellipse at 50% 42%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 70%)`; on
+  `theme.scheme === "light"` use `rgba(255,255,255,0.5) 0%` → `rgba(0,0,0,0.05) 70%`, because a 42%
+  black vignette turns paper grey.
+- Kalam (a handwriting face) at 168px weight 700. Ink `inkColor`, defaulting to `theme.paper` on a
+  dark scheme and `theme.ink` on a light one — `paper` is the GROUND token, so under a light theme it
+  *is* the ground and the writing would be invisible. Outline `strokeColor` (`theme.series[3]`,
+  `#ffd166` in the house theme).
+- Faint ruled lines in `${theme.ink}0e` — the ink at 5.5%, which is `#ffffff0e` on a dark theme and a
+  dark hairline on a light one — offset to sit under the baseline. The writing needs something to sit
+  on, or it floats.
 - Stagger 3.4 frames per character, 16-frame stroke, 5-frame fill delay.
 - A tracked sans caption at the bottom.
 

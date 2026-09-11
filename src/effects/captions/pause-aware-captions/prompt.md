@@ -78,7 +78,8 @@ return segments.slice(0, 2);
 
 You cannot compute a contrast ratio against a moving background, so guarantee it by construction. This
 one uses the **blur-behind pill** — `backdropFilter: 'blur(18px) saturate(1.4)'` over
-`rgba(8,9,14,0.42)` with a `1px solid rgba(255,255,255,0.14)` border and an 18px radius. It is the one
+`rgba(8,9,14,0.42)` with a `1px solid rgba(255,255,255,0.14)` border and the theme's `radius` (18px at
+house). It is the one
 option on the list that holds over any footage without dimming the shot, and `backdrop-filter` runs in
 Remotion's Chromium with no WebGL. A hard stroke is the alternative and belongs on short-form captions;
 a drop shadow alone fails exactly when the footage gets busy.
@@ -98,8 +99,8 @@ voice. Tint the currently-spoken word and leave the rest at full opacity.
 - Pages fade and rise 10px over 5 frames — short, because a subtitle that animates draws attention to
   itself.
 - Readout pill top-left at `84, 84` naming why the current page broke: `PAGE BROKEN ON SILENCE` in
-  `#c6ff3d` when the preceding gap cleared the threshold, `PAGE BROKEN ON LENGTH` in `#8d93a5`
-  otherwise, and `NO PAGE — THE HOLD HAS CLEARED` in the caption-free beat.
+  `#c6ff3d` when the preceding gap cleared the threshold, `PAGE BROKEN ON LENGTH` in the theme's
+  `muted` (`#8d93a5`) otherwise, and `NO PAGE — THE HOLD HAS CLEARED` in the caption-free beat.
 - A 26px strip at `bottom: 70` with every page as a block on the source clock, silence-broken pages in
   the accent. The holes between the blocks are the pauses, which is the clearest way to show that the
   pager respected them.

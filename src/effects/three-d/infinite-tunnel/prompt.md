@@ -105,7 +105,7 @@ Geometry `args={[tubeRadius * 0.93, 0.022, 8, 44]}`, `<meshBasicMaterial transpa
 opacity={0.12 + glow * 0.88} />`.
 
 **The scene**
-- 1920×1080, 30fps, 180 frames. Background `#03020a`.
+- 1920×1080, 30fps, 180 frames. Background `backgroundColor` (`theme.bgDeep`, `#04050a`).
 - `<ThreeCanvas>` with explicit `width`/`height` and `camera={{fov: 88, near: 0.02, far: 60}}`.
   A wide fov exaggerates the rush; `near` must be small or the wall clips away at close range.
 - Over the canvas, a vignette `<AbsoluteFill>`:
@@ -118,14 +118,15 @@ Bottom-centred in its own `<AbsoluteFill>` with `pointerEvents: 'none'` and `pad
 
 | | |
 |---|---|
-| title | Sora 96px, weight 700, `letter-spacing: 0.32em` with a matching negative `margin-right`, colour `#ffffff`, `textShadow: '0 0 74px <glowColor>'`, fades in over frames 18→44 |
-| subtitle | monospace 25px, colour `#9b8fc4`, `margin-top: 16`, fades in over frames 32→56 |
+| title | `fontFamily` (default `theme.display`, whose inline value is this file's Sora) 96px, weight 700, `letter-spacing: 0.32em` with a matching negative `margin-right`, colour `theme.ink`, `textShadow: '0 0 74px <glowColor>'`, fades in over frames 18→44 |
+| subtitle | `theme.mono` 25px, colour `theme.muted` (`#8d93a5`), `margin-top: 16`, fades in over frames 32→56 |
 
 **Requirements**
 - One self-contained `.tsx` file exporting `InfiniteTunnel`.
-- Props, with defaults: `title` (`'HYPERSPACE'`), `subtitle`
-  (`'TubeGeometry · BackSide · closed curve'`), `loopRadius` (9), `wobble` (4.4), `tubeRadius`
-  (1.35), `rings` (46), `laps` (1), `wallColor` (`#1a1035`), `glowColor` (`#ff4fd8`),
-  `backgroundColor` (`#03020a`).
+- Props, with defaults: `theme` (destructured FIRST), `fontFamily` (`theme.display`), `title`
+  (`'HYPERSPACE'`), `subtitle` (`'TubeGeometry · BackSide · closed curve'`), `loopRadius` (9),
+  `wobble` (4.4), `tubeRadius` (1.35), `rings` (46), `laps` (1), `wallColor` (`theme.bg`,
+  house `#0a0b10`), `glowColor` (`theme.series[4]`, house `#c77dff`), `backgroundColor`
+  (`theme.bgDeep`, house `#04050a`).
 - Load Sora via `@remotion/google-fonts/Sora`.
 - Set `Config.setChromiumOpenGlRenderer('angle')` in `remotion.config.ts`, or pass `--gl=angle`.

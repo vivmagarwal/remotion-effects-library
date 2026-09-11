@@ -68,24 +68,28 @@ d.replace(/[MLZ]/g, ' ').trim().split(/\s+/)
    else acc[acc.length - 1].push(Number(n));
    return acc;
  }, [])
- .map(([x, y], i) => <circle key={i} cx={x} cy={y} r={3.2} fill={textColor} opacity={0.85} />)
+ .map(([x, y], i) => <circle key={i} cx={x} cy={y} r={3.6} fill={textColor} opacity={0.92} />)
 ```
 
 **The scene**
-- 1920×1080, 30fps, **180 frames**. Background `#0a0b12` plus
-  `radial-gradient(ellipse at 50% 46%, <accentColor>1f 0%, transparent 62%)`.
+- 1920×1080, 30fps, **180 frames**. Background `theme.bg` (`#0a0b10`) plus
+  `radial-gradient(ellipse at 50% 46%, <accentColor>33 0%, transparent 64%)`.
 - `<svg width={SIZE} height={SIZE} viewBox="0 0 200 200" style={{overflow: 'visible'}}>` with
-  `SIZE = Math.min(width * 0.3, height * 0.54)`.
-- The shape: `fill={\`${accentColor}2e\`}`, `stroke={accentColor}`, `strokeWidth={3}`,
-  `strokeLinejoin="round"`.
+  `SIZE = Math.min(width * 0.42, height * 0.62)`. Not 0.3 — at 0.3 the shape is a ninth of the
+  frame's area and reads as nothing on a gallery card.
+- The shape: `fill={\`${accentColor}52\`}`, `stroke={accentColor}`,
+  `strokeWidth={theme.stroke * 1.5}` (4.5 at the house stroke 3), `strokeLinejoin="round"`.
 - Below it, centred: the name (Inter 52px weight 800, `letter-spacing: -0.02em`, `textColor`,
-  `margin-top: 62`); then a 320×5 progress track (`#242a38`, `border-radius: 3`,
-  `overflow: hidden`, `margin-top: 26`) whose inner bar is `width: ${p * 100}%` in `accentColor`.
-- A monospace caption at `bottom: 84`, 25px, `#7f88a0`.
+  `margin-top: 62`); then a 320×5 progress track (`border-radius: 3`, `overflow: hidden`,
+  `margin-top: 26`) whose inner bar is `width: ${p * 100}%` in `accentColor`. The track itself is
+  `theme.scheme === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)'` — a white hairline
+  disappears on paper.
+- A monospace caption at `bottom: 84`, 25px, `theme.muted` (`#8d93a5`).
 
 **Requirements**
 - One self-contained `.tsx` file exporting `ShapeMorph`.
 - Props, with defaults: `shapes` (the four `{name, d}` pairs above), `caption`
   (`'interpolatePath(p, a, b) · @remotion/paths'`), `morphFrames` (26), `holdFrames` (16),
-  `accentColor` (`#c77dff`), `backgroundColor` (`#0a0b12`), `textColor` (`#eef1f7`).
+  `accentColor` (`theme.series[4]`, `#c77dff`), `backgroundColor` (`theme.bg`, `#0a0b10`),
+  `textColor` (`theme.body`, `#eef1f7`).
 - Load Inter via `@remotion/google-fonts/Inter`, weights `['500', '700', '800']`.

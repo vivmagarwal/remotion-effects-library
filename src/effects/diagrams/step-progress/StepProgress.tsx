@@ -20,25 +20,35 @@ type Step = {readonly label: string; readonly detail: string};
  * this file runnable on its own.
  */
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly muted: string;
   readonly text: string;
+  readonly display: string;
   readonly bg: string;
   readonly body: string;
   readonly pair: string;
+  readonly accentInk: string;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   muted: '#8d93a5',
   text: fontFamily,
+  display: fontFamily,
   bg: '#0a0b10',
   body: '#eef1f7',
   pair: '#4cc9f0',
+  accentInk: '#04050a',
+  stroke: 3,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to this file's own face, or the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly title?: string;
@@ -63,6 +73,7 @@ const DEFAULT_STEPS: Step[] = [
 export const StepProgress: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   title = 'How a Remotion video gets made',
   steps = DEFAULT_STEPS,
   travelFrames = 26,
@@ -93,12 +104,22 @@ export const StepProgress: React.FC<Props> = ({
   });
   const playhead = Math.min(steps.length - 1, legIndex + legProgress);
 
+  // The hairline colour for everything not yet reached. A white wash is
+  // invisible on paper and a black one on the dark ground, so it comes from the
+  // scheme rather than from a colour.
+  const hair = theme.scheme === 'light' ? '0,0,0' : '255,255,255';
+
   return (
     <AbsoluteFill
       name="Scene"
       style={{
         backgroundColor,
-        backgroundImage: 'radial-gradient(ellipse at 50% 46%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 70%)',
+        // A 42% black vignette turns paper grey, so a light scheme gets a much
+        // lighter one rather than the dark ground's.
+        backgroundImage:
+          theme.scheme === 'light'
+            ? 'radial-gradient(ellipse at 50% 46%, rgba(255,255,255,0.5) 0%, rgba(0,0,0,0.05) 70%)'
+            : 'radial-gradient(ellipse at 50% 46%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 70%)',
         fontFamily,
         overflow: 'hidden',
       }}
@@ -111,6 +132,7 @@ export const StepProgress: React.FC<Props> = ({
           right: 0,
           top: 138,
           textAlign: 'center',
+          fontFamily: displayFamily,
           fontSize: 56,
           fontWeight: 800,
           letterSpacing: '-0.025em',
@@ -133,7 +155,7 @@ export const StepProgress: React.FC<Props> = ({
           width: railW,
           height: 6,
           borderRadius: 3,
-          backgroundColor: 'rgba(255,255,255,0.08)',
+          backgroundColor: `rgba(${hair},0.08)`,
         }}
       />
       {/* The fill, driven by the same playhead as the nodes. */}
@@ -177,14 +199,14 @@ export const StepProgress: React.FC<Props> = ({
                 width: NODE_R * 2,
                 height: NODE_R * 2,
                 borderRadius: '50%',
-                backgroundColor: arrived > 0.5 ? accentColor : 'rgba(255,255,255,0.05)',
-                border: `4px solid ${arrived > 0.5 ? accentColor : 'rgba(255,255,255,0.12)'}`,
+                backgroundColor: arrived > 0.5 ? accentColor : `rgba(${hair},0.05)`,
+                border: `${theme.stroke * (4 / 3)}px solid ${arrived > 0.5 ? accentColor : `rgba(${hair},0.12)`}`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: 34,
                 fontWeight: 800,
-                color: arrived > 0.5 ? '#04050a' : '#8d93a5',
+                color: arrived > 0.5 ? theme.accentInk : theme.muted,
                 scale: 1 + (isCurrent ? Math.max(0, pop) * 0.12 : 0),
                 boxShadow: isCurrent ? `0 0 40px ${accentColor}77` : 'none',
               }}

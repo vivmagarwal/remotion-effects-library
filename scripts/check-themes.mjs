@@ -189,6 +189,7 @@ const PROBE = {
   accent: '#ff00ff', accentInk: '#ff00ff', accentOnPaper: '#ff00ff',
   pair: '#ff00ff',
   series: ['#ff00ff', '#ff00ff', '#ff00ff', '#ff00ff', '#ff00ff', '#ff00ff'],
+  paperSeries: ['#ff00ff', '#ff00ff', '#ff00ff', '#ff00ff', '#ff00ff', '#ff00ff', '#ff00ff', '#ff00ff'],
   display: 'Times New Roman', text: 'Times New Roman',
   mono: 'Times New Roman', hand: 'Times New Roman',
   radius: 0, stroke: 12, roughness: 0, safe: 300,

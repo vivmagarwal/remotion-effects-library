@@ -4,11 +4,13 @@ of the floor, tilting to face the camera, its screen waking as it arrives.
 **The look**
 - 1920×1080, 30fps, 120 frames. Background `#0a0b10` with
   `radial-gradient(ellipse at 50% 42%, #ff5c391f 0%, transparent 58%)`.
-- The device: 344×706, radius 48, fill `#20222b`, `2px solid #33363f`,
-  `boxShadow: '0 60px 120px rgba(0,0,0,0.66)'`. Its screen is an inset-12 child at radius 38 with
-  `overflow: hidden`, filled with `linear-gradient(150deg, #ff5c39, #7c3aed)`.
-- A headline at the top (Inter 76px weight 700, letter-spacing `-0.035em`) and an accent subhead at the
-  bottom (36px weight 600).
+- The device: 344×706, radius 48, fill `deviceColor` (`theme.paperInk`, `#1d1b17`),
+  `2px solid rgba(255,255,255,0.16)`, `boxShadow: '0 60px 120px rgba(0,0,0,0.66)'`. Its screen is an
+  inset-12 child at radius 38 with `overflow: hidden`, filled with
+  `linear-gradient(150deg, accentColor, theme.series[4])` (`#ff5c39` → `#c77dff`), with the 78px ◐
+  glyph white until the brighter screen stop passes luminance 0.5, then `theme.accentInk` (`#04050a`).
+- A headline at the top in `displayFamily` (`theme.display`, Inter inline) at 76px weight 700,
+  letter-spacing `-0.035em`, and an accent subhead at the bottom (36px weight 600).
 
 **One driver value**
 

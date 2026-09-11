@@ -256,6 +256,13 @@ Put anything with its own clock onto Remotion's: find its seek and feed it `fram
 - A hard ease-out like `Easing.bezier(0.16, 1, 0.3, 1)` covers **~91 % of the distance in the first
   third**, so "halfway through" is visually almost finished. Pick verification frames from the first
   quarter, not the middle.
+- **An SVG `id` is global to the page.** A literal `id="clip"` referenced by `url(#clip)` resolves to
+  whichever copy of the composition mounted first — so with two players on one page (a thumbnail and
+  a detail view, or one video embedded twice) the second one's clip, mask or gradient follows the
+  first one's frame. Derive every def id from `useId()`:
+  `const svgId = useId().replace(/[^a-zA-Z0-9_-]/g, '')`, then `` id={`clip-${svgId}`} `` and
+  `` clipPath={`url(#clip-${svgId})`} ``. The replace matters: React's ids contain characters that are
+  not valid inside `url(#…)`.
 
 ---
 

@@ -62,20 +62,28 @@ card still covers it, and the lines re-stagger identically on the way out. Drive
 instead and every retiming of the beat desynchronises them.
 
 **The look**
-- **1080×1920 (vertical)**, 30fps, 340 frames. Warm paper `#f6f4ef`, ink `#1d1b17`, accent `#ff5c39`.
+- **1080×1920 (vertical)**, 30fps, 340 frames. Paper `theme.paper` (`#f6f5f2`), ink `theme.paperInk`
+  (`#1d1b17`), accent `theme.accent` (`#ff5c39`) — the header rule, the kicker chip and the chip dot
+  are all one accent, with the kicker text in the paper colour.
 - Rest rect `{x: 44, y: 300, w: 992, h: 1180}`; shifted rect `{x: 150, y: 1170, w: 780, h: 500}`.
-  Card: radius 28, `4px solid #1d1b17`, `boxShadow: '0 26px 70px rgba(29,27,23,0.28)'`,
-  `overflow: hidden`.
+  Card: radius `28 * theme.radius / 18` (28 in the house theme),
+  border `` `${(4 * theme.stroke) / 3}px solid ${theme.paperInk}` ``,
+  `boxShadow: '0 26px 70px rgba(29,27,23,0.28)'`, `overflow: hidden`. The kicker chip's 8px radius
+  scales the same way, so a theme's corner language reaches both. The 999px pill and the 6px dot do
+  not — those are shapes, not corners.
 - A fixed header top-left with a short accent rule under it — the card needs something stationary to
   move against, or the move has no frame of reference.
-- The text beat: an accent kicker chip, then lines at 92px weight 800, line-height 1.16.
+- The text beat: an accent kicker chip, then lines at 92px weight 800, line-height 1.16, in the
+  display face (`displayFamily = theme.display`, Inter by default); the header title uses it too.
 - A chip riding inside the card (bottom-left) so it is legible as one object in both states.
 - A monospace `shift 0.00` read-out, so the mechanism is visible while you watch it.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `AspectMorphCard`.
 - Props: `src`, `title`, `rest` and `shifted` (each `{x, y, w, h}`), `beats` (array of
-  `{at, hold, kicker, lines}`), `accentColor`, `paperColor`, `morphFrames`.
+  `{at, hold, kicker, lines}`), `accentColor`, `paperColor`, `morphFrames`. `paperColor` is
+  interpolated into a hex with an alpha suffix (`` `${paperColor}f0` `` for the plate chip), so it
+  only accepts 6-digit hex — not `rgb()` or a named colour.
 - Use `<CanvasImage>` with `staticFile()`; swap it for `<Video>` from `@remotion/media` to morph a
   video card, which is where this technique earns its keep.
-- Load Inter via `@remotion/google-fonts/Inter`.
+- Load Inter via `@remotion/google-fonts/Inter`. It is the inline default for both text and display.

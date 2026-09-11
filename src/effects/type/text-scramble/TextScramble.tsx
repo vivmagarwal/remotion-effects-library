@@ -96,19 +96,31 @@ export const TextScramble: React.FC<Props> = ({
         }}
       >
         {chars.map((c, i) => (
+          // A fixed-width slot per character so glyph swaps do not reflow the
+          // line — but sized to the ACTIVE FACE rather than to a number, because
+          // a theme can swap the typeface underneath this.
+          //
+          // The hidden `W` is what sets the width: it measures the widest capital
+          // of whatever family is in force, so a wider face widens every slot
+          // equally instead of spilling into its neighbour. `0.92em` is only the
+          // floor — what Space Grotesk 700 already measures, so the untouched
+          // look is unchanged.
+          //
+          // The churning glyph is absolutely positioned over that measure, out of
+          // flow, so a wide pick such as the em dash can never resize its own slot
+          // and reflow the line.
           <span
             key={i}
             style={{
+              position: 'relative',
+              minWidth: '0.92em',
+              textAlign: 'center',
               color: c.scrambling ? accentColor : color,
               opacity: c.scrambling ? 0.72 : 1,
-              // A fixed-width slot per character so glyph swaps do not reflow the line.
-              // 0.92em fits Space Grotesk 700's widest caps (M, W ≈ 0.9em); size it
-              // to the typeface, or wide glyphs overflow and collide with neighbours.
-              width: '0.92em',
-              textAlign: 'center',
             }}
           >
-            {c.char}
+            <span style={{visibility: 'hidden'}}>W</span>
+            <span style={{position: 'absolute', left: 0, right: 0, top: 0}}>{c.char}</span>
           </span>
         ))}
       </Interactive.Div>

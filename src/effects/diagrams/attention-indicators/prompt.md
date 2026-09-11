@@ -37,27 +37,33 @@ const runOf = (i: number) => {
 1. **Circumscribe** — an SVG `<rect>` drawn on with `strokeDasharray={perimeter}` and
    `strokeDashoffset={perimeter * (1 - draw)}` where `draw = smooth(min(1, run / 0.6))`. Draws over the
    first 60% of the run, holds, then fades. Manim draws the shape on and then *removes* it; a box that
-   stays behind stops being an indication and becomes part of the layout.
+   stays behind stops being an indication and becomes part of the layout. The rect's `rx` is
+   `14 * theme.radius / 18`, stroked at `theme.stroke * 5 / 3` (5px at the house stroke 3).
 
 2. **Indicate** — `scale: 1 + thereAndBack(run) * 0.13` plus a colour swap to the accent. It must scale
    **about its own centre** so the row swells in place; scale a row from a corner and it shoves its
    neighbours.
 
-3. **Flash** — 14 rays on a circle, `inner` growing 40→150 and `outer` 40→260, so each ray is a
-   travelling segment rather than a spoke from the centre. Multiply the y component by ~0.55 to match
-   the row's aspect. Opacity `[0, 0.25, 1] → [0, 1, 0]` so it appears and clears with the movement.
+3. **Flash** — 14 rays on a circle, stroked at `theme.stroke * 5 / 3` (5px at the house stroke 3), with
+   `inner` growing 40→150 and `outer` 40→260, so each ray is a travelling segment rather than a spoke
+   from the centre. Multiply the y component by ~0.55 to match the row's aspect. Opacity
+   `[0, 0.25, 1] → [0, 1, 0]` so it appears and clears with the movement.
 
 4. **FocusOn** — an SVG `<mask>` containing a white full-frame rect and a black ellipse; a dim
-   `#05070c` rect is drawn through it. Animate the ellipse's `rx`/`ry` from the whole frame down to
-   just around the target on `thereAndBack`, so the room closes in and opens back up. The mask is the
-   point: dimming everything and drawing a bright shape on top gives you a glow, not a spotlight.
+   `#04050a` rect at 0.82 opacity is drawn through it. Animate the ellipse's `rx`/`ry` from the whole
+   frame down to just around the target on `thereAndBack`, so the room closes in and opens back up. The
+   mask is the point: dimming everything and drawing a bright shape on top gives you a glow, not a
+   spotlight.
 
 **The look**
-- 1920×1080, 30fps, 280 frames. `#0d1117` with
-  `radial-gradient(ellipse at 50% 36%, #182131 0%, #0b0e14 68%)`.
-- A panel at `#161c26`, `1px solid #232c3a`, radius 22, holding four 132px rows. Each row: a name at
-  42px weight 700 on the left and a description at 32px weight 500 in `#79839a` on the right.
-- Accent `#ffcf3d`. A monospace caption at the bottom naming whichever device is currently running.
+- 1920×1080, 30fps, 280 frames. Ground `theme.bg`, overlaid with
+  `radial-gradient(ellipse at 50% 36%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 68%)`.
+- A panel at `rgba(255,255,255,0.05)` with `1px solid rgba(255,255,255,0.12)`, radius
+  `22 * theme.radius / 18` (22 at the house radius 18), holding four 132px rows. Each row: a name at
+  42px weight 700 in `theme.body` on the left and a description at 32px weight 500 in `theme.muted` on
+  the right.
+- Accent `theme.series[3]` (`#ffd166` in the house theme). A monospace caption at the bottom naming
+  whichever device is currently running.
 - Fire them 58 frames apart, 46 frames each.
 
 **Requirements**

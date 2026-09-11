@@ -31,6 +31,7 @@ type SyntaxTheme = {
 type Theme = {
   readonly mono: string;
   readonly bgDeep: string;
+  readonly surface: string;
   readonly radius: number;
 };
 
@@ -38,6 +39,7 @@ type Theme = {
 const THEME: Theme = {
   mono: fontFamily,
   bgDeep: '#04050a',
+  surface: '#101218',
   radius: 18,
 };
 
@@ -118,7 +120,8 @@ export const CodeEditorTyping: React.FC<Props> = ({
   /** Window corner radius. The one shape token a recreated UI can honestly take. */
   radius = theme.radius,
   syntax = {
-    bg: '#12141c',
+    // The editor plate is the one ground in this recreation the library owns.
+    bg: theme.surface,
     gutter: '#3a4055',
     text: '#d6dae6',
     keyword: '#ff7b72',

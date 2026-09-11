@@ -1,3 +1,4 @@
+import {useId} from 'react';
 import {AbsoluteFill, Easing, Interactive, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import {Video} from '@remotion/media';
 import {loadFont} from '@remotion/google-fonts/Anton';
@@ -72,6 +73,11 @@ export const VideoInText: React.FC<Props> = ({
   captionColor = theme.muted,
   fontSize = 330,
 }) => {
+  // One SVG id per INSTANCE. A literal id is global to the page: with two copies
+  // mounted (a gallery card and its detail player), every url(#…) resolves to
+  // whichever copy came first in the DOM, and its clip or mask follows the other
+  // copy's frame.
+  const svgId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const frame = useCurrentFrame();
   const {width, height} = useVideoConfig();
 
@@ -92,12 +98,34 @@ export const VideoInText: React.FC<Props> = ({
 
   const maskScale = settle * open;
 
+  // The zoom centre can land between two letters — it does for `INSIDE`, in
+  // every face — so the letterform alone never quite covers the frame. A circle
+  // in the SAME clipPath grows over the back 60% of the open on the same easing;
+  // the clip is the union of the two, so the reveal ends full-frame whatever
+  // typeface the theme supplies.
+  const iris = interpolate(
+    frame,
+    [openAt + openFrames * 0.4, openAt + openFrames],
+    [0, Math.hypot(cx, cy)],
+    {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.bezier(0.7, 0, 0.3, 1)},
+  );
+
   return (
-    <AbsoluteFill name="Scene" style={{backgroundColor, overflow: 'hidden', fontFamily}}>
+    <AbsoluteFill
+      name="Scene"
+      style={{
+        backgroundColor,
+        overflow: 'hidden',
+        fontFamily,
+        // No faux bold. Anton ships a single 400 face, so the 800 below renders
+        // it untouched; a theme's display family supplies a real heavy cut.
+        fontSynthesis: 'none',
+      }}
+    >
       {/* The clip path lives in a zero-size svg; it is a definition, not a drawing. */}
       <svg width={0} height={0} style={{position: 'absolute'}}>
         <defs>
-          <clipPath id="vit-text" clipPathUnits="userSpaceOnUse">
+          <clipPath id={`vit-text-${svgId}`} clipPathUnits="userSpaceOnUse">
             <text
               x={cx}
               y={cy}
@@ -105,7 +133,7 @@ export const VideoInText: React.FC<Props> = ({
               dominantBaseline="central"
               fontFamily={fontFamily}
               fontSize={fontSize}
-              fontWeight={400}
+              fontWeight={800} // font-weight-check: ignore — theme display faces; Anton ships 400 only and fontSynthesis 'none' keeps it unsynthesised
               letterSpacing={-6}
               // Scaling the mask about the frame's centre is what turns a
               // text-shaped window into a full-frame reveal.
@@ -113,13 +141,16 @@ export const VideoInText: React.FC<Props> = ({
             >
               {word}
             </text>
+            {/* The iris. A clipPath's shapes union, so this only ever adds to
+                the window — zero while the type is the whole of the effect. */}
+            <circle cx={cx} cy={cy} r={iris} />
           </clipPath>
         </defs>
       </svg>
 
       {/* The media, clipped to the letterforms. The content itself never moves —
           only the mask grows — so the footage stays framed the whole way. */}
-      <AbsoluteFill style={{clipPath: 'url(#vit-text)', WebkitClipPath: 'url(#vit-text)'}}>
+      <AbsoluteFill style={{clipPath: `url(#vit-text-${svgId})`, WebkitClipPath: `url(#vit-text-${svgId})`}}>
         <Video
           objectFit="cover"
           src={src ?? staticFile('footage/broll-earth.mp4')}

@@ -80,18 +80,21 @@ source. This composition is muted.
 - 1920×1080, 30 fps, 189 frames — the sum of the legs. Ground `#04050a`. Inter at 500/700/800.
 - `objectFit="cover"` as a **prop** on `<Video>`; it decodes into a canvas, so CSS `object-fit` in
   `style` is silently ignored.
-- Readout pill top-left at `84, 84`, `padding: 16px 26px`, radius 12, `rgba(10,11,16,0.72)`,
-  `backdropFilter: 'blur(18px) saturate(1.3)'`, `1px solid rgba(255,255,255,0.14)`, `minWidth: 560`.
+- Readout pill top-left at `84, 84`, `padding: 16px 26px`, radius `12 × theme.radius / 18` (12 at
+  house), `rgba(10,11,16,0.72)`, `backdropFilter: 'blur(18px) saturate(1.3)'`,
+  `1px solid rgba(255,255,255,0.14)`, `minWidth: 560`.
   The current leg's label at 34px/800 `letter-spacing: 0.16em` in `#ff5c39`; then
   `0.40× · source frame 58 of 180` at 34px/500 `#eef1f7` with `fontVariantNumeric: 'tabular-nums'`,
   or the number jitters as the digits change width; then the spend percentage at 34px/500 `#8d93a5`.
-- **Draw the ramp.** An SVG at `left/right: 84`, `bottom: 96`, `viewBox="0 0 <total> 110"` with
-  `preserveAspectRatio="none"`, a hairline at 1× so the curve is measured against something, the
-  speed polyline in the accent at `strokeWidth: 3` with `vectorEffect="non-scaling-stroke"` (the
-  viewBox is anisotropic and a plain stroke would be squashed to a thread), and a white playhead.
-- A 10px spend meter under it, `#c6ff3d` turning `#ffd166` past 98% — the moment before the budget
-  runs out is the moment worth colouring.
-- A 380px gradient scrim along the bottom so all of that survives whatever the footage is doing.
+- **Draw the ramp.** The curve block sits at `left/right: 84`, `bottom: 110`, with an SVG at
+  `viewBox="0 0 <total> 130"` and `preserveAspectRatio="none"`: a 1× hairline at
+  `2 × theme.stroke / 3` so the curve is measured against something, the speed polyline in the accent
+  at `strokeWidth: 5 × theme.stroke / 3` (5 at house) with `vectorEffect="non-scaling-stroke"` (the
+  viewBox is anisotropic and a plain stroke would be squashed to a thread), and a
+  `theme.paper` (`#f6f5f2`) playhead at `3 × theme.stroke / 3`.
+- A 12px spend meter under it, `theme.series[2]` (`#c6ff3d`) turning `theme.series[3]` (`#ffd166`)
+  past 98% — the moment before the budget runs out is the moment worth colouring.
+- A 460px gradient scrim along the bottom so all of that survives whatever the footage is doing.
 
 **Requirements**
 

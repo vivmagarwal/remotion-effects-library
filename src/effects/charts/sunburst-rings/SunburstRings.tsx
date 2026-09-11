@@ -36,25 +36,37 @@ type Node = {
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly mono: string;
   readonly muted: string;
   readonly text: string;
+  readonly display: string;
   readonly bg: string;
   readonly body: string;
+  readonly series: readonly string[];
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   mono: MONO,
   muted: '#8d93a5',
   text: fontFamily,
+  display: fontFamily,
   bg: '#0a0b10',
   body: '#eef1f7',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly title?: string;
@@ -67,12 +79,13 @@ type Props = {
   readonly paperColor?: string;
 };
 
-const DEFAULT_DATA: Node = {
+/** Only the depth-1 branches carry a colour; everything under them inherits. */
+const defaultData = (s: readonly string[]): Node => ({
   name: 'render',
   children: [
     {
       name: 'compose',
-      color: '#4cc9f0',
+      color: s[1],
       children: [
         {name: 'layout', value: 34},
         {name: 'fonts', value: 20},
@@ -82,7 +95,7 @@ const DEFAULT_DATA: Node = {
     },
     {
       name: 'animate',
-      color: '#ff5c39',
+      color: s[0],
       children: [
         {name: 'spring', value: 40},
         {name: 'interpolate', value: 36},
@@ -92,7 +105,7 @@ const DEFAULT_DATA: Node = {
     },
     {
       name: 'draw',
-      color: '#c77dff',
+      color: s[4],
       children: [
         {name: 'canvas', value: 28},
         {name: 'svg', value: 24},
@@ -102,7 +115,7 @@ const DEFAULT_DATA: Node = {
     },
     {
       name: 'encode',
-      color: '#c6ff3d',
+      color: s[2],
       children: [
         {name: 'h264', value: 30},
         {name: 'audio', value: 16},
@@ -110,14 +123,15 @@ const DEFAULT_DATA: Node = {
       ],
     },
   ],
-};
+});
 
 export const SunburstRings: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   title = 'Anatomy of a render',
   subtitle = 'sunburst · d3-hierarchy partition',
-  data = DEFAULT_DATA,
+  data = defaultData(theme.series),
   ringStagger = 16,
   startAt = 16,
   backgroundColor = theme.bg,
@@ -144,8 +158,8 @@ export const SunburstRings: React.FC<Props> = ({
       d3arc<{startAngle: number; endAngle: number; innerRadius: number; outerRadius: number}>()
         .padAngle(0.008)
         .padRadius(radius)
-        .cornerRadius(3),
-    [radius],
+        .cornerRadius(theme.radius / 6),
+    [radius, theme.radius],
   );
 
   /** Walks up to the nearest ancestor that declares a colour. */
@@ -155,7 +169,7 @@ export const SunburstRings: React.FC<Props> = ({
       if (cur.data.color) return cur.data.color;
       cur = cur.parent as typeof n | null;
     }
-    return '#8d93a5';
+    return theme.muted;
   };
 
   return (
@@ -163,7 +177,12 @@ export const SunburstRings: React.FC<Props> = ({
       name="Scene"
       style={{
         backgroundColor,
-        backgroundImage: 'radial-gradient(ellipse at 50% 52%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 70%)',
+        // A dark scrim reads as depth on a dark ground and as dirt on a light
+        // one, so the scheme picks which way the vignette runs.
+        backgroundImage:
+          theme.scheme === 'light'
+            ? 'radial-gradient(ellipse at 50% 52%, rgba(255,255,255,0.5) 0%, rgba(0,0,0,0.06) 70%)'
+            : 'radial-gradient(ellipse at 50% 52%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 70%)',
         fontFamily,
         overflow: 'hidden',
       }}
@@ -179,6 +198,7 @@ export const SunburstRings: React.FC<Props> = ({
           fontSize: 56,
           fontWeight: 800,
           letterSpacing: '-0.025em',
+          fontFamily: displayFamily,
           color: paperColor,
           opacity: interpolate(frame, [0, 20], [0, 1], {
             extrapolateLeft: 'clamp',
@@ -244,7 +264,7 @@ export const SunburstRings: React.FC<Props> = ({
                   fill={colour}
                   fillOpacity={n.depth === 1 ? 0.92 : 0.42}
                   stroke={colour}
-                  strokeWidth={n.depth === 1 ? 0 : 1.6}
+                  strokeWidth={n.depth === 1 ? 0 : (theme.stroke * 1.6) / 3}
                 />
                 {showLabel ? (
                   <g
@@ -255,7 +275,7 @@ export const SunburstRings: React.FC<Props> = ({
                     <text
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      fill={n.depth === 1 ? '#0a0b10' : paperColor}
+                      fill={n.depth === 1 ? backgroundColor : paperColor}
                       fontFamily={fontFamily}
                       fontSize={n.depth === 1 ? 25 : 21}
                       fontWeight={n.depth === 1 ? 800 : 600}

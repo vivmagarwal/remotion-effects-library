@@ -25,6 +25,9 @@ type Theme = {
   readonly bg: string;
   readonly ink: string;
   readonly muted: string;
+  readonly pair: string;
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -33,6 +36,9 @@ const THEME: Theme = {
   bg: '#0a0b10',
   ink: '#ffffff',
   muted: '#8d93a5',
+  pair: '#4cc9f0',
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
@@ -51,6 +57,8 @@ type Props = {
   readonly baseColor?: string;
   readonly fillColor?: string;
   readonly bandColor?: string;
+  /** The accent bar down the left of the band. */
+  readonly barColor?: string;
   readonly backgroundColor?: string;
   readonly transparent?: boolean;
 };
@@ -81,6 +89,7 @@ export const SubtitleBand: React.FC<Props> = ({
   baseColor = theme.muted,
   fillColor = theme.ink,
   bandColor = 'rgba(10,12,18,0.86)',
+  barColor = theme.pair,
   backgroundColor = theme.bg,
   transparent = false,
 }) => {
@@ -138,9 +147,9 @@ export const SubtitleBand: React.FC<Props> = ({
         style={{
           position: 'relative',
           backgroundColor: bandColor,
-          borderRadius: 18,
+          borderRadius: theme.radius,
           padding: '28px 52px',
-          borderLeft: '7px solid #4cc9f0',
+          borderLeft: `${theme.stroke * (7 / 3)}px solid ${barColor}`,
           translate: `0px ${(1 - enter) * 26}px`,
           opacity: enter,
         }}

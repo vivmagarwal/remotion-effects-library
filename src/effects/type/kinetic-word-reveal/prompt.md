@@ -2,15 +2,17 @@ Build a Remotion composition called **KineticWordReveal** (composition id `kinet
 title card where the words of a short phrase rise into view one after another from behind a hard edge.
 
 **The look**
-- 1920×1080, 30fps, 70 frames. Near-black background `#08070c`, warm off-white text `#f5f3ef`, one
-  accent colour `#ff5c39`.
+- 1920×1080, 30fps, 70 frames. Background `theme.bgDeep` (house `#04050a`), text `theme.ink` (house
+  `#ffffff`), one accent `theme.accent` (house `#ff5c39`).
 - The phrase is **`['Design', 'in', 'motion.']`** — three words, with the accent colour on the last one
   (`accentIndex` defaults to `2`).
 - Inter at 160px, weight 800, letter-spacing `-0.04em`, laid out in a flex row with a 28px gap,
   centred in the frame. Load it with `@remotion/google-fonts/Inter` — weight 800 does not exist in most
   system fallbacks, so a plain font stack silently renders a synthesised or snapped-to-Bold weight, and
   the card loses most of its authority.
-- A 4px accent rule below the phrase, with `margin-top: 44px` on the rule (measured from the bottom of
+- An accent rule below the phrase, `theme.stroke * 4 / 3` px tall (4px at house), corners
+  `theme.radius * 2 / 18` (2px at house — the browser clamps it to half the height, so a large-radius
+  theme just gets a pill), with `margin-top: 44px` on the rule (measured from the bottom of
   the mask wrapper's padding box — the optical gap from the lowest ink reads larger, around 76px).
 
 **The mask — this is the effect**

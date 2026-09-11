@@ -92,22 +92,26 @@ const plus = (arm: number, lo: number, hi: number) => {
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly mono: string;
   readonly muted: string;
   readonly text: string;
   readonly bg: string;
   readonly body: string;
   readonly series: readonly string[];
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   mono: MONO,
   muted: '#8d93a5',
   text: fontFamily,
   bg: '#0a0b10',
   body: '#eef1f7',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  stroke: 3,
 };
 
 type Props = {
@@ -183,7 +187,7 @@ export const ShapeMorph: React.FC<Props> = ({
             // see the polygon.
             fill={`${accentColor}52`}
             stroke={accentColor}
-            strokeWidth={4.5}
+            strokeWidth={theme.stroke * 1.5}
             strokeLinejoin="round"
           />
           {/* The vertices, so you can see that the points correspond one-to-one
@@ -222,7 +226,9 @@ export const ShapeMorph: React.FC<Props> = ({
             width: 320,
             height: 5,
             borderRadius: 3,
-            backgroundColor: 'rgba(255,255,255,0.08)',
+            // A white hairline is invisible on paper; a black one is invisible
+            // on the dark ground. Pick from the scheme, not from the colour.
+            backgroundColor: theme.scheme === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)',
             overflow: 'hidden',
           }}
         >

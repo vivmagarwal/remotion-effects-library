@@ -1,4 +1,4 @@
-import {useMemo} from 'react';
+import {useId, useMemo} from 'react';
 import {AbsoluteFill, Easing, Interactive, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import {sankey as d3sankey, sankeyJustify, sankeyLinkHorizontal} from 'd3-sankey';
 import type {SankeyGraph, SankeyLink, SankeyNode} from 'd3-sankey';
@@ -34,25 +34,37 @@ type LaidOutLink = SankeyLink<NodeExtra, LinkExtra>;
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly mono: string;
   readonly muted: string;
   readonly text: string;
+  readonly display: string;
   readonly bg: string;
   readonly body: string;
+  readonly series: readonly string[];
+  readonly accentOnPaper: string;
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   mono: MONO,
   muted: '#8d93a5',
   text: fontFamily,
+  display: fontFamily,
   bg: '#0a0b10',
   body: '#eef1f7',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  accentOnPaper: '#c2410c',
+  radius: 18,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly title?: string;
@@ -66,16 +78,18 @@ type Props = {
   readonly paperColor?: string;
 };
 
-const DEFAULT_NODES: NodeExtra[] = [
-  {name: 'Script', color: '#ff5c39'},
-  {name: 'Stock footage', color: '#c2410c'},
-  {name: 'Screen capture', color: '#ffd166'},
-  {name: 'Edit', color: '#4cc9f0'},
-  {name: 'Motion graphics', color: '#c77dff'},
-  {name: 'Colour', color: '#c6ff3d'},
-  {name: 'YouTube', color: '#ff5c39'},
-  {name: 'Shorts', color: '#4cc9f0'},
-  {name: 'Archive', color: '#8d93a5'},
+/** Nodes coloured from the theme's categorical palette, `deep` for the one
+ *  entry that needs a darker warm than the series carries. */
+const defaultNodes = (s: readonly string[], deep: string): NodeExtra[] => [
+  {name: 'Script', color: s[0]},
+  {name: 'Stock footage', color: deep},
+  {name: 'Screen capture', color: s[3]},
+  {name: 'Edit', color: s[1]},
+  {name: 'Motion graphics', color: s[4]},
+  {name: 'Colour', color: s[2]},
+  {name: 'YouTube', color: s[0]},
+  {name: 'Shorts', color: s[1]},
+  {name: 'Archive', color: s[5]},
 ];
 
 const DEFAULT_LINKS = [
@@ -97,15 +111,21 @@ const DEFAULT_LINKS = [
 export const SankeyFlow: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   title = 'Where the footage ends up',
   subtitle = 'sankey · d3-sankey, laid out once',
-  nodes = DEFAULT_NODES,
+  nodes = defaultNodes(theme.series, theme.accentOnPaper),
   links = DEFAULT_LINKS,
   drawFrames = 104,
   startAt = 18,
   backgroundColor = theme.bg,
   paperColor = theme.body,
 }) => {
+  // One SVG id per INSTANCE. A literal id is global to the page: with two copies
+  // mounted (a gallery card and its detail player), every url(#…) resolves to
+  // whichever copy came first in the DOM, and its clip or mask follows the other
+  // copy's frame.
+  const svgId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const frame = useCurrentFrame();
   const {width, height} = useVideoConfig();
 
@@ -143,14 +163,19 @@ export const SankeyFlow: React.FC<Props> = ({
     easing: Easing.bezier(0.4, 0, 0.2, 1),
   });
 
-  const colorOf = (n: LaidOutNode) => n.color ?? '#8d93a5';
+  const colorOf = (n: LaidOutNode) => n.color ?? theme.muted;
 
   return (
     <AbsoluteFill
       name="Scene"
       style={{
         backgroundColor,
-        backgroundImage: 'radial-gradient(ellipse at 50% 56%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 74%)',
+        // A dark scrim reads as depth on a dark ground and as dirt on a light
+        // one, so the scheme picks which way the vignette runs.
+        backgroundImage:
+          theme.scheme === 'light'
+            ? 'radial-gradient(ellipse at 50% 56%, rgba(255,255,255,0.5) 0%, rgba(0,0,0,0.06) 74%)'
+            : 'radial-gradient(ellipse at 50% 56%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 74%)',
         fontFamily,
         overflow: 'hidden',
       }}
@@ -164,6 +189,7 @@ export const SankeyFlow: React.FC<Props> = ({
           fontSize: 58,
           fontWeight: 800,
           letterSpacing: '-0.025em',
+          fontFamily: displayFamily,
           color: paperColor,
           opacity: interpolate(frame, [0, 20], [0, 1], {
             extrapolateLeft: 'clamp',
@@ -193,7 +219,7 @@ export const SankeyFlow: React.FC<Props> = ({
 
       <svg width={width} height={height} style={{position: 'absolute', inset: 0}}>
         <defs>
-          <clipPath id="sankey-wipe">
+          <clipPath id={`sankey-wipe-${svgId}`}>
             <rect x={0} y={-40} width={plotW * p} height={plotH + 80} />
           </clipPath>
           {/* One gradient per link, source colour to target colour. Without it a
@@ -207,7 +233,7 @@ export const SankeyFlow: React.FC<Props> = ({
             return (
               <linearGradient
                 key={i}
-                id={`sankey-link-${i}`}
+                id={`sankey-link-${svgId}-${i}`}
                 gradientUnits="userSpaceOnUse"
                 x1={src.x1 ?? 0}
                 x2={dst.x0 ?? 0}
@@ -220,13 +246,13 @@ export const SankeyFlow: React.FC<Props> = ({
         </defs>
 
         <g transform={`translate(${PAD.left} ${PAD.top})`}>
-          <g clipPath="url(#sankey-wipe)">
+          <g clipPath={`url(#sankey-wipe-${svgId})`}>
             {graph.links.map((l, i) => (
                 <path
                   key={i}
                   d={linkPath(l) ?? undefined}
                   fill="none"
-                  stroke={`url(#sankey-link-${i})`}
+                  stroke={`url(#sankey-link-${svgId}-${i})`}
                   // The band's thickness IS the value — that is the whole chart.
                   strokeWidth={Math.max(1, l.width ?? 1)}
                   strokeOpacity={0.46}
@@ -258,7 +284,7 @@ export const SankeyFlow: React.FC<Props> = ({
                   y={n.y0}
                   width={(n.x1 ?? 0) - (n.x0 ?? 0)}
                   height={h}
-                  rx={4}
+                  rx={(theme.radius * 4) / 18}
                   fill={colorOf(n)}
                 />
                 <text

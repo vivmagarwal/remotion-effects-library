@@ -22,8 +22,12 @@ type Theme = {
   readonly muted: string;
   readonly text: string;
   readonly accent: string;
+  readonly accentInk: string;
   readonly bg: string;
+  readonly bgDeep: string;
   readonly ink: string;
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -31,8 +35,12 @@ const THEME: Theme = {
   muted: '#8d93a5',
   text: fontFamily,
   accent: '#ff5c39',
+  accentInk: '#04050a',
   bg: '#0a0b10',
+  bgDeep: '#04050a',
   ink: '#ffffff',
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
@@ -118,7 +126,7 @@ export const LowerThird: React.FC<Props> = ({
     <AbsoluteFill
       name="Scene"
       style={{
-        backgroundColor: transparent ? 'transparent' : '#04050a',
+        backgroundColor: transparent ? 'transparent' : theme.bgDeep,
         backgroundImage:
           transparent || src
             ? undefined
@@ -197,10 +205,10 @@ export const LowerThird: React.FC<Props> = ({
                     fontSize: 20,
                     fontWeight: 800,
                     letterSpacing: '0.18em',
-                    color: '#0a0b10',
+                    color: theme.accentInk,
                     backgroundColor: accentColor,
                     padding: '5px 12px',
-                    borderRadius: 5,
+                    borderRadius: (theme.radius * 5) / 18,
                   }}
                 >
                   {kicker}
@@ -223,7 +231,7 @@ export const LowerThird: React.FC<Props> = ({
           position: 'absolute',
           left: x,
           bottom: y - 14,
-          height: 3,
+          height: theme.stroke,
           backgroundColor: accentColor,
           width: interpolate(text, [0, 1], [0, 620], {
             extrapolateLeft: 'clamp',

@@ -38,27 +38,39 @@ type Link = SimulationLinkDatum<Node> & {readonly value: number};
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly mono: string;
   readonly paperMuted: string;
   readonly muted: string;
   readonly text: string;
+  readonly display: string;
   readonly bg: string;
   readonly body: string;
+  readonly series: readonly string[];
+  readonly accentOnPaper: string;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   mono: MONO,
   paperMuted: '#4a4e5a',
   muted: '#8d93a5',
   text: fontFamily,
+  display: fontFamily,
   bg: '#0a0b10',
   body: '#eef1f7',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  accentOnPaper: '#c2410c',
+  stroke: 3,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly title?: string;
@@ -89,9 +101,17 @@ const CLUSTERS = [
 export const ForceNetwork: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   title = 'One package, many neighbours',
   subtitle = 'force-directed graph · d3-force, pre-ticked',
-  colors = ['#ff5c39', '#4cc9f0', '#c77dff', '#ffd166', '#c6ff3d', '#c2410c'],
+  colors = [
+    theme.series[0],
+    theme.series[1],
+    theme.series[4],
+    theme.series[3],
+    theme.series[2],
+    theme.accentOnPaper,
+  ],
   ticks = 280,
   ticksPerFrame = 1.9,
   startAt = 12,
@@ -173,7 +193,12 @@ export const ForceNetwork: React.FC<Props> = ({
       name="Scene"
       style={{
         backgroundColor,
-        backgroundImage: 'radial-gradient(ellipse at 50% 54%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 72%)',
+        // A dark scrim reads as depth on a dark ground and as dirt on a light
+        // one, so the scheme picks which way the vignette runs.
+        backgroundImage:
+          theme.scheme === 'light'
+            ? 'radial-gradient(ellipse at 50% 54%, rgba(255,255,255,0.5) 0%, rgba(0,0,0,0.06) 72%)'
+            : 'radial-gradient(ellipse at 50% 54%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 72%)',
         fontFamily,
         overflow: 'hidden',
       }}
@@ -189,6 +214,7 @@ export const ForceNetwork: React.FC<Props> = ({
           fontSize: 54,
           fontWeight: 800,
           letterSpacing: '-0.025em',
+          fontFamily: displayFamily,
           color: paperColor,
           opacity: interpolate(frame, [0, 20], [0, 1], {
             extrapolateLeft: 'clamp',
@@ -232,8 +258,8 @@ export const ForceNetwork: React.FC<Props> = ({
                 y1={a.y}
                 x2={b.x}
                 y2={b.y}
-                stroke={l.value > 2 ? 'rgba(141,147,165,0.55)' : 'rgba(141,147,165,0.28)'}
-                strokeWidth={l.value > 2 ? 2.4 : 1.4}
+                stroke={l.value > 2 ? `${theme.muted}8c` : `${theme.muted}47`}
+                strokeWidth={(theme.stroke * (l.value > 2 ? 2.4 : 1.4)) / 3}
               />
             );
           })}
@@ -248,7 +274,7 @@ export const ForceNetwork: React.FC<Props> = ({
                   r={r}
                   fill={n.hub ? colour : `${colour}44`}
                   stroke={colour}
-                  strokeWidth={n.hub ? 0 : 2}
+                  strokeWidth={n.hub ? 0 : (theme.stroke * 2) / 3}
                 />
                 {n.hub ? (
                   <text
@@ -265,7 +291,7 @@ export const ForceNetwork: React.FC<Props> = ({
                   <text
                     y={r + 20}
                     textAnchor="middle"
-                    fill="#8d93a5"
+                    fill={theme.muted}
                     fontFamily={fontFamily}
                     fontSize={17}
                     fontWeight={500}

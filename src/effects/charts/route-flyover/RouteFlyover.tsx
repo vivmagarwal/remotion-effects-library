@@ -25,7 +25,9 @@ type Theme = {
   readonly text: string;
   readonly accent: string;
   readonly bg: string;
+  readonly muted: string;
   readonly paperMuted: string;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -34,7 +36,9 @@ const THEME: Theme = {
   text: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
+  muted: '#8d93a5',
   paperMuted: '#4a4e5a',
+  stroke: 3,
 };
 
 type Props = {
@@ -148,12 +152,19 @@ export const RouteFlyover: React.FC<Props> = ({
           ))}
 
           {/* Route: the dim full path, then the lit portion drawn over it. */}
-          <path d={route} fill="none" stroke="#ffffff" strokeWidth={4} opacity={0.09} strokeLinecap="round" />
+          <path
+            d={route}
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth={(theme.stroke * 4) / 3}
+            opacity={0.09}
+            strokeLinecap="round"
+          />
           <path
             d={route}
             fill="none"
             stroke={routeColor}
-            strokeWidth={6}
+            strokeWidth={theme.stroke * 2}
             strokeLinecap="round"
             strokeDasharray={strokeDasharray}
             strokeDashoffset={strokeDashoffset}
@@ -169,13 +180,25 @@ export const RouteFlyover: React.FC<Props> = ({
             });
             return (
               <g key={stop.name}>
-                <circle cx={p.x} cy={p.y} r={9 + lit * 5} fill={lit > 0.5 ? routeColor : '#4a4e5a'} />
-                <circle cx={p.x} cy={p.y} r={9 + lit * 5} fill="none" stroke={seaColor} strokeWidth={3} />
+                <circle
+                  cx={p.x}
+                  cy={p.y}
+                  r={9 + lit * 5}
+                  fill={lit > 0.5 ? routeColor : theme.paperMuted}
+                />
+                <circle
+                  cx={p.x}
+                  cy={p.y}
+                  r={9 + lit * 5}
+                  fill="none"
+                  stroke={seaColor}
+                  strokeWidth={theme.stroke}
+                />
                 <text
                   x={p.x}
                   y={p.y - 26}
                   textAnchor="middle"
-                  fill={lit > 0.5 ? '#ffffff' : '#8d93a5'}
+                  fill={lit > 0.5 ? theme.ink : theme.muted}
                   fontSize={22}
                   fontWeight={700}
                   letterSpacing={2.6}
@@ -190,7 +213,12 @@ export const RouteFlyover: React.FC<Props> = ({
           {/* The marker, rotated onto the tangent. */}
           <g transform={`translate(${point.x} ${point.y}) rotate(${heading})`}>
             <circle r={30} fill={routeColor} opacity={0.16} />
-            <path d="M 16 0 L -11 -10 L -6 0 L -11 10 Z" fill="#ffffff" stroke={routeColor} strokeWidth={2} />
+            <path
+              d="M 16 0 L -11 -10 L -6 0 L -11 10 Z"
+              fill={theme.ink}
+              stroke={routeColor}
+              strokeWidth={(theme.stroke * 2) / 3}
+            />
           </g>
         </svg>
       </Interactive.Div>

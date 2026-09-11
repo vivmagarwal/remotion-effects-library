@@ -22,8 +22,10 @@ type Theme = {
   readonly muted: string;
   readonly display: string;
   readonly bg: string;
+  readonly bgDeep: string;
   readonly ink: string;
   readonly series: readonly string[];
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -31,8 +33,10 @@ const THEME: Theme = {
   muted: '#8d93a5',
   display: fontFamily,
   bg: '#0a0b10',
+  bgDeep: '#04050a',
   ink: '#ffffff',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  stroke: 3,
 };
 
 type Props = {
@@ -100,7 +104,7 @@ export const ChapterDivider: React.FC<Props> = ({
   const HALF = height / 2;
 
   return (
-    <AbsoluteFill name="Scene" style={{backgroundColor: '#04050a', overflow: 'hidden', fontFamily}}>
+    <AbsoluteFill name="Scene" style={{backgroundColor: theme.bgDeep, overflow: 'hidden', fontFamily}}>
       {/* Top band */}
       <AbsoluteFill
         style={{
@@ -125,9 +129,9 @@ export const ChapterDivider: React.FC<Props> = ({
         style={{
           position: 'absolute',
           left: width / 2 - (width * 0.34 * rule) / 2,
-          top: HALF - 1.5,
+          top: HALF - theme.stroke / 2,
           width: width * 0.34 * rule,
-          height: 3,
+          height: theme.stroke,
           backgroundColor: accentColor,
         }}
       />
@@ -141,6 +145,9 @@ export const ChapterDivider: React.FC<Props> = ({
             fontSize: 30,
             fontWeight: 800,
             letterSpacing: '0.42em',
+            // A serif theme's default old-style figures would otherwise sit off
+            // the cap line next to the all-caps word.
+            fontVariantNumeric: 'lining-nums',
             marginRight: '-0.42em',
             color: accentColor,
             opacity: reveal(0),

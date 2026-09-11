@@ -30,6 +30,7 @@ type Shot = {
  * structural, so the library's full theme object is assignable to it.
  */
 type Theme = {
+  readonly bgDeep: string;
   readonly muted: string;
   readonly ink: string;
   readonly display: string;
@@ -38,6 +39,7 @@ type Theme = {
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  bgDeep: '#04050a',
   muted: '#8d93a5',
   ink: '#ffffff',
   display: serif,
@@ -77,7 +79,7 @@ const Frame: React.FC<{
   });
 
   return (
-    <AbsoluteFill style={{backgroundColor: '#04050a', overflow: 'hidden', opacity: fade}}>
+    <AbsoluteFill style={{overflow: 'hidden', opacity: fade}}>
       <CanvasImage
         src={shot.src ?? staticFile('sample-scene.svg')}
         style={{
@@ -154,18 +156,23 @@ export const KenBurns: React.FC<Props> = ({
   ],
   shotFrames = 90,
 }) => (
-  <Series>
-    {shots.map((shot, i) => (
-      <Series.Sequence key={i} durationInFrames={shotFrames} premountFor={30}>
-        <Frame
-          shot={shot}
-          frames={shotFrames}
-          captionFamily={captionFamily}
-          creditFamily={creditFamily}
-          ink={theme.ink}
-          muted={theme.muted}
-        />
-      </Series.Sequence>
-    ))}
-  </Series>
+  // Each shot fades at both ends, so there has to be a ground behind them to
+  // fade THROUGH. Putting it on the shot itself fades the ground out with the
+  // picture and the composition flashes transparent between plates.
+  <AbsoluteFill style={{backgroundColor: theme.bgDeep}}>
+    <Series>
+      {shots.map((shot, i) => (
+        <Series.Sequence key={i} durationInFrames={shotFrames} premountFor={30}>
+          <Frame
+            shot={shot}
+            frames={shotFrames}
+            captionFamily={captionFamily}
+            creditFamily={creditFamily}
+            ink={theme.ink}
+            muted={theme.muted}
+          />
+        </Series.Sequence>
+      ))}
+    </Series>
+  </AbsoluteFill>
 );

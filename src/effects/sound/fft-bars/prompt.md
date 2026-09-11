@@ -43,18 +43,21 @@ looks broken. `Math.max(6, …)` keeps a visible stub so silent bands read as ba
 as gaps.
 
 **The look**
-- 1920×1080, 30fps, 180 frames. Background `#08080f` with
-  `radial-gradient(ellipse at 50% 50%, #4cc9f018 0%, transparent 62%)`. Sora throughout.
-- A track title at 74px weight 700, an uppercase artist line at 30px with `letter-spacing: 0.28em`.
-- 48 bars, 16px wide, 7px gap, radius 8, filled with a vertical
-  `linear-gradient(#4cc9f0, #f72585)`, opacity ramping `0.45 → 1` left to right, and a glow
-  (`boxShadow: 0 0 22px #4cc9f077`) only on bands above 0.35 — so peaks light up and the rest stays
-  clean.
+- 1920×1080, 30fps, 180 frames. Background `theme.bgDeep` (`#04050a`) with
+  `radial-gradient(ellipse at 50% 50%, ${colors[0]}18 0%, transparent 62%)`. Sora throughout.
+- A track title in `displayFamily` (default: the theme's `display` face; Sora as authored) at 74px
+  weight 700, an uppercase artist line at 30px with `letter-spacing: 0.28em`.
+- 48 bars, 16px wide, 7px gap, radius `theme.radius × 8/18` (8 at house), filled with a vertical
+  `linear-gradient(colors[0], colors[1])`, with `colors` defaulting to
+  `[theme.series[1], theme.series[4]]` (`#4cc9f0`, `#c77dff` at house), opacity ramping `0.45 → 1`
+  left to right, and a glow (`0 0 22px ${colors[0]}77`) only on bands above 0.35 — so peaks light up
+  and the rest stays clean.
 - A 1180×5 progress rail below, filling across the composition.
 
 **Requirements**
 - One self-contained `.tsx` file exporting `FftBars`.
-- Props: `src`, `title`, `artist`, `bars`, `colors` (a two-colour tuple), `backgroundColor`, `gamma`.
+- Props: `src`, `title`, `artist`, `displayFamily`, `bars`, `colors` (a two-colour tuple),
+  `backgroundColor`, `gamma`.
 - Load Sora via `@remotion/google-fonts/Sora`.
 - For a waveform instead of bars, `getWaveformPortion()` from the same package gives you time-domain
   samples you can feed into an SVG path.

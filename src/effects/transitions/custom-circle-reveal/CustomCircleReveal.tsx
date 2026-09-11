@@ -93,14 +93,18 @@ export type Shot = {
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 type Theme = {
+  readonly bg: string;
+  readonly series: readonly string[];
+  readonly display: string;
   readonly mono: string;
-  readonly text: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  bg: '#0a0b10',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  display: fontFamily,
   mono: MONO,
-  text: fontFamily,
 };
 
 type Props = {
@@ -108,6 +112,10 @@ type Props = {
   readonly fontFamily?: string;
   /** CSS family for the code/metric type. Defaults to the theme's monospace. */
   readonly monoFamily?: string;
+  /** Colour of the monospace subtitle. Defaults to `theme.series[2]`. */
+  readonly accentColor?: string;
+  /** Ground for a shot that has no `src`. Defaults to `theme.bg`. */
+  readonly cardColor?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   /** The scenes, in order. Two or more. */
@@ -147,13 +155,17 @@ const ShotView: React.FC<{shot: Shot;
   fontFamily: string;
   /** Threaded: at module scope a bare `theme` is not in lexical reach. */
   monoFamily: string;
-}> = ({shot, fontFamily, monoFamily}) => {
+  accentColor: string;
+  cardColor: string;
+}> = ({shot, fontFamily, monoFamily, accentColor, cardColor}) => {
   const frame = useCurrentFrame();
 
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: shot.backgroundColor ?? '#0a0b10',
+        // Opaque, not transparent: the exiting scene sits under the entering one
+        // for the whole reveal, so a see-through card shows both at once.
+        backgroundColor: shot.backgroundColor ?? cardColor,
         color: shot.color ?? '#f6f5f2',
         fontFamily,
         // Lower third rather than dead centre, and that is about the transition
@@ -210,7 +222,7 @@ const ShotView: React.FC<{shot: Shot;
           position: 'relative',
           fontFamily: monoFamily,
           fontSize: 30,
-          color: shot.accentColor ?? '#c6ff3d',
+          color: shot.accentColor ?? accentColor,
           marginTop: 28,
           letterSpacing: '0.02em',
           textShadow: '0 2px 18px rgba(0,0,0,0.8)',
@@ -224,8 +236,10 @@ const ShotView: React.FC<{shot: Shot;
 
 export const CustomCircleReveal: React.FC<Props> = ({
   theme = THEME,
-  fontFamily = theme.text,
+  fontFamily = theme.display,
   monoFamily = theme.mono,
+  accentColor = theme.series[2],
+  cardColor = theme.bg,
   shots = SHOTS,
   origins = [
     [22, 30],
@@ -244,7 +258,13 @@ export const CustomCircleReveal: React.FC<Props> = ({
           durationInFrames={i === shots.length - 1 ? holdFrames + transitionFrames : holdFrames}
           name={shot.title ?? `Shot ${i + 1}`}
         >
-          <ShotView shot={shot} fontFamily={fontFamily} monoFamily={monoFamily} />
+          <ShotView
+            shot={shot}
+            fontFamily={fontFamily}
+            monoFamily={monoFamily}
+            accentColor={accentColor}
+            cardColor={cardColor}
+          />
         </TransitionSeries.Sequence>
         {i < shots.length - 1 ? (
           <TransitionSeries.Transition

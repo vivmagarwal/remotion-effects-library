@@ -32,6 +32,7 @@ type Theme = {
   readonly body: string;
   readonly muted: string;
   readonly text: string;
+  readonly display: string;
   readonly bgDeep: string;
   readonly series: readonly string[];
 };
@@ -41,6 +42,7 @@ const THEME: Theme = {
   body: '#eef1f7',
   muted: '#8d93a5',
   text: fontFamily,
+  display: fontFamily,
   bgDeep: '#04050a',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
 };
@@ -48,6 +50,8 @@ const THEME: Theme = {
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the star's name. Defaults to this file's Sora, or the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly bodies?: readonly Body[];
@@ -72,11 +76,12 @@ type Props = {
 export const OrbitSystem: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   bodies = [
     {name: 'Mercury', color: theme.muted, radius: 206, size: 30, speed: 2.6, phase: 0.4},
-    {name: 'Venus', color: '#ffd166', radius: 324, size: 44, speed: 1.75, phase: 2.35},
-    {name: 'Earth', color: '#4cc9f0', radius: 442, size: 50, speed: 1.2, phase: 4.2},
-    {name: 'Mars', color: '#ff5c39', radius: 564, size: 38, speed: 0.85, phase: 5.55},
+    {name: 'Venus', color: theme.series[3], radius: 324, size: 44, speed: 1.75, phase: 2.35},
+    {name: 'Earth', color: theme.series[1], radius: 442, size: 50, speed: 1.2, phase: 4.2},
+    {name: 'Mars', color: theme.series[0], radius: 564, size: 38, speed: 0.85, phase: 5.55},
     {name: 'Saturn', color: theme.body, radius: 716, size: 64, speed: 0.58, phase: 1.15, hasRing: true},
   ],
   starName = 'SOL',
@@ -168,7 +173,7 @@ export const OrbitSystem: React.FC<Props> = ({
           // with the geometry at low elevations.
           backgroundImage: `radial-gradient(circle at ${50 - Math.cos(b.angle) * 26}% ${
             50 - Math.sin(b.angle) * squash * 26
-          }%, ${b.color}, ${b.color}44 62%, #04050a 100%)`,
+          }%, ${b.color}, ${b.color}44 62%, ${backgroundColor} 100%)`,
           boxShadow: `0 0 ${b.size * 0.7}px ${b.color}55`,
         }}
       />
@@ -209,7 +214,7 @@ export const OrbitSystem: React.FC<Props> = ({
             width: st.size,
             height: st.size,
             borderRadius: '50%',
-            backgroundColor: '#eef1f7',
+            backgroundColor: theme.body,
             opacity: st.opacity,
           }}
         />
@@ -273,7 +278,7 @@ export const OrbitSystem: React.FC<Props> = ({
           position: 'absolute',
           left: 88,
           top: 76,
-          fontFamily,
+          fontFamily: displayFamily,
           fontSize: 52,
           fontWeight: 700,
           letterSpacing: '0.32em',

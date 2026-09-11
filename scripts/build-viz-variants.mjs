@@ -22,17 +22,19 @@ import {ROOT} from './lib/fs.mjs';
 const {VIZ_DEMOS} = await import('edododraw/demos');
 
 /**
- * Templates that draw edododraw's character figures. The figures are broken and
- * this library does not use them anywhere, so these are left out.
+ * Templates left out of the gallery, each for a reason that can be seen.
  *
- * `quote` is here reluctantly: it is a hand-lettered quote card with a
- * "presenting character" beside it, and the template documents `pose: none` to
- * hide the figure. That option does not work — the source compiles with it and
- * the figure still draws — and the layout reserves the space either way, so
- * suppressing it was never going to be clean. Dropped rather than shipped with a
- * broken figure on it.
+ * Five templates draw edododraw's character figures, and all five used to be
+ * excluded as "broken". That stopped being true: the v2 figure grammar (0.14)
+ * and the 0.16 polish pass made them read at 1080p, and a frame-by-frame review
+ * judged four of them includable — `personas`, `vision`, `hole` and `quote`
+ * (whose `pose: none` works as documented).
+ *
+ * `tug-of-war` stays out: its whole idea is two teams pulling one rope, and the
+ * figures' hands still do not reach the rope. That is a fix in the character
+ * poses, not in this library.
  */
-const EXCLUDED = new Set(['personas', 'vision', 'hole', 'tug-of-war', 'quote']);
+const EXCLUDED = new Set(['tug-of-war']);
 
 const tagline = (d) => String(d.description).replace(/`/g, '').slice(0, 120);
 

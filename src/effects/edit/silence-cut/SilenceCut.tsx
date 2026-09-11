@@ -37,6 +37,8 @@ type Theme = {
   readonly text: string;
   readonly accent: string;
   readonly bg: string;
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
@@ -47,6 +49,8 @@ const THEME: Theme = {
   text: fontFamily,
   accent: '#ff5c39',
   bg: '#0a0b10',
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
@@ -143,12 +147,19 @@ const DEEPGRAM_WORDS: Word[] = [
  */
 const buildKeepList = (
   words: readonly Word[],
-  {minSilence, margin, minSegment, fillers}:
-    {minSilence: number; margin: number; minSegment: number; fillers: readonly string[]},
+  {minSilence, margin, minSegment, fillers, fillerPad = 0.05}:
+    {minSilence: number; margin: number; minSegment: number; fillers: readonly string[]; fillerPad?: number},
 ): {readonly s: number; readonly e: number}[] => {
   const drop = new Set(fillers.map((f) => f.toLowerCase()));
-  const kept = words.filter((w) => !drop.has(w.w.toLowerCase().replace(/[^a-z']/g, '')));
+  const isFiller = (w: Word) => drop.has(w.w.toLowerCase().replace(/[^a-z']/g, ''));
+  const kept = words.filter((w) => !isFiller(w));
   if (kept.length === 0) return [];
+
+  // A filler is cut as its OWN interval, padded a little each side. Dropping it
+  // from the word list is not a cut: whenever its neighbours sit closer than
+  // `minSilence` the run is kept whole and the "um" stays in the picture — which
+  // is what three of the four in this transcript did until it was measured.
+  const cuts = words.filter(isFiller).map((w) => ({s: w.s - fillerPad, e: w.e + fillerPad}));
 
   // 1. Group into runs, breaking wherever the gap is real dead air.
   const runs: {s: number; e: number}[] = [{s: kept[0].s, e: kept[0].e}];
@@ -159,14 +170,28 @@ const buildKeepList = (
 
   // 2. Pad each run, drop the clicks, and merge anything the padding overlapped —
   //    skip the merge and two adjacent removals become a stutter of micro-cuts.
-  const out: {s: number; e: number}[] = [];
+  const padded: {s: number; e: number}[] = [];
   for (const r of runs) {
     const s = Math.max(0, r.s - margin);
     const e = r.e + margin;
     if (e - s < minSegment) continue;
-    const last = out[out.length - 1];
+    const last = padded[padded.length - 1];
     if (last && s <= last.e) last.e = Math.max(last.e, e);
-    else out.push({s, e});
+    else padded.push({s, e});
+  }
+
+  // 3. Subtract the filler cuts LAST, so a margin can never grow back into one.
+  const out: {s: number; e: number}[] = [];
+  for (const k of padded) {
+    let segs = [{s: k.s, e: k.e}];
+    for (const c of cuts) {
+      segs = segs.flatMap((g) =>
+        c.e <= g.s || c.s >= g.e
+          ? [g]
+          : [...(c.s > g.s ? [{s: g.s, e: c.s}] : []), ...(c.e < g.e ? [{s: c.e, e: g.e}] : [])],
+      );
+    }
+    out.push(...segs.filter((g) => g.e - g.s >= minSegment));
   }
   return out;
 };
@@ -222,7 +247,10 @@ export const SilenceCut: React.FC<Props> = ({
         {shown.map((k) => (
           <Series.Sequence
             key={k.s}
-            durationInFrames={Math.max(1, Math.round((k.e - k.s) * fps))}
+            // Round at the BOUNDARIES, never the duration: round(e - s) is not
+            // round(e) - round(s), and the difference is a frame of drift per
+            // segment between this length and the trims below it.
+            durationInFrames={Math.max(1, Math.round(k.e * fps) - Math.round(k.s * fps))}
             premountFor={fps}
           >
             <Video
@@ -247,7 +275,7 @@ export const SilenceCut: React.FC<Props> = ({
           alignItems: 'baseline',
           gap: 20,
           padding: '14px 26px',
-          borderRadius: 12,
+          borderRadius: (12 * theme.radius) / THEME.radius,
           backgroundColor: 'rgba(10, 11, 16, 0.72)',
           backdropFilter: 'blur(18px) saturate(1.3)',
           border: '1px solid rgba(255, 255, 255, 0.14)',
@@ -272,7 +300,7 @@ export const SilenceCut: React.FC<Props> = ({
           style={{
             position: 'relative',
             height: 26,
-            borderRadius: 6,
+            borderRadius: (6 * theme.radius) / THEME.radius,
             backgroundColor: 'rgba(255, 255, 255, 0.1)',
             border: '1px solid rgba(255, 255, 255, 0.16)',
             overflow: 'hidden',
@@ -298,8 +326,8 @@ export const SilenceCut: React.FC<Props> = ({
               left: `${pct(playhead)}%`,
               top: -7,
               bottom: -7,
-              width: 3,
-              backgroundColor: '#ffffff',
+              width: (3 * theme.stroke) / THEME.stroke,
+              backgroundColor: theme.ink,
             }}
           />
         </div>

@@ -44,24 +44,36 @@ const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 type Theme = {
   readonly mono: string;
+  readonly display: string;
   readonly ink: string;
+  readonly body: string;
   readonly text: string;
   readonly bg: string;
+  readonly bgDeep: string;
+  readonly accent: string;
   readonly series: readonly string[];
+  readonly radius: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
   mono: MONO,
+  display: fontFamily,
   ink: '#ffffff',
+  body: '#eef1f7',
   text: fontFamily,
   bg: '#0a0b10',
+  bgDeep: '#04050a',
+  accent: '#ff5c39',
   series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  radius: 18,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to this file's own loaded face, or the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly src?: string;
@@ -79,6 +91,7 @@ type Props = {
 export const EffectsCatalogue: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   src,
   title = '@remotion/effects',
   columns = 5,
@@ -96,7 +109,7 @@ export const EffectsCatalogue: React.FC<Props> = ({
   // of them are zero-argument — and the ranges differ per effect, so check each
   // one's own .d.ts rather than assuming a shared convention.
   const tiles: Tile[] = [
-    {name: 'duotone', call: "duotone({darkColor, lightColor})", effect: duotone({darkColor: '#04050a', lightColor: '#ff5c39', threshold: 0.4})},
+    {name: 'duotone', call: "duotone({darkColor, lightColor})", effect: duotone({darkColor: theme.bgDeep, lightColor: theme.accent, threshold: 0.4})},
     {name: 'halftone', call: 'halftone({dotSize, rotation})', effect: halftone({dotSize: 11, dotSpacing: 11, rotation: 22, colorMode: 'source'})},
     {name: 'scanlines', call: 'scanlines({amount, spacing})', effect: scanlines({amount: 0.5, spacing: 5, thickness: 2})},
     {name: 'thermalVision', call: 'thermalVision({})', effect: thermalVision({})},
@@ -133,6 +146,7 @@ export const EffectsCatalogue: React.FC<Props> = ({
           position: 'absolute',
           left: PAD,
           top: 62,
+          fontFamily: displayFamily,
           fontSize: 46,
           fontWeight: 800,
           letterSpacing: '-0.02em',
@@ -188,7 +202,7 @@ export const EffectsCatalogue: React.FC<Props> = ({
               top: y,
               width: cellW,
               height: cellH,
-              borderRadius: 12,
+              borderRadius: (theme.radius * 2) / 3,
               overflow: 'hidden',
               backgroundColor: '#04050a',
               border: `2px solid ${lit ? accentColor : 'rgba(255,255,255,0.12)'}`,
@@ -215,7 +229,7 @@ export const EffectsCatalogue: React.FC<Props> = ({
                 backgroundImage: 'linear-gradient(transparent, rgba(4,5,9,0.9))',
                 fontSize: 20,
                 fontWeight: 700,
-                color: lit ? accentColor : '#eef1f7',
+                color: lit ? accentColor : theme.body,
                 textAlign: 'center',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',

@@ -19,8 +19,11 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '600', '700'], subsets
  */
 type Theme = {
   readonly ink: string;
+  readonly display: string;
   readonly text: string;
   readonly accent: string;
+  readonly accentInk: string;
+  readonly series: readonly string[];
   readonly bg: string;
   readonly paperInk: string;
 };
@@ -28,15 +31,28 @@ type Theme = {
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
   ink: '#ffffff',
+  display: fontFamily,
   text: fontFamily,
   accent: '#ff5c39',
+  accentInk: '#04050a',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
   bg: '#0a0b10',
   paperInk: '#1d1b17',
+};
+
+/** WCAG relative luminance of a #rrggbb colour — the house `isDark` arithmetic. */
+const luminance = (hex: string) => {
+  const h = hex.replace('#', '');
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
+  const lin = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the headline. Defaults to this file's own loaded face, or the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly headline?: string;
@@ -47,7 +63,7 @@ type Props = {
   readonly accentColor?: string;
 };
 
-const Screen: React.FC<{colors: readonly [string, string]; wake: number}> = ({colors, wake}) => (
+const Screen: React.FC<{colors: readonly [string, string]; wake: number; ink: string}> = ({colors, wake, ink}) => (
   <div
     style={{
       position: 'absolute',
@@ -67,7 +83,7 @@ const Screen: React.FC<{colors: readonly [string, string]; wake: number}> = ({co
       style={{
         justifyContent: 'center',
         alignItems: 'center',
-        color: '#fff',
+        color: ink,
         fontFamily,
         fontSize: 78,
         fontWeight: 700,
@@ -83,15 +99,19 @@ const Screen: React.FC<{colors: readonly [string, string]; wake: number}> = ({co
 export const DeviceRise: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   headline = 'Introducing',
   subhead = 'a phone that renders itself',
   deviceColor = theme.paperInk,
-  screenColors = ['#ff5c39', '#c77dff'],
-  backgroundColor = theme.bg,
   accentColor = theme.accent,
+  screenColors = [accentColor, theme.series[4]],
+  backgroundColor = theme.bg,
 }) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
+
+  // White until the screen itself is light — white on lime or amber vanishes.
+  const screenInk = Math.max(luminance(screenColors[0]), luminance(screenColors[1])) > 0.5 ? theme.accentInk : '#fff';
 
   // One rise value drives the device, its reflection and the tilt.
   const rise = interpolate(frame, [6, 6 + 1.6 * fps], [0, 1], {
@@ -117,7 +137,7 @@ export const DeviceRise: React.FC<Props> = ({
         border: '2px solid rgba(255,255,255,0.16)',
       }}
     >
-      <Screen colors={screenColors} wake={wake} />
+      <Screen colors={screenColors} wake={wake} ink={screenInk} />
     </div>
   );
 
@@ -139,6 +159,7 @@ export const DeviceRise: React.FC<Props> = ({
         style={{
           position: 'absolute',
           top: 62,
+          fontFamily: displayFamily,
           fontSize: 76,
           fontWeight: 700,
           letterSpacing: '-0.035em',

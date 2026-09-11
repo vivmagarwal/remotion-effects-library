@@ -82,7 +82,7 @@ export const CONCEPTS = [
   'dB-domain interpolation', 'gap classification', 'keep-list from word timings',
   'pause budget', 'room tone floor', 'frame-exact SFX', 'peak picking',
   'octave-banded FFT', 'effects array grade', 'seeded per-frame grain',
-  'chroma key spill', 'region blur inversion', 'octave-quantised roughness',
+  'chroma key spill', 'region blur inversion', 'zoom-scaled roughness', 'draw by data item',
   'total function of frame', 'viz template catalogue', 'beat-to-frame schedule',
 ] as const;
 

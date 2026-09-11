@@ -78,23 +78,25 @@ drawn near it.
 **The look**
 
 - 1920×1080, 30 fps, 360 frames. Ground `#04050a`. Inter at 500/700/800.
-- Readout pill top-left at `84, 84`, `padding: 18px 28px`, radius 12, `rgba(10,11,16,0.72)`,
+- Readout pill top-left at `84, 84`, `padding: 18px 28px`, radius `theme.radius × 12/18`, the theme's
+  `bg` at 0.72,
   `backdropFilter: 'blur(18px) saturate(1.3)'`, `1px solid rgba(255,255,255,0.14)`, `minWidth: 640`.
   `BED DUCKED` / `BED MOVING` / `BED OPEN` at 34px/800 `letter-spacing: 0.16em` in `#ff5c39`; the
   current level at 34px/500 `#eef1f7` with `fontVariantNumeric: 'tabular-nums'`; the four knobs at
   34px/500 `#8d93a5`.
-- Two waveform lanes from `top: 300`, 210px tall, 40px apart: the bed in `#4cc9f0`, the voice in
-  `#f6f5f2`. Bars 0.7 units wide on a 480-unit viewBox with `preserveAspectRatio="none"`. Everything
+- Two waveform lanes from `top: 300`, 210px tall, 40px apart: the bed in the theme's `pair`
+  (`#4cc9f0`), the voice in the theme's `paper` (`#f6f5f2`). Bars 0.7 units wide on a 480-unit viewBox with `preserveAspectRatio="none"`. Everything
   before the playhead at 0.95 opacity, everything after at 0.34.
-- **Draw the merged regions behind the envelope**, as `rgba(255,92,57,0.16)` bands on the same frame
-  axis. Twenty-five words become two bands, and that merge *is* the hold — undrawn, the curve looks
+- **Draw the merged regions behind the envelope**, as bands in `accentColor` at `fillOpacity` 0.16 on
+  the same frame axis. Twenty-five words become two bands, and that merge *is* the hold — undrawn, the curve looks
   like something keyframed by hand rather than derived.
 - Top-right, in `#8d93a5` with the first line in `#eef1f7`: *"A compressor reacts to what it has
   already heard. 25 word timings are known in advance, which is the one thing it can never have."*
 - The envelope under both at `bottom: 96`, 120px tall, `viewBox="0 0 <durationInFrames> 120"` so the
-  x-axis is *frames* and a dip lines up with the words that caused it. `strokeWidth: 5` with
-  `vectorEffect="non-scaling-stroke"`, because the viewBox is anisotropic and a plain stroke would be
-  squashed to a thread. A hairline at 0 dB and a white playhead.
+  x-axis is *frames* and a dip lines up with the words that caused it. `strokeWidth: theme.stroke ×
+  5/3` (5 at house) with `vectorEffect="non-scaling-stroke"`, because the viewBox is anisotropic and a
+  plain stroke would be squashed to a thread. A hairline at 0 dB and a playhead in the theme's `paper`
+  (`#f6f5f2`).
 
 **Requirements**
 

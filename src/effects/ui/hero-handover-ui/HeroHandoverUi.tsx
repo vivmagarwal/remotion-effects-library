@@ -18,11 +18,13 @@ const {fontFamily} = loadFont('normal', {weights: ['400', '500', '600'], subsets
  * structural, so the library's full theme object is assignable to it.
  */
 type Theme = {
+  readonly bg: string;
   readonly text: string;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  bg: '#0a0b10',
   text: fontFamily,
 };
 
@@ -130,7 +132,7 @@ export const HeroHandoverUi: React.FC<Props> = ({
   const zoom = 1 + (zoomWhileTyping - 1) * typingProgress * (1 - handover);
 
   return (
-    <AbsoluteFill name="Scene" style={{backgroundColor: '#0e1116', fontFamily, overflow: 'hidden'}}>
+    <AbsoluteFill name="Scene" style={{backgroundColor: theme.bg, fontFamily, overflow: 'hidden'}}>
       <Interactive.Div
         name="Window"
         style={{

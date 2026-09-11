@@ -57,22 +57,30 @@ type Word = {readonly w: string; readonly s: number; readonly e: number};
  * this file runnable on its own.
  */
 type Theme = {
-  readonly paperMuted: string;
   readonly muted: string;
   readonly body: string;
   readonly text: string;
   readonly accent: string;
+  readonly pair: string;
+  readonly paper: string;
+  readonly bg: string;
   readonly bgDeep: string;
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
-  paperMuted: '#4a4e5a',
   muted: '#8d93a5',
   body: '#eef1f7',
   text: fontFamily,
   accent: '#ff5c39',
+  pair: '#4cc9f0',
+  paper: '#f6f5f2',
+  bg: '#0a0b10',
   bgDeep: '#04050a',
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
@@ -255,8 +263,8 @@ export const MusicDuck: React.FC<Props> = ({
               left: 84,
               top: 84,
               padding: '18px 28px',
-              borderRadius: 12,
-              backgroundColor: 'rgba(10,11,16,0.72)',
+              borderRadius: theme.radius * (12 / 18),
+              backgroundColor: `${theme.bg}b8`,
               backdropFilter: 'blur(18px) saturate(1.3)',
               border: '1px solid rgba(255,255,255,0.14)',
               minWidth: 640,
@@ -307,22 +315,26 @@ export const MusicDuck: React.FC<Props> = ({
               label="MUSIC BED · drawn at the level the duck leaves it"
               env={musicEnv}
               gain={(i) => dbToGain(envelopeDb[Math.round((i / BUCKETS) * durationInFrames)] ?? 0)}
-              color="#4cc9f0"
+              color={theme.pair}
               playhead={playhead}
+              playheadColor={theme.paper}
+              playheadWidth={theme.stroke}
               loading={music === null}
               labelColor={theme.muted}
-  loadingColor={theme.paperMuted}
+              loadingColor={theme.muted}
             />
             <div style={{height: 40}} />
             <Lane
               label="VOICE · the thing the bed is getting out of the way of"
               env={voiceEnv}
               gain={() => 1}
-              color="#f6f5f2"
+              color={theme.paper}
               playhead={playhead}
+              playheadColor={theme.paper}
+              playheadWidth={theme.stroke}
               loading={voice === null}
               labelColor={theme.muted}
-              loadingColor={theme.paperMuted}
+              loadingColor={theme.muted}
             />
           </div>
 
@@ -356,7 +368,8 @@ export const MusicDuck: React.FC<Props> = ({
                   y={0}
                   width={Math.max(1, (r.e - r.s) * fps)}
                   height={120}
-                  fill="rgba(255,92,57,0.16)"
+                  fill={accentColor}
+                  fillOpacity={0.16}
                 />
               ))}
               <line
@@ -371,7 +384,7 @@ export const MusicDuck: React.FC<Props> = ({
               <polyline
                 fill="none"
                 stroke={accentColor}
-                strokeWidth={5}
+                strokeWidth={theme.stroke * (5 / 3)}
                 vectorEffect="non-scaling-stroke"
                 points={envelopeDb
                   .map((db, f) => `${f},${2 + (db / duckDb) * 116}`)
@@ -382,8 +395,8 @@ export const MusicDuck: React.FC<Props> = ({
                 y1={0}
                 x2={frame}
                 y2={120}
-                stroke="#f6f5f2"
-                strokeWidth={3}
+                stroke={theme.paper}
+                strokeWidth={theme.stroke}
                 vectorEffect="non-scaling-stroke"
               />
             </svg>
@@ -400,10 +413,23 @@ const Lane: React.FC<{
   gain: (bucket: number) => number;
   color: string;
   playhead: number;
+  playheadColor: string;
+  playheadWidth: number;
   loading: boolean;
   labelColor: string;
   loadingColor: string;
-}> = ({label, env, gain, color, playhead, loading, labelColor, loadingColor}) => (
+}> = ({
+  label,
+  env,
+  gain,
+  color,
+  playhead,
+  playheadColor,
+  playheadWidth,
+  loading,
+  labelColor,
+  loadingColor,
+}) => (
   <div>
     <div
       style={{
@@ -446,9 +472,9 @@ const Lane: React.FC<{
           left: `${playhead * 100}%`,
           top: 0,
           bottom: 0,
-          width: 3,
-          backgroundColor: '#f6f5f2',
-          boxShadow: '0 0 18px rgba(246,245,242,0.7)',
+          width: playheadWidth,
+          backgroundColor: playheadColor,
+          boxShadow: `0 0 18px ${playheadColor}b3`,
         }}
       />
     </div>

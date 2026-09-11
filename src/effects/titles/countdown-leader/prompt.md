@@ -2,14 +2,17 @@ Build a Remotion composition called **CountdownLeader** (composition id `countdo
 Academy-style film-leader countdown.
 
 **The look**
-- 1920×1080, 30fps, 190 frames. Warm near-black `#171512`, ink `#e8e2d4`, accent `#c8462e`.
-  Oswald throughout.
-- A full-width and full-height crosshair in `#e8e2d444`, 3px.
-- An SVG disc sized to `min(width, height) * 0.42` radius: an outer ring (`4px`, `#e8e2d455`), an inner
-  ring at 62% radius (`3px`, `#e8e2d433`), a semicircular wiper wedge filled `#e8e2d412`, and a 5px
-  radial hand.
-- The number at 460px weight 500 in the ink colour; when the count reaches zero it becomes the word
-  `ACTION` at 190px in the accent colour with `letter-spacing: 0.14em`.
+- 1920×1080, 30fps, 190 frames. Ground `backgroundColor` (`theme.paperInk`, `#1d1b17`), ink
+  `inkColor` (`theme.paper`, `#f6f5f2`), accent `accentColor` (`theme.accentOnPaper`, `#c2410c`); on
+  a light-scheme theme (`theme.scheme === 'light'`) ground and ink swap, so the leader prints dark on
+  paper. Oswald throughout.
+- A full-width and full-height crosshair in `` `${inkColor}44` ``, `theme.stroke` (3px).
+- An SVG disc sized to `min(width, height) * 0.42` radius: an outer ring (`theme.stroke * 4/3`,
+  `` `${inkColor}55` ``), an inner ring at 62% radius (`theme.stroke`, `` `${inkColor}33` ``), a
+  semicircular wiper wedge filled `` `${inkColor}12` ``, and a `theme.stroke * 5/3` radial hand.
+- The number at 460px weight 500 in the ink colour, with `font-variant-numeric: lining-nums`, because
+  a serif theme's old-style figures otherwise drop off the crosshair centre; when the count reaches
+  zero it becomes the word `ACTION` at 190px in the accent colour with `letter-spacing: 0.14em`.
 
 **The timing — two derived values drive everything**
 

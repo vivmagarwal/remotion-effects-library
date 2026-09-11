@@ -22,16 +22,22 @@ const {fontFamily} = loadFont('normal', {weights: ['600', '800'], subsets: ['lat
  * this file runnable on its own.
  */
 type Theme = {
+  readonly bgDeep: string;
   readonly paperInk: string;
   readonly text: string;
   readonly ink: string;
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  bgDeep: '#04050a',
   paperInk: '#1d1b17',
   text: fontFamily,
   ink: '#ffffff',
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
@@ -77,7 +83,7 @@ export const BeforeAfterWipe: React.FC<Props> = ({
   );
 
   return (
-    <AbsoluteFill name="Scene" style={{backgroundColor: '#04050a', overflow: 'hidden', fontFamily}}>
+    <AbsoluteFill name="Scene" style={{backgroundColor: theme.bgDeep, overflow: 'hidden', fontFamily}}>
       {/* AFTER — the graded version, full frame, underneath. */}
       <Video
         objectFit="cover"
@@ -108,8 +114,8 @@ export const BeforeAfterWipe: React.FC<Props> = ({
           left: `${x}%`,
           top: 0,
           bottom: 0,
-          width: 5,
-          marginLeft: -2.5,
+          width: (5 * theme.stroke) / THEME.stroke,
+          marginLeft: -(5 * theme.stroke) / THEME.stroke / 2,
           backgroundColor: accentColor,
           boxShadow: '0 0 26px rgba(0,0,0,0.6)',
         }}
@@ -146,9 +152,9 @@ export const BeforeAfterWipe: React.FC<Props> = ({
           left: 64,
           top: 60,
           padding: '14px 26px',
-          borderRadius: 10,
+          borderRadius: (10 * theme.radius) / THEME.radius,
           backgroundColor: 'rgba(12,13,18,0.72)',
-          color: '#fff',
+          color: theme.ink,
           fontSize: 32,
           fontWeight: 600,
           letterSpacing: '0.2em',
@@ -168,9 +174,9 @@ export const BeforeAfterWipe: React.FC<Props> = ({
           right: 64,
           top: 60,
           padding: '14px 26px',
-          borderRadius: 10,
+          borderRadius: (10 * theme.radius) / THEME.radius,
           backgroundColor: 'rgba(12,13,18,0.72)',
-          color: '#fff',
+          color: theme.ink,
           fontSize: 32,
           fontWeight: 600,
           letterSpacing: '0.2em',

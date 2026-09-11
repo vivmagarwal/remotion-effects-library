@@ -1,4 +1,4 @@
-import {useMemo} from 'react';
+import {useId, useMemo} from 'react';
 import {AbsoluteFill, Easing, Interactive, interpolate, random, useCurrentFrame, useVideoConfig} from 'remotion';
 import {area as d3area, curveBasis, stack as d3stack, stackOffsetWiggle, stackOrderInsideOut} from 'd3-shape';
 import type {SeriesPoint} from 'd3-shape';
@@ -33,25 +33,39 @@ type Row = Record<string, number>;
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 type Theme = {
+  readonly scheme: 'dark' | 'light';
   readonly mono: string;
   readonly muted: string;
   readonly text: string;
+  readonly display: string;
   readonly bg: string;
   readonly body: string;
+  readonly series: readonly string[];
+  readonly accentOnPaper: string;
+  readonly radius: number;
+  readonly stroke: number;
 };
 
 /** The house values. Pass a `theme` prop to restyle every effect at once. */
 const THEME: Theme = {
+  scheme: 'dark',
   mono: MONO,
   muted: '#8d93a5',
   text: fontFamily,
+  display: fontFamily,
   bg: '#0a0b10',
   body: '#eef1f7',
+  series: ['#ff5c39', '#4cc9f0', '#c6ff3d', '#ffd166', '#c77dff', '#8d93a5'],
+  accentOnPaper: '#c2410c',
+  radius: 18,
+  stroke: 3,
 };
 
 type Props = {
   /** CSS font family. Defaults to this file's own loaded face, or the theme's. */
   readonly fontFamily?: string;
+  /** CSS family for the title. Defaults to the theme's display face. */
+  readonly displayFamily?: string;
   /** Colours, typefaces and shape for the whole library. Any single prop below still wins. */
   readonly theme?: Theme;
   readonly title?: string;
@@ -68,21 +82,33 @@ type Props = {
 };
 
 const DEFAULT_KEYS = ['shorts', 'tutorials', 'launches', 'demos', 'devlogs', 'talks', 'ads'];
-const DEFAULT_COLORS = ['#ff5c39', '#4cc9f0', '#c77dff', '#ffd166', '#c6ff3d', '#c2410c', '#8d93a5'];
-
 export const Streamgraph: React.FC<Props> = ({
   theme = THEME,
   fontFamily = theme.text,
+  displayFamily = theme.display,
   title = 'What people are rendering',
   subtitle = 'streamgraph · stackOffsetWiggle + stackOrderInsideOut',
   keys = DEFAULT_KEYS,
-  colors = DEFAULT_COLORS,
+  colors = [
+    theme.series[0],
+    theme.series[1],
+    theme.series[4],
+    theme.series[3],
+    theme.series[2],
+    theme.accentOnPaper,
+    theme.series[5],
+  ],
   samples = 48,
   drawFrames = 96,
   startAt = 16,
   backgroundColor = theme.bg,
   paperColor = theme.body,
 }) => {
+  // One SVG id per INSTANCE. A literal id is global to the page: with two copies
+  // mounted (a gallery card and its detail player), every url(#…) resolves to
+  // whichever copy came first in the DOM, and its clip or mask follows the other
+  // copy's frame.
+  const svgId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const frame = useCurrentFrame();
   const {width, height} = useVideoConfig();
 
@@ -155,7 +181,12 @@ export const Streamgraph: React.FC<Props> = ({
       name="Scene"
       style={{
         backgroundColor,
-        backgroundImage: 'radial-gradient(ellipse at 50% 58%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 74%)',
+        // A dark scrim reads as depth on a dark ground and as dirt on a light
+        // one, so the scheme picks which way the vignette runs.
+        backgroundImage:
+          theme.scheme === 'light'
+            ? 'radial-gradient(ellipse at 50% 58%, rgba(255,255,255,0.5) 0%, rgba(0,0,0,0.06) 74%)'
+            : 'radial-gradient(ellipse at 50% 58%, rgba(255,255,255,0.055) 0%, rgba(0,0,0,0.42) 74%)',
         fontFamily,
         overflow: 'hidden',
       }}
@@ -169,6 +200,7 @@ export const Streamgraph: React.FC<Props> = ({
           fontSize: 58,
           fontWeight: 800,
           letterSpacing: '-0.025em',
+          fontFamily: displayFamily,
           color: paperColor,
           opacity: interpolate(frame, [0, 20], [0, 1], {
             extrapolateLeft: 'clamp',
@@ -198,13 +230,13 @@ export const Streamgraph: React.FC<Props> = ({
 
       <svg width={width} height={height} style={{position: 'absolute', inset: 0}}>
         <defs>
-          <clipPath id="stream-wipe">
+          <clipPath id={`stream-wipe-${svgId}`}>
             <rect x={0} y={-40} width={plotW * p} height={plotH + 80} />
           </clipPath>
         </defs>
 
         <g transform={`translate(${PAD.left} ${PAD.top})`}>
-          <g clipPath="url(#stream-wipe)">
+          <g clipPath={`url(#stream-wipe-${svgId})`}>
             {series.map((s, i) => (
               <path
                 key={s.key}
@@ -223,7 +255,7 @@ export const Streamgraph: React.FC<Props> = ({
               x2={plotW * p}
               y2={plotH + 40}
               stroke={paperColor}
-              strokeWidth={2}
+              strokeWidth={(theme.stroke * 2) / 3}
               opacity={0.75}
             />
           ) : null}
@@ -262,7 +294,7 @@ export const Streamgraph: React.FC<Props> = ({
               style={{
                 width: 18,
                 height: 18,
-                borderRadius: 5,
+                borderRadius: (theme.radius * 5) / 18,
                 backgroundColor: colors[i % colors.length],
               }}
             />
