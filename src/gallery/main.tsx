@@ -44,7 +44,7 @@ if (base && base !== '/') {
 /**
  * The compositions this gallery can actually render, for `check:browser`.
  *
- * The gate needs the EXPANDED list — 181 rows, not the 96 effect folders — and
+ * The gate needs the EXPANDED list — 185 rows, not the 96 effect folders — and
  * that expansion lives in the registry. Re-deriving it in a script means
  * reimplementing it, and the first attempt silently produced 99 rows because
  * `viz-gallery`'s variants arrive as an imported identifier a meta parser

@@ -2,9 +2,9 @@
 // Run `npm run viz:variants` after upgrading edododraw.
 //
 // 86 of edododraw's 87 visualization templates, each with the curated
-// runnable demo the package ships for it. The 1 missing ones —
-// tug-of-war — draw character figures, which are
-// known-broken upstream and are not used anywhere in this library.
+// runnable demo the package ships for it. Left out: tug-of-war — its two
+// teams pull a rope the character figures' hands do not reach, which is a fix in
+// edododraw's poses rather than in this library.
 //
 // Categories: Brainstorming · Business Frameworks · Cause and Effect · Comparison · Data · Parts of a whole · Problems and Solutions · Process · Timelines · Visual Metaphors
 import type {EffectMeta} from '../../../types';

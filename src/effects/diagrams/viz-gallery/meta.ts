@@ -1,5 +1,5 @@
 import type {EffectMeta} from '../../../types';
-import {VIZ_VARIANTS, VIZ_TEMPLATE_COUNT} from './variants.generated';
+import {VIZ_VARIANTS, VIZ_TEMPLATE_COUNT} from './variants.generated.ts';
 
 export const meta: EffectMeta = {
   id: 'viz-gallery', name: 'Viz Gallery', category: 'diagrams',

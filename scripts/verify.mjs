@@ -10,27 +10,24 @@ import {bundle} from '@remotion/bundler';
 import {getCompositions, renderStill} from '@remotion/renderer';
 import {mkdirSync} from 'node:fs';
 import {join} from 'node:path';
-import {ROOT, OUT_DIR, walkEffects} from './lib/fs.mjs';
-import {readMeta} from './lib/meta.mjs';
+import {ROOT, OUT_DIR} from './lib/fs.mjs';
+import {compositionFrames} from './lib/meta.mjs';
 
 const OUT = join(OUT_DIR, 'verify');
 const filter = process.argv[2] ?? '';
 
 mkdirSync(OUT, {recursive: true});
 
-// checkFrame lives in each meta.ts; one reader, shared with every other gate.
-const checkFrames = new Map();
-const posterFrames = new Map();
-for (const e of walkEffects()) {
-  const meta = readMeta(e.metaPath);
-  if (Number.isFinite(meta.checkFrame)) checkFrames.set(meta.id, meta.checkFrame);
-  // The poster is the frame the gallery actually shows, and no gate ever
-  // rendered it. Render it here when it differs so check:poster has something
-  // to look at.
-  if (Number.isFinite(meta.posterFrame) && meta.posterFrame !== meta.checkFrame) {
-    posterFrames.set(meta.id, meta.posterFrame);
-  }
-}
+/**
+ * The frame each COMPOSITION nominates — variants included.
+ *
+ * This map used to be keyed by effect id, built from a text parse of meta.ts.
+ * The 89 variant compositions therefore matched nothing and fell through to the
+ * `durationInFrames * 0.62` fallback below, so a variant's own `checkFrame` was
+ * never honoured and no variant poster was ever rendered — which left
+ * `check:poster` with nothing to look at for every card but the parent's.
+ */
+const frames = await compositionFrames();
 const POSTERS = join(OUT_DIR, 'poster');
 mkdirSync(POSTERS, {recursive: true});
 
@@ -50,8 +47,11 @@ console.log(`Rendering ${comps.length} stills…\n`);
 
 const failures = [];
 for (const comp of comps) {
-  // Render the frame the effect's own meta nominates as its most representative.
-  const frame = checkFrames.get(comp.id) ?? Math.round(comp.durationInFrames * 0.62);
+  // Render the frame the composition's own meta nominates as most representative.
+  const nominated = frames.get(comp.id);
+  const frame = Number.isFinite(nominated?.checkFrame)
+    ? nominated.checkFrame
+    : Math.round(comp.durationInFrames * 0.62);
   try {
     await renderStill({
       composition: comp,
@@ -62,7 +62,10 @@ for (const comp of comps) {
       chromiumOptions: {gl: 'angle'},
       overwrite: true,
     });
-    const poster = posterFrames.get(comp.id);
+    // The poster is the frame the gallery card actually shows. Render it when it
+    // differs from the check frame, so `check:poster` sees what a visitor sees.
+    const poster =
+      Number.isFinite(nominated?.poster) && nominated.poster !== frame ? nominated.poster : undefined;
     if (poster !== undefined) {
       await renderStill({
         composition: comp,

@@ -66,7 +66,7 @@ const buildKeepList = (words, {minSilence, margin, minSegment, fillers, fillerPa
   stutter of micro-cuts without it.
 - **A filler is a cut, not a deletion from a list.** The first version of this file only dropped
   `um` from the word array — and whenever its neighbours sat closer than `minSilence`, the run was kept
-  whole and the "um" stayed in the picture. Three of the four in this transcript survived that way.
+  whole and the "um" stayed in the picture. Three of the five in this transcript survived that way.
   So fillers are subtracted as their own intervals, ±50 ms, *after* padding, where no margin can grow
   back into them.
 

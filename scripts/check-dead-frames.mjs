@@ -12,17 +12,18 @@ import {getCompositions, renderStill} from '@remotion/renderer';
 import {readFileSync, mkdirSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {join} from 'node:path';
-import {ROOT, OUT_DIR, walkEffects} from './lib/fs.mjs';
-import {readMeta} from './lib/meta.mjs';
+import {ROOT, OUT_DIR} from './lib/fs.mjs';
+import {compositionFrames} from './lib/meta.mjs';
 
 const TMP = join(OUT_DIR, 'deadcheck');
 mkdirSync(TMP, {recursive: true});
 
-const checkFrames = new Map();
-for (const e of walkEffects()) {
-  const meta = readMeta(e.metaPath);
-  if (Number.isFinite(meta.checkFrame)) checkFrames.set(meta.id, meta.checkFrame);
-}
+/**
+ * Every composition's own check frame — variants included. Keyed by effect id,
+ * this map matched none of the 89 variant compositions, and the loop below
+ * skipped what it could not find: a variant that never moved was never caught.
+ */
+const checkFrames = await compositionFrames();
 
 const serveUrl = await bundle({entryPoint: join(ROOT, 'src/index.ts'), onProgress: () => undefined});
 const comps = await getCompositions(serveUrl);
@@ -30,8 +31,8 @@ const md5 = (p) => createHash('md5').update(readFileSync(p)).digest('hex');
 
 const dead = [];
 for (const c of comps) {
-  const f = checkFrames.get(c.id);
-  if (f === undefined) continue;
+  const f = checkFrames.get(c.id)?.checkFrame;
+  if (!Number.isFinite(f)) continue;
   const other = Math.min(c.durationInFrames - 1, f + 6);
   if (other === f) continue;
   const a = join(TMP, `${c.id}-a.png`);

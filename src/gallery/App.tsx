@@ -454,7 +454,7 @@ const Card: React.FC<{
             <Player
               component={Component}
               // Without this every variant renders the component's DEFAULTS. A
-              // variant IS its props — 82 viz templates and 3 handheld presets
+              // variant IS its props — 86 viz templates and 3 handheld presets
               // all shipped the same default picture under 85 different names.
               inputProps={inputProps}
               durationInFrames={meta.durationInFrames}
@@ -1109,8 +1109,8 @@ export const App: React.FC = () => {
    * Variants are hidden from the grid unless their family is expanded, or unless
    * the search is specific enough to be asking for them.
    *
-   * `viz-gallery` alone ships 83 variants. Shown flat they would be 83 of the
-   * grid's cards, and — worse — 83 live `<Thumbnail>`s, which is five times the
+   * `viz-gallery` alone ships 86 variants. Shown flat they would be 86 of the
+   * grid's cards, and — worse — 86 live `<Thumbnail>`s, which is five times the
    * browser's WebGL context budget. So the parent card carries the family and
    * says how many are inside; a search term that matches a variant's own name
    * surfaces it directly, because someone typing "sankey" wants the sankey card
@@ -1127,7 +1127,7 @@ export const App: React.FC = () => {
    * Whether this entry is a CARD right now, independent of the filters.
    *
    * A variant is folded into its family until you search or press "show all N
-   * variants", so the registry has 181 entries and the grid shows 96. Every
+   * variants", so the registry has 185 entries and the grid shows 96. Every
    * number on the page has to be counted through this, or it promises cards
    * that are not there: the rail read "Diagrams & Sketches 91" and a click
    * produced nine.
@@ -1299,8 +1299,8 @@ export const App: React.FC = () => {
           <div className="stats">
             {/* Two numbers, because they are two different things and one of them
                 would be a boast. `effects` includes every expanded variant, so
-                the 83 diagram templates would read as 83 effects; they are one
-                effect with 83 prop sets. Count families once and say how many
+                the 86 diagram templates would read as 86 effects; they are one
+                effect with 86 prop sets. Count families once and say how many
                 compositions that actually amounts to. */}
             <span>
               <b>{families}</b> effects

@@ -11,6 +11,7 @@
  * literal. Nested objects (`credit`) and long prose are inert.
  */
 import {readFileSync} from 'node:fs';
+import {pathToFileURL} from 'node:url';
 import {splitTopLevel} from '../../src/prompt-kit/compose.mjs';
 
 const NUMBER_KEYS = new Set(['width', 'height', 'fps', 'durationInFrames', 'checkFrame', 'posterFrame']);
@@ -160,3 +161,52 @@ export const parseMeta = (source, label = 'meta.ts') => {
 
 /** Read and parse one meta.ts. */
 export const readMeta = (metaPath) => parseMeta(readFileSync(metaPath, 'utf8'), metaPath);
+
+/**
+ * The `meta` export, EVALUATED rather than text-parsed.
+ *
+ * The reader above exists because a Node script could not import TypeScript when
+ * it was written. It still cannot import a component (`.tsx`), but a `meta.ts` is
+ * plain data — so Node's type stripping imports it directly, and `variants`
+ * arrives as the array it is, including `viz-gallery`'s, which is an imported
+ * identifier no text parser can evaluate. That is the whole reason this exists:
+ * two gates keyed their frame maps by effect id and silently skipped all 89
+ * variant compositions.
+ *
+ * Requires the explicit `.ts` specifier in any value import a meta.ts makes
+ * (`allowImportingTsExtensions` in tsconfig.json) — Node resolves no
+ * extensionless specifier.
+ */
+export const importMeta = async (metaPath) => {
+  const mod = await import(pathToFileURL(metaPath).href);
+  if (!mod.meta) throw new Error(`${metaPath}: no \`meta\` export`);
+  return mod.meta;
+};
+
+/**
+ * Every composition the registry will register — base effects and variants —
+ * with the frames each one's own metadata nominates.
+ *
+ * The inheritance here MIRRORS `src/registry.generated.ts`: a variant takes its
+ * parent's frames unless it overrides them, and `posterFrame` falls back to
+ * `checkFrame` only at the point of use, exactly as the gallery does.
+ */
+export const compositionFrames = async () => {
+  const {walkEffects} = await import('./fs.mjs');
+  const map = new Map();
+  for (const e of walkEffects()) {
+    const meta = await importMeta(e.metaPath);
+    const add = (id, checkFrame, posterFrame, parentId) =>
+      map.set(id, {checkFrame, posterFrame, poster: posterFrame ?? checkFrame, parentId});
+    add(meta.id, meta.checkFrame, meta.posterFrame, null);
+    for (const v of meta.variants ?? []) {
+      add(
+        `${meta.id}--${v.id}`,
+        v.checkFrame ?? meta.checkFrame,
+        v.posterFrame ?? meta.posterFrame,
+        meta.id,
+      );
+    }
+  }
+  return map;
+};

@@ -2,7 +2,7 @@
 
 A browsable catalogue of production-ready motion for [Remotion](https://remotion.dev) 4.0.522.
 
-**[Browse it →](https://vivmagarwal.github.io/remotion-effects-library/)** — 181 compositions playing
+**[Browse it →](https://vivmagarwal.github.io/remotion-effects-library/)** — 185 compositions playing
 live in the browser, each with the file and the prompt behind it.
 
 Every entry is three things kept in one folder and guaranteed not to drift apart:
@@ -19,6 +19,11 @@ npm i
 npm run gallery     # the browsable catalogue      → http://localhost:5177
 npm run studio      # Remotion Studio, all effects  → http://localhost:3000
 ```
+
+**New to the codebase?** Start with [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — the `docs/` folder
+is the complete onboarding reference: architecture, the effect contract, the design system, the prompt
+pipeline, the gallery, every quality gate, media assets, the diagrams subsystem, video editing, and
+deployment.
 
 ---
 
@@ -82,7 +87,7 @@ project, register it in `src/Root.tsx`. Every effect is a single self-contained 
 optional props — no shared helpers to chase down, no design tokens to import. Duplication across
 effects is deliberate.
 
-**2. Copy the prompt.** Hit **Copy prompt** and paste it into Claude Code, Cursor, Codex or anything
+**2. Copy the prompt.** Hit **Copy full prompt** and paste it into Claude Code, Cursor, Codex or anything
 else. Each prompt composes, in this order:
 
 - the effect brief — exact colours, sizes, timings, and *why* the non-obvious decisions are what they
@@ -114,11 +119,11 @@ in 4.0.522 already and the only missing ingredient was footage.
 
 ### What ships
 
-`public/footage/` — 9.1 MB, six clips, all NASA, all H.264 1080p (or 720p) 30 fps with `+faststart`:
+`public/footage/` — 9.6 MB, six clips, all NASA, all H.264 1080p (or 720p) 30 fps with `+faststart`:
 
 | clip | | |
 |---|---|---|
-| `interview-raw.mp4` | 1280×720, 39.0 s, with audio | A raw locked-off interview with **real filler words and real pauses**. This is the one that matters: you cannot demonstrate a silence cut or a filler cut on clean footage, because there is nothing to cut. |
+| `interview-raw.mp4` | 1280×720, 53.0 s, with audio | A raw locked-off interview with **real filler words and real pauses**. This is the one that matters: you cannot demonstrate a silence cut or a filler cut on clean footage, because there is nothing to cut. |
 | `interview.mp4` | 1920×1080, 6.1 s, with audio | A clean produced talking head — the "after" to the raw clip's "before". |
 | `broll-earth.mp4` | 1920×1080, 6.0 s, silent | Earth from orbit. |
 | `broll-eva.mp4` | 1920×1080, 4.4 s, silent | A spacewalk. |
@@ -127,7 +132,8 @@ in 4.0.522 already and the only missing ingredient was footage.
 
 `public/audio/` — a music bed and a ten-piece SFX rack, all **synthesised** by
 `scripts/make-audio-assets.py` rather than sourced, so there is no licence question and the transients
-land exactly where the script puts them.
+land exactly where the script puts them — plus `voice-interview.mp3`, the 41.0–53.0 s voice window of
+`interview-raw.mp4`, for ducking demos.
 
 `public/transcripts/` — two **real Deepgram `nova-3` responses, committed verbatim**, so every
 caption, cut-list and pause effect renders offline with no API key and no network.
@@ -135,7 +141,7 @@ caption, cut-list and pause effect renders offline with no API key and no networ
 Provenance for every file in `public/`, including NASA's media-usage position quoted in full and how
 this repo complies with it, is in [`public/ASSETS.md`](public/ASSETS.md). `scripts/fetch-footage.sh` re-derives
 every clip from its source URL and checks the result against a recorded SHA-256; all six reproduce byte
-for byte. `npm run check:assets` fails the build if a file appears in `public/` without a row in the
+for byte with ffmpeg 7.1.1. `npm run check:assets` fails the build if a file appears in `public/` without a row in the
 manifest.
 
 **These are demo assets.** Both interview clips show an identifiable NASA astronaut wearing the NASA
@@ -243,35 +249,41 @@ pill over a stroke with `paintOrder: 'stroke fill'`; a drop shadow alone is not 
 
 ## Diagrams
 
-The `diagrams` category drives [edododraw](https://www.npmjs.com/package/edododraw) — a text DSL that
-compiles to a hand-drawn diagram — from `useCurrentFrame()`. You write the diagram as source, and
-Remotion animates it: strokes draw on, nodes reveal on their timeline beats, the camera moves between
-groups, annotations fire on cue, and arrows flow.
+The `diagrams` category includes `viz-gallery`, which drives
+[edododraw](https://www.npmjs.com/package/edododraw) — a text DSL that compiles to a hand-drawn diagram —
+from `useCurrentFrame()`. The one component ships as **87 compositions**: a base card plus one variant
+for each of 86 of edododraw's 87 visualization templates, generated from the package's own demo
+catalogue by `npm run viz:variants` (`tug-of-war` is left out: its figures' hands do not reach the rope).
 
-Four things to know before you copy one of these effects:
+What to know before you copy it:
 
-- **Compilation is DOM-free and deterministic.** `compileEdd()` is pure and synchronous (8–18 ms for a
-  twelve-node scene); rough-sketch seeds are hashed from element ids, not random.
-- **Rendering must be pinned.** Use `SvgRenderer` with `static: true` and `startHidden: true`. Without
-  both, a Remotion worker can screenshot a 0.45 s CSS transition mid-flight and two renders of the same
-  frame will differ.
+- **Compile once, render once, write styles per frame.** `compileEdd()` is pure, synchronous and
+  DOM-free (8–18 ms for a twelve-node scene), so it runs in a `useMemo`; `renderer.render()` touches the
+  DOM, so it runs once in a `useLayoutEffect`; per frame only `stroke-dasharray`/`dashoffset`/`opacity`
+  are written on elements measured at mount. Rough-sketch seeds are hashed from element ids, not random.
+- **Construct `SvgRenderer` with `static: true`.** It strips the CSS transitions and animated-arrow
+  keyframes a Remotion worker would otherwise capture mid-flight, so two renders of one frame agree.
+- **Hold line weight and jitter constant on screen.** `nonScalingStroke: true` keeps a width a screen
+  width at any camera zoom; `strokeScale` sets that weight; `roughnessScale: min(1, 1/zoom)` undoes the
+  magnification rough.js jitter gets from the camera fit, because rough.js perturbs geometry in world
+  units.
+- **Measure dash lengths in screen pixels.** Under a non-scaling stroke the dash pattern is laid out on
+  screen, so `getTotalLength()` must be scaled by the element's CTM — measured in user units, every
+  circle closes halfway round on the finished frame.
 - **Install with `--omit=optional`.** `@excalidraw/mermaid-to-excalidraw` is an optional dependency and
-  npm installs those by default: 122 packages and 66 MB, versus 8 packages and 4.2 MB without it. You
-  only need it if you are importing Mermaid, and that conversion belongs in a build step anyway because
-  it is browser-only and async.
-- **Turn roughness down when you zoom.** Rough strokes are generated at scale 1, so a camera push
-  magnifies the sketchiness along with everything else. `defaults { node { roughness: 0.35 } edge {
-  roughness: 0.35 } }` is the fix that needs no upstream change.
+  npm installs those by default: 122 packages and 66 MB, versus 8 packages and 4.2 MB without it.
 
 Everything above was verified against edododraw **0.16.2**, which `package.json` pins as `^0.16.2`.
+The full subsystem — draw order by data item, the camera fit, how the theme reaches a diagram, and how
+to verify a change in a browser — is in [`docs/DIAGRAMS_VIZ_GUIDE.md`](docs/DIAGRAMS_VIZ_GUIDE.md).
 
-The first of those fixes is worth reading even if you never touch edododraw, because the failure had no
+One failure from this subsystem is worth knowing even if you never touch edododraw, because it had no
 symptom. The package populates its visualization registry by **import side effect**, and its
-`sideEffects` globs pointed at `**/viz/generators/*.ts` while the published build ships only `.d.ts`
-files there. The declaration matched nothing, so the package looked side-effect-free and a production
-bundler removed the registrations. An unregistered `viz` type **warns rather than errors** — so a card
-compiled to a scene with zero nodes and rendered a clean blank frame. Every gate was green, the dev
-server was fine, server-side stills were fine, and only the production Vite build tree-shook. A human
+`sideEffects` globs once pointed at `**/viz/generators/*.ts` while the published build ships only
+`.d.ts` files there. The declaration matched nothing, so the package looked side-effect-free and a
+production bundler removed the registrations. An unregistered `viz` type **warns rather than errors** —
+so a card compiled to a scene with zero nodes and rendered a clean blank frame. Every gate was green, the
+dev server was fine, server-side stills were fine, and only the production Vite build tree-shook. A human
 had to see it. `check:edd` now fails on a `sideEffects` glob that matches no shipped `.js`, and on any
 viz template that compiles to an empty scene.
 
@@ -281,8 +293,8 @@ viz template that compiles to an empty scene.
 
 Every effect takes a `theme` prop. Pass one object to a set of compositions and
 they agree on ground, ink, accent, typeface, corner radius and hand-drawn
-roughness. `src/theme.ts` is the vocabulary and ships four themes; the gallery
-has a picker that restyles all 181 compositions live.
+roughness. `src/theme.ts` is the vocabulary and ships five themes; the gallery
+has a picker that restyles all 185 compositions live.
 
 ```tsx
 import {THEMES} from './src/theme';
@@ -414,7 +426,7 @@ fixed or dropped:
   WebGL2 and render a **blank white frame with no error** where that is unavailable
   (`--gl=swiftshader` throws *"Failed to create WebGL2 context"*). The cards either side look perfect,
   so only a mid-transition frame catches it. **Whip Pan** replaces it as a custom DOM presentation that
-  renders anywhere, and the caveat is now in the shared core module.
+  renders anywhere, and the caveat is now in the shared shaders module.
 
 ---
 
@@ -425,33 +437,43 @@ src/
 ├── effects/<category>/<id>/
 │   ├── <Component>.tsx      the effect — one file, copy-pasteable, nothing else in it
 │   ├── meta.ts              name, description, tags, dimensions, checkFrame/posterFrame,
-│   │                        packages, requires, ground, audience
+│   │                        packages, requires, ground, audience, variants
 │   └── prompt.md            the effect-specific brief
 ├── prompt-kit/
 │   ├── compose.mjs          THE composer — imported by both the gallery and emit-prompts
-│   ├── core.md              always included: imports, the frame-driven rule, gotchas
+│   ├── project-setup.md     always included: scaffold instructions
 │   ├── house-style.md       always included: palette, type scale, easing and spring vocabulary
+│   ├── theme.md             always included: the theme-as-a-prop contract
+│   ├── core.md              always included: imports, the frame-driven rule, gotchas
 │   ├── video.md             when meta.requires includes 'video'
 │   ├── captions.md          when meta.requires includes 'transcript'
 │   ├── audio.md             when meta.requires includes 'audio'
-│   ├── three.md d3.md diagrams.md shaders.md    selected from meta.packages
-│   └── project-setup.md     scaffold instructions
+│   └── three.md d3.md diagrams.md shaders.md    selected from meta.packages / the source
 ├── gallery/                 the Vite catalogue app
 │   └── categories.ts        THE taxonomy — CATEGORY_LABEL and CATEGORY_ORDER
+├── theme.ts                 the Theme type, the five themes, themeFor()
 ├── tags.ts                  the controlled vocabularies for meta.tags and meta.concepts
+├── types.ts                 EffectMeta, EffectEntry, Category — the contract
 ├── Root.tsx                 registers every effect as a Composition
 └── registry.generated.ts    codegen — do not edit
 
 scripts/
-├── build-registry.mjs       scans src/effects, writes the registry
+├── build-registry.mjs       scans src/effects and public/, writes the registry
+├── build-viz-variants.mjs   generates viz-gallery's variants from edododraw's demo catalogue
 ├── emit-prompts.mjs         writes every composed prompt to out/prompts/
-├── verify.mjs               renders one still per effect — the quality gate
+├── update-readme.mjs        regenerates the catalogue table in this README
+├── verify.mjs               renders one still per composition
 ├── check-*.mjs              the gates below
-├── lib/                     dirs(), the effect walk, readMeta/readProps, the taxonomy mirror
+├── serve-and-check-*.mjs    serve the built gallery on a free port for the browser gates
+├── lib/                     the effect walk, the meta.ts parser, the gate harness, a PNG decoder,
+│                            the blank-frame floors, the taxonomy mirror, the prompt-kit loader
+├── apply-theme*.mjs         one-shot codemods that introduced the theme prop (not in any npm script)
 ├── fetch-footage.sh         re-derives public/footage/ from NASA, byte for byte
 ├── make-audio-assets.py     regenerates the whole audio pack from oscillators
 ├── make-sample-plates.py    regenerates public/plate-*.svg and subject-skyline.svg
 └── make-city-asset.py       regenerates public/sample-city.svg
+
+docs/                        the onboarding reference — start at ARCHITECTURE.md
 ```
 
 ### Commands
@@ -462,7 +484,9 @@ scripts/
 | `npm run studio` | Remotion Studio with every effect registered |
 | `npm run prompts` | writes all composed prompts to `out/prompts/` |
 | `npm run docs` | regenerates the catalogue table above |
-| `npm run render <id>` | render one effect to video |
+| `npm run viz:variants` | regenerates the viz-gallery variant list after an edododraw upgrade |
+| `npm run render <id>` / `npm run still <id>` | render one effect to video / to a still |
+| `npm run build:gallery` / `npm run preview:gallery` | build the gallery to `dist-gallery/` / serve it on `localhost:5178` |
 | `npm run gate:fast` | everything below that does not render — what CI runs on push |
 | `npm run gate:slow` | the rendering gates; slow, run before a release |
 
@@ -472,11 +496,11 @@ Every one exits non-zero on failure.
 
 | gate | fails when | speed |
 |---|---|---|
-| `registry` | an effect folder is not exactly one `.tsx` + `meta.ts` + `prompt.md` | fast |
+| `registry` | an effect folder does not hold exactly one `.tsx`, or is missing `meta.ts` or `prompt.md` | fast |
 | `typecheck` | `tsc --noEmit` finds anything | fast |
 | `check:compose` | `emit-prompts` output differs from what the gallery composer produces, byte for byte | fast |
 | `check:vocab` | a tag or concept is outside `src/tags.ts` | fast |
-| `check:taxonomy` | `src/types.ts`, `src/gallery/categories.ts` and `scripts/lib/taxonomy.mjs` disagree | fast |
+| `check:taxonomy` | `src/types.ts`, `src/gallery/categories.ts` and `scripts/lib/taxonomy.mjs` disagree; an effect's folder is not its `meta.category`; or a `check:*` npm script has no row in this table, or a row names no script | fast |
 | `check:meta` | a tagline is outside 42–79 characters or does not end in `.`; an id is not kebab-case of its component; a duplicate id; **a key written in `meta.ts` never reached the registry** | fast |
 | `check:standalone` | a `prompt.md` says "this repo", "the library", "as elsewhere" or "see also", or references a `staticFile()` asset that is not in `public/` | fast |
 | `check:media-props` | a `<Video>`/`<Audio>` sets `objectFit` or `objectPosition` inside `style`, where a canvas-backed component silently ignores it — in a component **or in a brief's code fence** | fast |
@@ -488,15 +512,13 @@ Every one exits non-zero on failure.
 | `check:palette` | a hex literal in a component is outside the house palette, is not derived from a prop, and is not marked `// palette: brand-mimicry` | fast |
 | `check:imports` | a component imports a package the brief's install line does not cover, or the install line lists a package the component never imports — so a pasted file either fails to resolve or asks for more than it needs | fast |
 | `check:edd` | an `edododraw` `sideEffects` glob matches no shipped JS, or a viz template compiles to an empty scene | fast |
-| `verify` | any effect fails to render a still | slow |
-| `check:frames` | an effect's `checkFrame` shows no motion | slow |
+| `verify` | any composition fails to render a still. Renders every composition at its own `checkFrame` — variants included — plus its poster frame where that differs | slow |
+| `check:frames` | a composition's `checkFrame` shows no motion (all 185, variants included) | slow |
 | `check:poster` | a poster frame's mean luminance variance is below the floor — a blank or black card | slow |
 | `check:browser` | a composition renders blank in a **browser**, or lands a long way from where `renderStill` puts it — the gap two shipped bugs lived in. Not a general pixel-regression test; see the header of `scripts/check-browser-frames.mjs` for the measured sensitivity limit | slow |
-
-| `check:gallery-counts` | a number printed beside a filter does not equal the number of cards clicking it opens, or a "Copy code"/"Copy prompt" button would put a placeholder on the clipboard. Runs inside `check:browser`, on the same server | slow |
+| `check:gallery-counts` | a number printed beside a rail category or a facet pill does not equal the number of cards selecting it shows, or a "Copy source"/"Copy full prompt" button would put a placeholder on the clipboard. Runs inside `check:browser`, on the same server | slow |
 | `check:player` | a composition renders differently while it is **playing** than it does seeked to the same frame — the WebCodecs path `<Thumbnail>` never takes, and the only one a viewer who presses play ever sees | slow |
-
-| `check:themes` | a theme fails to render an effect, renders it blank, or moves a token it changes without moving one pixel. `house` is inverted: it is the authored look, so a *difference* beyond a typeface swap is the bug. `--probe` additionally asks, one token at a time, whether each declared token reaches the picture at all — that one is a report to read, not a verdict, because a token can be wired and simply not visible at the frame being rendered. Not in a gate chain; 384 renders, or 394 for the probe | manual |
+| `check:themes` | a theme fails to render an effect, renders it blank, or moves a token it changes without moving one pixel. `house` is inverted: it is the authored look, so a *difference* beyond a typeface swap is the bug. `--probe` additionally asks, one token at a time, whether each declared token reaches the picture at all — that one is a report to read, not a verdict, because a token can be wired and simply not visible at the frame being rendered. Not in a gate chain; 480 themed renders (5 themes × 96 effects) plus up to 96 authored baselines; the probe renders once per declared theme token, 643 across the library | manual |
 
 ---
 
@@ -511,12 +533,14 @@ Every one exits non-zero on failure.
    the effect moving, a poster has to look like the finished thing. For a fast entrance those are
    different moments; for a continuous loop they are the same, and `posterFrame` can be omitted.
 3. Declare `requires` if the effect needs real media (`'video' | 'audio' | 'image' | 'transcript'`).
-   That is what selects the right prompt modules and what lets the gallery filter and the gates reason
-   about black frames.
+   That is what selects the right prompt modules and drives the gallery's *Needs* filter.
 4. `npm run gate:fast`, then `npm run verify` — it must render.
 5. Ideally, hand `out/prompts/<id>.md` to an agent with no context and see whether they can rebuild it.
 
 The registry, the Studio, the gallery grid and the prompt files all follow automatically.
+
+The full contract — every `meta.ts` field and its consequence, variants, the vocabularies, removing an
+effect — is in [`docs/EFFECT_AUTHORING_GUIDE.md`](docs/EFFECT_AUTHORING_GUIDE.md).
 
 ---
 

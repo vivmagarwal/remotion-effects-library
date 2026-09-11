@@ -229,7 +229,7 @@ type Props = {
  * "Cannot find module './variants.generated'", which is the first thing anyone
  * following the brief would see.
  *
- * The generated list is still the source of truth for the 82 gallery variants;
+ * The generated list is still the source of truth for the 86 gallery variants;
  * it is just referenced from `meta.ts`, which never leaves this repo, rather
  * than from the component, which does.
  */
@@ -365,7 +365,7 @@ export const VizGallery: React.FC<Props> = ({
     // || scene.theme.background`, so the host adopts the DIAGRAM's paper — #fbfaf7
     // for `hand-clean`. The frame around it is this component's `backgroundColor`,
     // which is #f6f5f2, and the two differ by about 2% luminance: a horizontal seam
-    // across the band on all 82 cards, faint enough to read as a rendering artefact
+    // across the band on every card, faint enough to read as a rendering artefact
     // rather than a bug. Under a theme it stops being faint, because the frame moves
     // to the theme's `paper` and the band does not move at all.
     host.style.backgroundColor = 'transparent';
@@ -373,7 +373,7 @@ export const VizGallery: React.FC<Props> = ({
     // Fit the diagram to the frame ONCE. Every template lays out at whatever
     // size its content needs, so without this a four-item flowchart sits small
     // in the top-left while a 25-element architecture diagram runs off the edge,
-    // and across 82 cards that inconsistency is the first thing you notice.
+    // and across 86 cards that inconsistency is the first thing you notice.
     //
     // `setViewport` is the load-bearing call and it is not optional. The camera
     // is `translate(vw/2, vh/2) scale(zoom) translate(-cx, -cy)`, and the

@@ -200,7 +200,7 @@ export const HOUSE: Theme = {
 
 /**
  * Alternate themes, shipped so the mechanism is provable rather than asserted.
- * Swap one in and all 181 compositions change together — that is the whole
+ * Swap one in and all 185 compositions change together — that is the whole
  * claim, and a claim you cannot demonstrate is a promise.
  */
 export const THEMES: Readonly<Record<string, Theme>> = {
@@ -329,7 +329,10 @@ export const THEMES: Readonly<Record<string, Theme>> = {
  * the gallery and the Remotion root make the same call.
  */
 export const themeFor = (theme: Theme, ground?: string): Theme => {
-  if (theme.scheme !== 'light' || ground !== 'dark') return theme;
+  // An absent ground is treated as 'dark' — the same reading the gallery's filter
+  // gives it. `meta.ground` is required, so this only covers a caller outside the
+  // type system; it is here because the two readings must not differ.
+  if (theme.scheme !== 'light' || (ground ?? 'dark') !== 'dark') return theme;
   return {
     ...theme,
     scheme: 'dark',

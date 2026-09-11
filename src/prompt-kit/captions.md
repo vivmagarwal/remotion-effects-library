@@ -188,14 +188,14 @@ const gaps = captions.slice(0, -1).map((a, i) => {
 point): silence threshold **4 % of peak RMS over a 20 ms window**; minimum silence to cut **350 ms**;
 keep margin **180–220 ms each side** so the cut never clips a consonant onset; minimum kept segment
 **250 ms**; after removing **disfluencies** (`um, uh, umm, uhh, uhm, hmm, er, ah` — `interview-raw`
-contains four real `um`s), merge adjacent kept ranges whose gap is now **< 120 ms**. Discourse markers
+contains five real `um`s), merge adjacent kept ranges whose gap is now **< 120 ms**. Discourse markers
 — `like, you know, so, basically, actually, I mean, right` — change the meaning of a sentence when
 they go, so they are **review-only**: list them, never auto-cut them.
 
 A filler is cut as its **own interval, ±50 ms**, independent of the silence gate. Dropping it from the
 word list alone is not a cut: whenever its neighbours sit closer than the silence threshold the run is
-kept whole and the "um" stays in the picture, which is exactly what the four in `interview-raw` did
-until this was measured.
+kept whole and the "um" stays in the picture, which is exactly what three of the five in
+`interview-raw` did until this was measured.
 
 **Two gap regimes.** The table above is the **short-form** regime — every gap tightened, ~40 % of a
 talking head removed. Long-form conversation and reflective teaching use the **conservative** one the
@@ -260,7 +260,7 @@ position — derived emphasis lands on "the".
 | YouTube Shorts | 120 | 300 | 48 | 96 |
 | **Universal (clears all three)** | **260** | **484** | **48** | **140** |
 
-The universal row is the per-column maximum of the three above it — an earlier version said 260 at the
+The universal row is at least the per-column maximum of the three above it — an earlier version said 260 at the
 bottom and 90 on the right, which cleared none of its own table. For captions specifically,
 **bottom-anchor between 520 and 620 px** on a 1080×1920 frame: that clears TikTok's caption stack and
 the Reels action rail at once. TikTok's figure is a floor, not a guarantee — it grows with the length

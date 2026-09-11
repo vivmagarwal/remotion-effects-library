@@ -11,7 +11,7 @@ export default defineConfig({
   preview: {port: 5178},
   build: {
     outDir: 'dist-gallery',
-    // The registry statically imports every effect, so three.js and the seven
+    // The registry statically imports every effect, so three.js and the eleven
     // d3 packages otherwise land in the same chunk as the shell and a visitor
     // who only wants a text effect downloads all of it before the first card
     // paints. Splitting them lets the browser cache the heavy libraries

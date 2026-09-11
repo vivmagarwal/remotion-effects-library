@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
  * Gate: every number printed next to a filter must equal the number of cards
- * clicking it produces.
+ * clicking it produces — the category rail AND the facet pills behind "Filters".
  *
- * The registry holds 181 entries but the grid shows 96, because a variant is
+ * The registry holds 185 entries but the grid shows 96, because a variant is
  * folded into its family until you search or expand it. The rail and the facet
  * chips were counting registry rows, so "Diagrams & Sketches 91" opened nine
  * cards and "All effects 181" opened ninety-six. Nothing was broken; the page
@@ -74,6 +74,72 @@ try {
   );
 
   /**
+   * The facet pills behind the "Filters" button, swept the same way.
+   *
+   * These were unchecked for a while, and they are the harder half: a rail count
+   * is one derivation, but a facet count is computed with that facet's own
+   * filter SKIPPED (`passes(e, filters, facet)`), so it promises "this many if
+   * you pick this one" — a different predicate from the grid's. Clicking the
+   * pill and counting the cards is the only way to prove the two agree.
+   *
+   * Each pill is toggled ON, measured, then toggled OFF again, because leaving
+   * one on changes every other count on the page. Pills are re-found by label
+   * between clicks: a pill whose count drops to zero is unmounted, so a node
+   * captured before the click can be stale.
+   *
+   * The sweep starts by clearing the category filter the rail loop above left
+   * selected. Without that it runs inside the last category, where nearly every
+   * pill has a count of zero and is therefore not rendered at all — the sweep
+   * reported success having checked 11 pills instead of every one of them.
+   */
+  const facetRows = JSON.parse(
+    await page.evaluate(
+      `(async () => {
+         const settle = () => new Promise((r) => setTimeout(r, 240));
+
+         // Back to "all effects" — the rail sweep left a category selected.
+         const all = document.querySelector('.rail-item');
+         if (all) { all.click(); await settle(); }
+         const baseline = document.querySelectorAll('[data-effect-id]').length;
+
+         const open = document.querySelector('.filterbtn');
+         if (!open) return JSON.stringify([{facet: 'Filters', label: 'button', claimed: null, shown: null, missing: true}]);
+         if (open.getAttribute('aria-expanded') !== 'true') { open.click(); await settle(); }
+
+         const labelOf = (b) => (b.childNodes[0]?.textContent ?? '').trim();
+         const groups = [...document.querySelectorAll('.facets > div')].map((d) => ({
+           facet: d.querySelector('.facet-h')?.textContent?.trim() ?? '?',
+           labels: [...d.querySelectorAll('button.pill')].map(labelOf),
+         }));
+
+         const find = (facet, label) => {
+           for (const d of document.querySelectorAll('.facets > div')) {
+             if ((d.querySelector('.facet-h')?.textContent?.trim() ?? '?') !== facet) continue;
+             for (const b of d.querySelectorAll('button.pill')) if (labelOf(b) === label) return b;
+           }
+           return null;
+         };
+
+         const out = [{facet: '(baseline)', label: 'all effects', claimed: baseline, shown: baseline, missing: false}];
+         for (const {facet, labels} of groups) {
+           for (const label of labels) {
+             const pill = find(facet, label);
+             if (!pill) { out.push({facet, label, claimed: null, shown: null, missing: true}); continue; }
+             const claimed = Number(pill.querySelector('.n')?.textContent?.trim() ?? 'NaN');
+             pill.click();
+             await settle();
+             const shown = document.querySelectorAll('[data-effect-id]').length;
+             const off = find(facet, label);
+             if (off) { off.click(); await settle(); }
+             out.push({facet, label, claimed, shown, missing: false});
+           }
+         }
+         return JSON.stringify(out);
+       })()`,
+    ),
+  );
+
+  /**
    * The two copy buttons, measured rather than assumed.
    *
    * `sourceOf` and `promptFor` both resolve through a Vite glob keyed by the
@@ -88,8 +154,8 @@ try {
   );
   if (payloads.length === 0) g.fail('the gallery published no compositions to measure');
   for (const c of payloads) {
-    if (!(c.srcBytes > 800)) g.fail(`${c.id}: "Copy code" would copy ${c.srcBytes} bytes`);
-    if (!(c.promptBytes > 2000)) g.fail(`${c.id}: "Copy prompt" would copy ${c.promptBytes} bytes`);
+    if (!(c.srcBytes > 800)) g.fail(`${c.id}: "Copy source" would copy ${c.srcBytes} bytes`);
+    if (!(c.promptBytes > 2000)) g.fail(`${c.id}: "Copy full prompt" would copy ${c.promptBytes} bytes`);
   }
 
   if (rows.length < 2) g.fail(`only ${rows.length} rail item(s) found — the gate checked nothing`);
@@ -99,8 +165,32 @@ try {
       g.fail(`rail "${r.name}" says ${r.claimed} but clicking it shows ${r.shown} card(s)`);
     }
   }
+
+  /**
+   * The page ships five facets — Needs, Ground, For, Level, Library — and the
+   * smallest of them has three values. A sweep that finds a handful has not found
+   * the facets; it has found whatever survived a filter it forgot to clear, which
+   * is precisely how this half of the gate first passed while checking almost
+   * nothing.
+   */
+  const swept = facetRows.filter((r) => r.facet !== '(baseline)');
+  if (swept.length < 20) {
+    g.fail(`only ${swept.length} facet pill(s) swept — expected every pill across five facets; the sweep checked almost nothing`);
+  }
+  const facetsSeen = new Set(swept.map((r) => r.facet));
+  if (facetsSeen.size < 5) {
+    g.fail(`only ${facetsSeen.size} facet group(s) found (${[...facetsSeen].join(', ') || 'none'}) — expected five`);
+  }
+  for (const r of swept) {
+    if (r.missing) g.fail(`facet "${r.facet}" pill "${r.label}" vanished before it could be clicked`);
+    else if (!Number.isFinite(r.claimed)) g.fail(`facet "${r.facet}" pill "${r.label}" prints no number`);
+    else if (r.claimed !== r.shown) {
+      g.fail(`facet "${r.facet}" pill "${r.label}" says ${r.claimed} but selecting it shows ${r.shown} card(s)`);
+    }
+  }
+
   g.done(
-    `${rows.length} rail sections match the cards they open; ` +
+    `${rows.length} rail sections and ${swept.length} facet pills across ${facetsSeen.size} facets match the cards they open; ` +
       `${payloads.length} compositions carry real code and a real prompt on the clipboard`,
   );
 } finally {

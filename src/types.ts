@@ -122,10 +122,18 @@ export type EffectMeta = {
    * fast entrance those are different moments.
    */
   readonly posterFrame?: number;
-  /** What real assets the effect needs. Lets the gallery filter and the gates reason about black frames. */
+  /** What real assets the effect needs. Selects the prompt modules and drives the gallery's Needs filter. */
   readonly requires?: readonly ('video' | 'audio' | 'image' | 'transcript')[];
-  /** How the effect's ground behaves in a light gallery. Default 'dark'. */
-  readonly ground?: 'dark' | 'light' | 'both' | 'transparent';
+  /**
+   * Which ground the effect was designed for.
+   *
+   * REQUIRED, because the safe default is not the obvious one: `themeFor()` only
+   * protects an explicit `'dark'` from a light theme, so an omitted value used to
+   * mean "a light theme may reground this" while the gallery's filter read the
+   * same absence as "dark". Two readings of one silence is how a particle field
+   * ends up white on white; declaring it is cheap.
+   */
+  readonly ground: 'dark' | 'light' | 'both' | 'transparent';
   /** Who this is for — every adopted catalogue is organised by audience, not only technique. */
   readonly audience?: readonly (
     | 'youtuber'
@@ -141,10 +149,9 @@ export type EffectMeta = {
   /**
    * Named prop sets this same component also ships as.
    *
-   * Some things here are a FAMILY, not an effect: fourteen caption styles, a
-   * dozen lower thirds, twenty transition presentations, eighty-three diagram
-   * templates. Eighty-three folders would be absurd, and one card that hides
-   * eighty-two looks is not a demo of them. So a variant becomes its own
+   * Some things here are a FAMILY, not an effect: eighty-six diagram templates,
+   * three handheld-camera presets. Eighty-six folders would be absurd, and one
+   * card that hides eighty-five looks is not a demo of them. So a variant becomes its own
    * `<Composition>` (`<id>--<variantId>`) and its own gallery card, grouped
    * under the parent, while the code stays in one file.
    *
@@ -174,7 +181,7 @@ export type EffectEntry = {
   /**
    * Set on entries expanded from `meta.variants`. The id of the effect they came
    * from, so the gallery can group a family under one heading and the prompt can
-   * point at one brief rather than eighty-three.
+   * point at one brief rather than eighty-six.
    */
   readonly parentId?: string;
   /** The variant's prop values, passed as the composition's `defaultProps`. */

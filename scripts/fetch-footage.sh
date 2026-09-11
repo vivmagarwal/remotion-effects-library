@@ -77,7 +77,7 @@ source_url() {
 # Common to every encode: libx264, preset slow, -pix_fmt yuv420p, -movflags +faststart.
 # Where audio is kept: AAC 96 kbps, 2 channels, 48 kHz. Where it is not: -an.
 read -r -d '' MANIFEST <<'EOF' || true
-interview-raw|S1|157.5|39.0|scale=1280:720:flags=lanczos,fps=30|26|y|3545532183869572de7e4434e518de45c12e774ec175651260e14999434209ae
+interview-raw|S1|157.5|53.0|scale=1280:720:flags=lanczos,fps=30|26|y|c42bbdb41dfdce4191fd32bbfb5a0419bc4298ad39a2904242ed5af64d67efa9
 interview|S2|88.97|6.1|fps=30|25|y|5c6560764aca29abb5bcd1bf611a95e1b150dbde5784066f0ed39818c4d30df2
 broll-earth|S3|139.9|6.0|fps=30|26|n|42bbf47cd178df647ae73d16d440cf1ecd186996cde84d93cee155361711b66e
 broll-eva|S3|156.9|4.4|fps=30|26|n|33906a8988224d0d1866f71663a9e079e04c163246163effcd0eb37308b3183a
