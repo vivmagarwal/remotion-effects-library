@@ -62,7 +62,7 @@ sequence: `check-gallery-counts.mjs`, then `check-browser-frames.mjs`.
 |---|---|---|---|
 | `verify` | `verify.mjs` | One still per composition at its own `checkFrame`, scale 0.35 → `out/verify/`, plus its poster frame → `out/poster/` when that differs. Variants included: they inherit their parent's frames unless they override them, exactly as the registry expands them (185 stills + 135 posters) | Any composition throws while rendering. Takes a positional substring filter. |
 | `check:frames` | `check-dead-frames.mjs` | `checkFrame` and `checkFrame + 6` at scale 0.3 → `out/deadcheck/`, for all 185 compositions | The two frames are md5-identical — i.e. `checkFrame` proves no motion. |
-| `check:poster` | `check-poster.mjs` | Nothing — reads `out/poster/`, falling back to `out/verify/` | A frame is blank: `mean < 0.004`, `std < 0.016`, or `edge < 0.0003`. It also re-tests five synthesised empty frames and fails if the floors stop rejecting them. Exits 0 with a message when no stills exist yet. |
+| `check:poster` | `check-poster.mjs` | Nothing — reads `out/poster/`, falling back to `out/verify/`, for all 185 compositions | A frame is blank: `mean < 0.004`, `std < 0.016`, or `edge < 0.0003`. It also re-tests five synthesised empty frames and fails if the floors stop rejecting them. Exits 0 with a message when no stills exist yet. |
 | `check:browser` (a) | `check-gallery-counts.mjs` | Drives the built gallery | A number printed beside a **rail category or a facet pill** ≠ the cards selecting it shows; fewer than 2 rail items or fewer than 5 facet pills (the sweep checked nothing); a pill that prints no number or vanishes mid-sweep; `srcBytes ≤ 800` or `promptBytes ≤ 2000` for any composition (a Copy button that would put a placeholder on the clipboard); zero compositions published. |
 | `check:browser` (b) | `check-browser-frames.mjs` | Screenshots `#/frame/<id>` and diffs against a cached `renderStill` reference (`out/ref/`) | Browser frame `ink < 0.0008` (blank), or `meanAbsDiff > 0.06` on a 64×64 block grid, or the sizes differ, or the gallery lists an id Remotion does not have. Flags: `--base`, `--only`, `--report`, `--fresh`. |
 | `check:player` | `check-player-video.mjs` | Plays `#/play/<id>` for 1400 ms, pauses, screenshots, then screenshots a `<Thumbnail>` at the stopped frame | The player never advanced (stopped frame 0), the playing frame is blank (`ink < 0.0008`), or the two differ by `meanAbsDiff > 0.12`. Flags: `--base`, `--only`, `--report`. |
@@ -129,6 +129,11 @@ at the frame being rendered.
 **A gate that cannot fail is worse than no gate.** That is why `check:poster` and `check:themes`
 re-derive their floors against synthetic empty frames on every run, and why `check:gallery-counts`
 measures the bytes a Copy button would actually put on the clipboard.
+
+The other half of that rule is coverage: a gate that runs over 96 effect folders when the library
+renders 185 compositions is not failing, it is looking away. `verify`, `check:frames` and
+`check:poster` all did exactly that until they were moved onto `compositionFrames()`; check what a
+visitor can open, not what the folder tree contains.
 
 ---
 

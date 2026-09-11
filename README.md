@@ -514,7 +514,7 @@ Every one exits non-zero on failure.
 | `check:edd` | an `edododraw` `sideEffects` glob matches no shipped JS, or a viz template compiles to an empty scene | fast |
 | `verify` | any composition fails to render a still. Renders every composition at its own `checkFrame` — variants included — plus its poster frame where that differs | slow |
 | `check:frames` | a composition's `checkFrame` shows no motion (all 185, variants included) | slow |
-| `check:poster` | a poster frame's mean luminance variance is below the floor — a blank or black card | slow |
+| `check:poster` | any of the 185 compositions' poster frames is below the blank floor — a blank or black card | slow |
 | `check:browser` | a composition renders blank in a **browser**, or lands a long way from where `renderStill` puts it — the gap two shipped bugs lived in. Not a general pixel-regression test; see the header of `scripts/check-browser-frames.mjs` for the measured sensitivity limit | slow |
 | `check:gallery-counts` | a number printed beside a rail category or a facet pill does not equal the number of cards selecting it shows, or a "Copy source"/"Copy full prompt" button would put a placeholder on the clipboard. Runs inside `check:browser`, on the same server | slow |
 | `check:player` | a composition renders differently while it is **playing** than it does seeked to the same frame — the WebCodecs path `<Thumbnail>` never takes, and the only one a viewer who presses play ever sees | slow |

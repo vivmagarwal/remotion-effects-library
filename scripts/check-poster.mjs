@@ -45,8 +45,8 @@
  */
 import {existsSync} from 'node:fs';
 import {join} from 'node:path';
-import {OUT_DIR, walkEffects} from './lib/fs.mjs';
-import {readMeta} from './lib/meta.mjs';
+import {OUT_DIR} from './lib/fs.mjs';
+import {compositionFrames} from './lib/meta.mjs';
 import {decodePng, luminanceStats} from './lib/png.mjs';
 import {EMPTY_FRAMES, blankReason, missedEmpties} from './lib/blank.mjs';
 import {gate} from './lib/gate.mjs';
@@ -61,13 +61,21 @@ const SEARCH = ['poster', 'verify'];
 
 const g = gate('check:poster');
 
+/**
+ * Every COMPOSITION's poster, not every effect's.
+ *
+ * This walk was over effect folders, so it looked at 96 pictures while `verify`
+ * had just rendered 135 — the 86 diagram variants are 86 of the gallery's cards
+ * and not one of them was ever checked for being blank, which is the exact
+ * failure this gate exists to catch.
+ */
+const compositions = await compositionFrames();
 const found = [];
-for (const e of walkEffects()) {
-  const meta = readMeta(e.metaPath);
+for (const id of compositions.keys()) {
   for (const dir of SEARCH) {
-    const p = join(OUT_DIR, dir, `${meta.id}.png`);
+    const p = join(OUT_DIR, dir, `${id}.png`);
     if (existsSync(p)) {
-      found.push({meta, path: p, dir});
+      found.push({id, path: p, dir});
       break;
     }
   }
@@ -80,7 +88,7 @@ if (found.length === 0) {
 }
 
 let looked = 0;
-for (const {meta, path, dir} of found) {
+for (const {id, path, dir} of found) {
   let stats;
   try {
     stats = luminanceStats(decodePng(path));
@@ -89,9 +97,9 @@ for (const {meta, path, dir} of found) {
     continue;
   }
   looked++;
-  const where = `out/${dir}/${meta.id}.png`;
+  const where = `out/${dir}/${id}.png`;
   const why = blankReason(stats);
-  if (why) g.fail(where, `${meta.id}: poster is ${why}`);
+  if (why) g.fail(where, `${id}: poster is ${why}`);
 }
 
 /**
@@ -102,8 +110,8 @@ for (const name of missedEmpties(luminanceStats)) {
   g.fail('scripts/lib/blank.mjs', `the floors no longer reject "${name}". This gate can no longer fail.`);
 }
 
-const skipped = walkEffects().length - found.length;
-if (skipped > 0) g.note(`${skipped} effect(s) have no still on disk yet — not checked.`);
+const skipped = compositions.size - found.length;
+if (skipped > 0) g.note(`${skipped} composition(s) have no still on disk yet — not checked.`);
 
 g.done(
   `${looked} poster(s) read from disk; none is blank, black or flat, ` +
