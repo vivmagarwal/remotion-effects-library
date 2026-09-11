@@ -4,7 +4,7 @@ diagram template drawn on stroke by stroke, from `edododraw` source, driven enti
 **Setup**
 
 ```bash
-npm i edododraw@^0.16.1
+npm i edododraw@^0.16.2
 npx remotion add @remotion/google-fonts
 ```
 

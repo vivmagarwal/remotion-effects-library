@@ -743,7 +743,7 @@ export const VIZ_VARIANTS: NonNullable<EffectMeta['variants']> = [
   item "Security review" "Close the audit findings"
   item "Scale testing" "Survive 10x load"
   item "Compliance" "SOC 2 evidence complete"
-  action: "Bridge the gap"
+  action: "Clear every hurdle"
 }`},
   },
   {
@@ -949,6 +949,9 @@ export const VIZ_VARIANTS: NonNullable<EffectMeta['variants']> = [
     name: 'Hole',
     tagline: 'The pit — and the ladder out of it.',
     props: {vizType: 'hole', vizCategory: 'Visual Metaphors', source: `viz hole "Technical Debt Trap" {
+  pit: "Shortcuts"
+  ladder: "Refactor sprints"
+  caption: "Every shortcut digs it deeper"
 }`},
   },
   {
@@ -1012,6 +1015,7 @@ export const VIZ_VARIANTS: NonNullable<EffectMeta['variants']> = [
     name: 'Pillar',
     tagline: 'Classical columns holding up the mission.',
     props: {vizType: 'pillar', vizCategory: 'Visual Metaphors', source: `viz pillar "Company Pillars" {
+  mission: "A product people trust"
   item "Trust" "Security and reliability first" { icon: shield }
   item "Craft" "Quality in every detail" { icon: star }
   item "Pace" "Ship and learn weekly" { icon: rocket }

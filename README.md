@@ -263,7 +263,7 @@ Four things to know before you copy one of these effects:
   magnifies the sketchiness along with everything else. `defaults { node { roughness: 0.35 } edge {
   roughness: 0.35 } }` is the fix that needs no upstream change.
 
-Everything above was verified against edododraw **0.16.1**, which `package.json` pins as `^0.16.1`.
+Everything above was verified against edododraw **0.16.2**, which `package.json` pins as `^0.16.2`.
 
 The first of those fixes is worth reading even if you never touch edododraw, because the failure had no
 symptom. The package populates its visualization registry by **import side effect**, and its
