@@ -57,6 +57,8 @@ type Props = {
   readonly headline?: readonly Span[];
   readonly byline?: string;
   readonly meta?: string;
+  /** A small chip under the meta line. Empty hides it. */
+  readonly chip?: string;
   readonly backgroundColor?: string;
   readonly highlightColor?: string;
   /** Frames before the first marker stroke starts. */
@@ -78,11 +80,12 @@ export const HeadlineHighlight: React.FC<Props> = ({
     {text: 'video frames', highlight: true},
     {text: ', one at a time'},
   ],
-  byline = 'By Ada Lovelace, Grace Hopper',
-  meta = 'Updated on: January 31, 2026 / 9:59 AM EST / Frame News',
+  byline = 'By Author Name',
+  meta = 'Updated on: Date / Publication',
   // A light theme's palette is dark ink meant to be read on paper, and a solid
   // bar of it would bury the very words it marks. Drop to 40% alpha there and
   // the stroke still reads as a highlighter passing over the line.
+  chip = '',
   highlightColor = theme.scheme === 'light' ? `${theme.series[3]}66` : theme.series[3],
   startAt = 24,
   strokeFrames = 20,
@@ -195,7 +198,7 @@ export const HeadlineHighlight: React.FC<Props> = ({
         {meta}
       </Interactive.Div>
 
-      <Interactive.Div
+      {chip ? <Interactive.Div
         name="Source chip"
         style={{
           fontFamily: textFamily,
@@ -214,8 +217,8 @@ export const HeadlineHighlight: React.FC<Props> = ({
           }),
         }}
       >
-        Add Frame News on Google
-      </Interactive.Div>
+        {chip}
+      </Interactive.Div> : null}
     </AbsoluteFill>
   );
 };

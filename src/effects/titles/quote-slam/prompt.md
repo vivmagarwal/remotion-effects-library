@@ -133,6 +133,6 @@ const {fontFamily: sans}  = loadSans('normal',  {weights: ['500', '700'], subset
 **Requirements**
 - One self-contained `.tsx` file exporting `QuoteSlam`.
 - Props, with defaults: `quote`
-  (`'We stopped\nrendering videos\nand started\nprogramming them.'`), `author` (`'Jonny Burger'`),
-  `role` (`'Creator of Remotion'`), `lineStagger` (7), `startAt` (12), `accentColor` (`#ff5c39`),
+  (`'Your quote\ngoes here,\nin their\nown words.'`), `author` (`'Speaker Name'`),
+  `role` (`'Their role'`), `lineStagger` (7), `startAt` (12), `accentColor` (`#ff5c39`),
   `backgroundColor` (`theme.bg`, `#0a0b10`), `textColor` (`theme.ink`, `#ffffff`), `fontSize` (104).

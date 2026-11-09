@@ -8,7 +8,7 @@ sweeps across the important phrases in the headline, one after another.
   1450px, 26px below the kicker.
 - Byline — Inter, 28px, `theme.accentOnPaper` (house `#c2410c`), underlined, 44px below the headline.
 - Timestamp line — Inter, 25px, `theme.paperMuted`, 14px below the byline.
-- A bordered "source" chip below that: Inter 24px weight 600, 1px border `rgba(29,27,23,0.16)`,
+- When `chip` is set, a bordered "source" chip below that: Inter 24px weight 600, 1px border `rgba(29,27,23,0.16)`,
   radius `theme.radius * 8 / 18` (8 at house), `10px 18px` padding, `align-self: flex-start`. It fades
   in at the 3-second mark.
 - Kicker, headline, byline and timestamp each fade in on a short overlapping stagger over the first
